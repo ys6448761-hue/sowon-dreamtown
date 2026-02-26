@@ -30,6 +30,12 @@ export async function GET() {
     take: 50,
     include: {
       author: { select: { id: true, nickname: true } },
+      adminLogs: {
+        where: { action: "REDIRECT", templateType: { not: null } },
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: { templateType: true },
+      },
     },
   });
 
@@ -60,11 +66,8 @@ export async function PATCH(request: NextRequest) {
     action === "REJECT" ? "REJECTED" :
     "REDIRECT";
 
-  // REDIRECT 전용 검증
+  // REDIRECT 전용 검증 (사유는 선택 — 템플릿 문구가 자동 포함됨)
   if (targetStatus === "REDIRECT") {
-    if (!rawReason) {
-      return NextResponse.json({ error: "redirectReason is required for REDIRECT" }, { status: 400 });
-    }
     if (rawReason.length > 300) {
       return NextResponse.json({ error: "redirectReason too long (max 300)" }, { status: 400 });
     }
@@ -146,5 +149,5 @@ export async function PATCH(request: NextRequest) {
     timestamp: new Date().toISOString(),
   });
 
-  return NextResponse.json({ post: updated });
+  return NextResponse.json({ post: updated, templateType });
 }

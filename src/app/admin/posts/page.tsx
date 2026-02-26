@@ -11,6 +11,13 @@ type ReviewPost = {
   status: string;
   createdAt: string;
   author: { id: string; nickname: string };
+  adminLogs?: { templateType: string }[];
+};
+
+const TEMPLATE_BADGE: Record<string, { label: string; color: string }> = {
+  A_WARM: { label: "A", color: "bg-purple-100 text-purple-700" },
+  B_SPECIFIC: { label: "B", color: "bg-pink-100 text-pink-700" },
+  C_GUIDE: { label: "C", color: "bg-blue-100 text-blue-700" },
 };
 
 export default function AdminPostsPage() {
@@ -62,12 +69,11 @@ export default function AdminPostsPage() {
   const handleRedirect = async (id: string) => {
     setError("");
     const reason = redirectReason.trim();
-    if (!reason) { setError("전환 사유를 입력해주세요."); return; }
 
     const res = await fetch("/api/admin/posts", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, action: "REDIRECT", redirectReason: reason }),
+      body: JSON.stringify({ id, action: "REDIRECT", ...(reason && { redirectReason: reason }) }),
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
@@ -110,6 +116,15 @@ export default function AdminPostsPage() {
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">{post.author.nickname}</span>
                   <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs text-yellow-700">PENDING</span>
+                  {post.adminLogs?.[0]?.templateType && (() => {
+                    const tt = post.adminLogs[0].templateType;
+                    const badge = TEMPLATE_BADGE[tt];
+                    return badge ? (
+                      <span className={`rounded-full px-2 py-0.5 text-xs ${badge.color}`}>
+                        재제출 ({badge.label})
+                      </span>
+                    ) : null;
+                  })()}
                 </div>
                 <span className="text-xs text-gray-400">{new Date(post.createdAt).toLocaleDateString("ko-KR")}</span>
               </div>
@@ -145,11 +160,11 @@ export default function AdminPostsPage() {
 
               {openRedirectId === post.id && (
                 <div className="rounded-lg border bg-gray-50 p-3 space-y-2">
-                  <p className="text-xs text-gray-600">전환 사유 (1줄)</p>
+                  <p className="text-xs text-gray-600">보충 사유 (선택 — 템플릿 문구가 자동 포함됩니다)</p>
                   <textarea
                     value={redirectReason}
                     onChange={(e) => setRedirectReason(e.target.value)}
-                    placeholder="예: 나눔 공간에서는 비난/단정 표현을 줄여요. 조금 더 따뜻하게 다듬어주세요."
+                    placeholder="비워두면 A/B/C 템플릿 문구만 전달됩니다. 추가 안내가 필요하면 입력하세요."
                     rows={2}
                     className="w-full rounded-lg border px-3 py-2 text-sm focus:border-purple-400 focus:outline-none"
                   />
