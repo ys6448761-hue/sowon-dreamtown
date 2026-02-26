@@ -178,9 +178,9 @@ export async function GET(request: NextRequest) {
   // severity 정렬: red first
   alerts.sort((a, b) => (a.severity === "red" ? -1 : 1) - (b.severity === "red" ? -1 : 1));
 
-  // Slack 알람 전송 (비동기, 응답 차단하지 않음)
+  // Slack 알람 전송 (RED/STALE_PENDING만 즉시, 비동기)
   if (alerts.length > 0) {
-    sendSlackAlerts(alerts).catch(() => {});
+    sendSlackAlerts(alerts, range).catch(() => {});
   }
 
   return NextResponse.json({
