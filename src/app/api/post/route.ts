@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { touchLastActive } from "@/lib/activity";
+import { sanitizeText } from "@/lib/sanitize";
 
 // GET /api/post - 글 목록 조회 (공개)
 export async function GET() {
@@ -28,7 +29,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { content } = body;
+  const content = sanitizeText(body.content).slice(0, 5000);
 
   if (!content) {
     return NextResponse.json(
