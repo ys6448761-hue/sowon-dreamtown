@@ -13,6 +13,7 @@
 | 광장 CRUD v0 | ✅ |
 | KPI 이벤트 로깅 v0 | ✅ |
 | Auth v0 (NextAuth) | ✅ |
+| Event/미션 v0 | ✅ |
 
 ## 현재 마일스톤
 
@@ -23,7 +24,7 @@
 - [x] 광장 최소 CRUD
 - [x] KPI 이벤트 로깅
 - [x] Auth v0 (NextAuth Credentials + JWT)
-- [ ] Event/미션 v0
+- [x] Event/미션 v0
 - [ ] 리텐션 측정 v0
 
 ## 팀
