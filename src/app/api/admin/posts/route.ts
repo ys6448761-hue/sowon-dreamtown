@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { isAdmin } from "@/lib/admin";
+import { lazyArchiveRedirects } from "@/lib/lazy-archive";
 
 async function requireAdmin() {
   const session = await auth();
@@ -14,10 +15,13 @@ async function requireAdmin() {
   return { denied: null, session };
 }
 
-// GET /api/admin/posts — PENDING 글 목록
+// GET /api/admin/posts — PENDING 글 목록 (Lazy Archive 실행 후)
 export async function GET() {
   const { denied } = await requireAdmin();
   if (denied) return denied;
+
+  // Lazy Archive: REDIRECT 3일 경과 → ARCHIVED
+  const archived = await lazyArchiveRedirects();
 
   const posts = await prisma.post.findMany({
     where: { status: "PENDING" },
@@ -28,7 +32,7 @@ export async function GET() {
     },
   });
 
-  return NextResponse.json({ posts });
+  return NextResponse.json({ posts, archived });
 }
 
 // PATCH /api/admin/posts — 승인/전환/거절 (멱등성 보장)
