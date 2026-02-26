@@ -15,4 +15,15 @@ for (const f of mustFiles) {
   }
 }
 
+const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+const prismaVer =
+  (pkg.dependencies && pkg.dependencies.prisma) ||
+  (pkg.devDependencies && pkg.devDependencies.prisma) ||
+  "";
+
+if (!prismaVer.includes("6")) {
+  console.error(`GATE FAIL: prisma version must be 6.x (found: ${prismaVer})`);
+  process.exit(1);
+}
+
 console.log("GATE PASS");
