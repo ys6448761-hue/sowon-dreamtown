@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { isAdmin } from "@/lib/admin";
+import { sendSlackAlerts } from "@/lib/slack";
 
 type Alert = { type: string; severity: "red" | "yellow"; message: string };
 
@@ -176,6 +177,11 @@ export async function GET(request: NextRequest) {
 
   // severity 정렬: red first
   alerts.sort((a, b) => (a.severity === "red" ? -1 : 1) - (b.severity === "red" ? -1 : 1));
+
+  // Slack 알람 전송 (비동기, 응답 차단하지 않음)
+  if (alerts.length > 0) {
+    sendSlackAlerts(alerts).catch(() => {});
+  }
 
   return NextResponse.json({
     range,

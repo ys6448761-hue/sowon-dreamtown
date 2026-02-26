@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { isAdmin } from "@/lib/admin";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   BarChart, Bar, LineChart, Line,
   XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend,
@@ -45,17 +45,28 @@ export default function AdminMetricsPage() {
   const [error, setError] = useState("");
 
   const admin = authStatus !== "loading" && isAdmin(session?.user?.name);
+  const abortRef = useRef<AbortController | null>(null);
 
-  const fetchMetrics = async (r: string) => {
+  const fetchMetrics = useCallback(async (r: string) => {
+    abortRef.current?.abort();
+    const ac = new AbortController();
+    abortRef.current = ac;
+
     setLoading(true);
     setError("");
-    const res = await fetch(`/api/admin/metrics?range=${r}`);
-    if (!res.ok) { setError("메트릭스를 불러오지 못했어요."); setLoading(false); return; }
-    setData(await res.json());
-    setLoading(false);
-  };
+    try {
+      const res = await fetch(`/api/admin/metrics?range=${r}`, { signal: ac.signal });
+      if (!res.ok) { setError("메트릭스를 불러오지 못했어요."); setLoading(false); return; }
+      setData(await res.json());
+    } catch (e: unknown) {
+      if (e instanceof DOMException && e.name === "AbortError") return;
+      setError("메트릭스를 불러오지 못했어요.");
+    } finally {
+      if (!ac.signal.aborted) setLoading(false);
+    }
+  }, []);
 
-  useEffect(() => { if (admin) fetchMetrics(range); }, [admin, range]);
+  useEffect(() => { if (admin) fetchMetrics(range); }, [admin, range, fetchMetrics]);
 
   if (authStatus === "loading") return <p className="py-12 text-center text-gray-400">...</p>;
   if (!admin) return <main className="py-12 text-center"><p className="text-lg font-medium text-red-600">접근 권한이 없습니다</p></main>;
@@ -74,11 +85,13 @@ export default function AdminMetricsPage() {
         <div className="flex gap-2">
           <button
             onClick={() => setRange("7d")}
-            className={`rounded-lg px-3 py-1.5 text-sm ${range === "7d" ? "bg-purple-500 text-white" : "border hover:bg-gray-50"}`}
+            disabled={loading}
+            className={`rounded-lg px-3 py-1.5 text-sm transition-colors disabled:opacity-50 ${range === "7d" ? "bg-purple-500 text-white" : "border hover:bg-gray-50"}`}
           >7일</button>
           <button
             onClick={() => setRange("30d")}
-            className={`rounded-lg px-3 py-1.5 text-sm ${range === "30d" ? "bg-purple-500 text-white" : "border hover:bg-gray-50"}`}
+            disabled={loading}
+            className={`rounded-lg px-3 py-1.5 text-sm transition-colors disabled:opacity-50 ${range === "30d" ? "bg-purple-500 text-white" : "border hover:bg-gray-50"}`}
           >30일</button>
           <Link href="/admin" className="rounded-lg border px-3 py-1.5 text-sm hover:bg-gray-50">Admin</Link>
         </div>
@@ -123,7 +136,15 @@ export default function AdminMetricsPage() {
               dot={kpi.p90ReviewHours > 72 ? "red" : kpi.p90ReviewHours > 24 ? "yellow" : "green"}
               delta={deltaDiff(kpi.p90ReviewHours, prevKpi?.p90ReviewHours, "h", true)}
             />
-            {/* 2. PENDING 대기 큐 → /admin/posts 링크 */}
+            {/* 2. p50 검토 시간 (일반 체감) */}
+            <KpiCard
+              label="검토 시간 (p50)"
+              value={hrs(kpi.medianReviewHours)}
+              sub="작성→검토 중앙값"
+              dot={kpi.medianReviewHours > 48 ? "yellow" : "green"}
+              delta={deltaDiff(kpi.medianReviewHours, prevKpi?.medianReviewHours, "h", true)}
+            />
+            {/* 3. PENDING 대기 큐 → /admin/posts 링크 */}
             <Link href="/admin/posts" className="block">
               <KpiCard
                 label="대기 큐 (PENDING)"
@@ -133,7 +154,7 @@ export default function AdminMetricsPage() {
                 clickable
               />
             </Link>
-            {/* 3. 승인률 */}
+            {/* 4. 승인률 */}
             <KpiCard
               label="승인률"
               value={pct(kpi.approvalRate)}
@@ -141,7 +162,7 @@ export default function AdminMetricsPage() {
               dot="green"
               delta={deltaDiff(kpi.approvalRate, prevKpi?.approvalRate, "%")}
             />
-            {/* 4. 전환률 */}
+            {/* 5. 전환률 */}
             <KpiCard
               label="전환률"
               value={pct(kpi.redirectRate)}
@@ -149,7 +170,7 @@ export default function AdminMetricsPage() {
               dot="yellow"
               delta={deltaDiff(kpi.redirectRate, prevKpi?.redirectRate, "%")}
             />
-            {/* 5. 거절률 */}
+            {/* 6. 거절률 */}
             <KpiCard
               label="거절률"
               value={pct(kpi.rejectionRate)}
@@ -157,7 +178,7 @@ export default function AdminMetricsPage() {
               dot={kpi.rejectionRate > 0.3 ? "red" : "green"}
               delta={deltaDiff(kpi.rejectionRate, prevKpi?.rejectionRate, "%", true)}
             />
-            {/* 6. 재제출 전환 */}
+            {/* 7. 재제출 전환 */}
             <KpiCard
               label="재제출 전환"
               value={pct(kpi.resubmitConversionRate)}
