@@ -1,4 +1,6 @@
 import AuthButton from "@/components/AuthButton";
+import DailyQuestion from "@/components/DailyQuestion";
+import FirstPostCTA from "@/components/FirstPostCTA";
 import Plaza from "@/components/Plaza";
 import EventList from "@/components/EventList";
 
@@ -11,6 +13,8 @@ export default function Home() {
       </header>
 
       <main className="space-y-10">
+        <DailyQuestion />
+        <FirstPostCTA />
         <Plaza />
         <EventList />
       </main>
