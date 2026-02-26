@@ -12,6 +12,7 @@
 | Prisma v0 확정 | ✅ |
 | 광장 CRUD v0 | ✅ |
 | KPI 이벤트 로깅 v0 | ✅ |
+| Auth v0 (NextAuth) | ✅ |
 
 ## 현재 마일스톤
 
@@ -21,6 +22,9 @@
 - [x] Prisma v0 스키마 + 마이그레이션
 - [x] 광장 최소 CRUD
 - [x] KPI 이벤트 로깅
+- [x] Auth v0 (NextAuth Credentials + JWT)
+- [ ] Event/미션 v0
+- [ ] 리텐션 측정 v0
 
 ## 팀
 

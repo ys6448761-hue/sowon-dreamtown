@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 
-// GET /api/post - 글 목록 조회
+// GET /api/post - 글 목록 조회 (공개)
 export async function GET() {
   const posts = await prisma.post.findMany({
     orderBy: { createdAt: "desc" },
@@ -18,17 +19,24 @@ export async function GET() {
   return NextResponse.json(posts);
 }
 
-// POST /api/post - 글 작성
+// POST /api/post - 글 작성 (인증 필수)
 export async function POST(request: NextRequest) {
-  const body = await request.json();
-  const { content, authorId } = body;
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+  }
 
-  if (!content || !authorId) {
+  const body = await request.json();
+  const { content } = body;
+
+  if (!content) {
     return NextResponse.json(
-      { error: "content와 authorId는 필수입니다." },
+      { error: "content는 필수입니다." },
       { status: 400 }
     );
   }
+
+  const authorId = session.user.id;
 
   const post = await prisma.post.create({
     data: { content, authorId },
