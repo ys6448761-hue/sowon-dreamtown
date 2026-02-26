@@ -34,6 +34,12 @@ type Metrics = {
     dailyReviewCounts: { date: string; approved: number; redirected: number; rejected: number }[];
     dailyReviewTime: { date: string; p50: number | null; p90: number | null }[];
   };
+  templatePerformance: {
+    templateType: string;
+    redirectCount: number;
+    resubmitCount: number;
+    resubmitConversionRate: number;
+  }[];
   alerts: { type: string; severity: "red" | "yellow"; message: string }[];
 };
 
@@ -226,6 +232,40 @@ export default function AdminMetricsPage() {
               작성 시점 → 검토 완료까지 걸린 시간. p90이 24h 이내면 양호
             </p>
           </div>
+
+          {/* Template Performance (A/B/C 실험) */}
+          {data!.templatePerformance.some((t) => t.redirectCount > 0) && (
+            <div className="rounded-lg border p-4">
+              <h3 className="mb-3 text-sm font-medium">REDIRECT 템플릿 성과</h3>
+              <div className="grid grid-cols-3 gap-3">
+                {data!.templatePerformance.map((tp) => {
+                  const lowSample = tp.redirectCount < 10;
+                  return (
+                    <div
+                      key={tp.templateType}
+                      className={`rounded-lg border p-3 ${lowSample ? "border-gray-200 bg-gray-50" : ""}`}
+                    >
+                      <p className="text-xs font-medium text-gray-600">
+                        {TEMPLATE_LABELS[tp.templateType] ?? tp.templateType}
+                      </p>
+                      <p className={`mt-1 text-lg font-bold ${lowSample ? "text-gray-400" : "text-gray-900"}`}>
+                        {tp.redirectCount > 0 ? `${(tp.resubmitConversionRate * 100).toFixed(1)}%` : "\u2014"}
+                      </p>
+                      <p className="text-[11px] text-gray-400">
+                        REDIRECT {tp.redirectCount} &middot; RESUBMIT {tp.resubmitCount}
+                      </p>
+                      {lowSample && tp.redirectCount > 0 && (
+                        <p className="mt-1 text-[10px] text-gray-400">n&lt;10 표본 주의</p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="mt-2 text-center text-[10px] text-gray-400">
+                REDIRECT 후 재제출(PENDING 복귀) 비율. 템플릿별 효과 비교용
+              </p>
+            </div>
+          )}
         </>
       ) : null}
     </main>
@@ -266,6 +306,14 @@ function KpiCard({ label, value, sub, dot, delta, clickable }: {
     </div>
   );
 }
+
+/* ── Template Labels ──────────────────────────────────── */
+
+const TEMPLATE_LABELS: Record<string, string> = {
+  A_WARM: "A. 따뜻한 톤",
+  B_SPECIFIC: "B. 구체적 안내",
+  C_GUIDE: "C. 가이드 참조",
+};
 
 /* ── Helpers ──────────────────────────────────────────── */
 

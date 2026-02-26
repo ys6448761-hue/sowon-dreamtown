@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { isAdmin } from "@/lib/admin";
 import { sendSlackAlerts } from "@/lib/slack";
+import { TEMPLATE_TYPES } from "@/lib/redirect-templates";
 
 type Alert = { type: string; severity: "red" | "yellow"; message: string };
 
@@ -152,6 +153,39 @@ export async function GET(request: NextRequest) {
     };
   });
 
+  // --- Template Performance (A/B/C별 REDIRECT → RESUBMIT 전환율) ---
+  const redirectLogs = await prisma.adminLog.findMany({
+    where: { createdAt: { gte: since }, action: "REDIRECT", templateType: { not: null } },
+    select: { postId: true, templateType: true },
+    distinct: ["postId"],
+  });
+
+  const templatePerformance = TEMPLATE_TYPES.map((tt) => {
+    const logsForType = redirectLogs.filter((l) => l.templateType === tt);
+    const redirectCount = logsForType.length;
+    return { templateType: tt, redirectCount, resubmitCount: 0, resubmitConversionRate: 0 };
+  });
+
+  // 재제출 수 집계 (REDIRECT 후 현재 PENDING인 post)
+  if (redirectLogs.length > 0) {
+    const postIdsByTemplate = new Map<string, string[]>();
+    for (const log of redirectLogs) {
+      const tt = log.templateType!;
+      const arr = postIdsByTemplate.get(tt) ?? [];
+      arr.push(log.postId);
+      postIdsByTemplate.set(tt, arr);
+    }
+
+    for (const tp of templatePerformance) {
+      const postIds = postIdsByTemplate.get(tp.templateType) ?? [];
+      if (postIds.length === 0) continue;
+      tp.resubmitCount = await prisma.post.count({
+        where: { id: { in: postIds }, status: "PENDING" },
+      });
+      tp.resubmitConversionRate = round(tp.resubmitCount / tp.redirectCount);
+    }
+  }
+
   // --- Alerts (severity 정렬: red > yellow) ---
   const alerts: Alert[] = [];
 
@@ -205,6 +239,7 @@ export async function GET(request: NextRequest) {
       resubmitConversionRate: prevResubmitConversionRate,
     },
     trend: { dailyReviewCounts, dailyReviewTime },
+    templatePerformance,
     alerts,
   });
 }

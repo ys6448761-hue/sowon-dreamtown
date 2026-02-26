@@ -73,6 +73,7 @@ model AdminLog {
   id             String   @id @default(cuid())
   action         String
   redirectReason String?
+  templateType   String?
   createdAt      DateTime @default(now())
 
   postId  String

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { isAdmin } from "@/lib/admin";
 import { lazyArchiveRedirects } from "@/lib/lazy-archive";
+import { pickRandomTemplate, REDIRECT_TEMPLATES, type TemplateType } from "@/lib/redirect-templates";
 
 async function requireAdmin() {
   const session = await auth();
@@ -93,13 +94,33 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "only PENDING posts can be reviewed" }, { status: 409 });
   }
 
+  // REDIRECT: 템플릿 배정 (동일 post 기존 templateType 재사용)
+  let templateType: TemplateType | null = null;
+  let finalReason = rawReason || null;
+
+  if (targetStatus === "REDIRECT") {
+    const prevLog = await prisma.adminLog.findFirst({
+      where: { postId: id, action: "REDIRECT", templateType: { not: null } },
+      orderBy: { createdAt: "desc" },
+      select: { templateType: true },
+    });
+
+    templateType = (prevLog?.templateType as TemplateType) ?? pickRandomTemplate();
+
+    // 템플릿 본문 + 운영자 커스텀 사유 조합
+    const templateText = REDIRECT_TEMPLATES[templateType];
+    finalReason = rawReason
+      ? `${templateText}\n\n${rawReason}`
+      : templateText;
+  }
+
   // 트랜잭션: 상태 변경 + Audit Log
   const updated = await prisma.$transaction(async (tx) => {
     const post = await tx.post.update({
       where: { id },
       data: {
         status: targetStatus,
-        redirectReason: targetStatus === "REDIRECT" ? rawReason : null,
+        redirectReason: finalReason,
       },
       select: { id: true, status: true },
     });
@@ -109,7 +130,8 @@ export async function PATCH(request: NextRequest) {
         postId: id,
         adminId: session!.user!.id,
         action: targetStatus,
-        redirectReason: targetStatus === "REDIRECT" ? rawReason : null,
+        redirectReason: finalReason,
+        templateType,
       },
     });
 
