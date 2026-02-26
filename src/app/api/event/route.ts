@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 // GET /api/event - 이벤트 목록 조회 (공개)
 export async function GET() {
   const events = await prisma.event.findMany({
+    where: { active: true },
     orderBy: { createdAt: "desc" },
     include: {
       _count: { select: { participations: true } },
