@@ -18,6 +18,7 @@ model User {
   posts               Post[]
   likes               Like[]
   eventParticipations EventParticipation[]
+  adminLogs           AdminLog[]
 }
 
 model Post {
@@ -31,6 +32,7 @@ model Post {
   authorId String
   author   User   @relation(fields: [authorId], references: [id])
   likes    Like[]
+  adminLogs AdminLog[]
 }
 
 model Like {
@@ -65,4 +67,16 @@ model EventParticipation {
   event   Event  @relation(fields: [eventId], references: [id])
 
   @@unique([userId, eventId])
+}
+
+model AdminLog {
+  id             String   @id @default(cuid())
+  action         String
+  redirectReason String?
+  createdAt      DateTime @default(now())
+
+  postId  String
+  post    Post   @relation(fields: [postId], references: [id])
+  adminId String
+  admin   User   @relation(fields: [adminId], references: [id])
 }

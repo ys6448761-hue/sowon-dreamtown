@@ -5,14 +5,18 @@ import { isAdmin } from "@/lib/admin";
 
 async function requireAdmin() {
   const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if (!isAdmin(session.user.name)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  return null;
+  if (!session?.user) {
+    return { denied: NextResponse.json({ error: "Unauthorized" }, { status: 401 }) as NextResponse, session: null };
+  }
+  if (!isAdmin(session.user.name)) {
+    return { denied: NextResponse.json({ error: "Forbidden" }, { status: 403 }) as NextResponse, session: null };
+  }
+  return { denied: null, session };
 }
 
 // GET /api/admin/posts — PENDING 글 목록
 export async function GET() {
-  const denied = await requireAdmin();
+  const { denied } = await requireAdmin();
   if (denied) return denied;
 
   const posts = await prisma.post.findMany({
@@ -27,15 +31,15 @@ export async function GET() {
   return NextResponse.json({ posts });
 }
 
-// PATCH /api/admin/posts — 승인/전환/거절
+// PATCH /api/admin/posts — 승인/전환/거절 (멱등성 보장)
 export async function PATCH(request: NextRequest) {
-  const denied = await requireAdmin();
+  const { denied, session } = await requireAdmin();
   if (denied) return denied;
 
   const body = await request.json();
   const id = (body?.id ?? "").toString().trim();
   const action = (body?.action ?? "").toString().trim();
-  const redirectReason = (body?.redirectReason ?? "").toString().trim();
+  const rawReason = (body?.redirectReason ?? "").toString().trim();
 
   if (!id) {
     return NextResponse.json({ error: "id is required" }, { status: 400 });
@@ -45,8 +49,25 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "action must be APPROVE|REDIRECT|REJECT" }, { status: 400 });
   }
 
-  if (action === "REDIRECT" && !redirectReason) {
-    return NextResponse.json({ error: "redirectReason is required for REDIRECT" }, { status: 400 });
+  // action → targetStatus 매핑
+  const targetStatus =
+    action === "APPROVE" ? "APPROVED" :
+    action === "REJECT" ? "REJECTED" :
+    "REDIRECT";
+
+  // REDIRECT 전용 검증
+  if (targetStatus === "REDIRECT") {
+    if (!rawReason) {
+      return NextResponse.json({ error: "redirectReason is required for REDIRECT" }, { status: 400 });
+    }
+    if (rawReason.length > 300) {
+      return NextResponse.json({ error: "redirectReason too long (max 300)" }, { status: 400 });
+    }
+  }
+
+  // 승인/거절에 redirectReason 혼입 차단
+  if (targetStatus !== "REDIRECT" && rawReason) {
+    return NextResponse.json({ error: "redirectReason allowed only for REDIRECT" }, { status: 400 });
   }
 
   const existing = await prisma.post.findUnique({
@@ -58,31 +79,46 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "post not found" }, { status: 404 });
   }
 
+  // 멱등성: 동일 상태면 200 OK
+  if (existing.status === targetStatus) {
+    return NextResponse.json({ post: existing });
+  }
+
+  // PENDING이 아니면 차단
   if (existing.status !== "PENDING") {
     return NextResponse.json({ error: "only PENDING posts can be reviewed" }, { status: 409 });
   }
 
-  const data: { status: string; redirectReason?: string } = { status: "" };
+  // 트랜잭션: 상태 변경 + Audit Log
+  const updated = await prisma.$transaction(async (tx) => {
+    const post = await tx.post.update({
+      where: { id },
+      data: {
+        status: targetStatus,
+        redirectReason: targetStatus === "REDIRECT" ? rawReason : null,
+      },
+      select: { id: true, status: true },
+    });
 
-  if (action === "APPROVE") data.status = "APPROVED";
-  if (action === "REJECT") data.status = "REJECTED";
-  if (action === "REDIRECT") {
-    data.status = "REDIRECT";
-    data.redirectReason = redirectReason;
-  }
+    await tx.adminLog.create({
+      data: {
+        postId: id,
+        adminId: session!.user!.id,
+        action: targetStatus,
+        redirectReason: targetStatus === "REDIRECT" ? rawReason : null,
+      },
+    });
 
-  const post = await prisma.post.update({
-    where: { id },
-    data,
-    select: { id: true, status: true },
+    return post;
   });
 
   console.log("EVENT: admin_post_review", {
-    postId: post.id,
+    postId: updated.id,
     action,
-    newStatus: post.status,
+    newStatus: updated.status,
+    adminId: session!.user!.id,
     timestamp: new Date().toISOString(),
   });
 
-  return NextResponse.json({ post });
+  return NextResponse.json({ post: updated });
 }
