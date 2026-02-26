@@ -141,7 +141,7 @@ export default function AdminMetricsPage() {
               label="검토 시간 (p50)"
               value={hrs(kpi.medianReviewHours)}
               sub="작성→검토 중앙값"
-              dot={kpi.medianReviewHours > 48 ? "yellow" : "green"}
+              dot={kpi.medianReviewHours > 24 ? "red" : kpi.medianReviewHours > 12 ? "yellow" : "green"}
               delta={deltaDiff(kpi.medianReviewHours, prevKpi?.medianReviewHours, "h", true)}
             />
             {/* 3. PENDING 대기 큐 → /admin/posts 링크 */}
