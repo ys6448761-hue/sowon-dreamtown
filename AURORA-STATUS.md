@@ -15,6 +15,7 @@
 | Auth v0 (NextAuth) | ✅ |
 | Event/미션 v0 | ✅ |
 | 리텐션 측정 v0 | ✅ |
+| UI v0 (광장+이벤트+로그인) | ✅ |
 
 ## 현재 마일스톤
 
@@ -27,6 +28,8 @@
 - [x] Auth v0 (NextAuth Credentials + JWT)
 - [x] Event/미션 v0
 - [x] 리텐션 측정 v0 (lastActiveAt + D1 쿼리)
+- [x] UI v0 (광장 + 이벤트 + 로그인 버튼)
+- [ ] 온보딩 v0
 
 ## 팀
 
