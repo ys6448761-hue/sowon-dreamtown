@@ -1,20 +1,51 @@
 "use client";
 
+import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function NewPostPage() {
   const { data: session } = useSession();
-  const router = useRouter();
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState<{ id: string } | null>(null);
 
   if (!session?.user) {
     return (
       <main className="py-12 text-center">
         <p className="text-gray-500">로그인 후 글을 작성할 수 있어요.</p>
+      </main>
+    );
+  }
+
+  if (submitted) {
+    return (
+      <main className="py-12 text-center">
+        <div className="mx-auto max-w-sm space-y-4">
+          <div className="text-4xl">✨</div>
+          <h2 className="text-xl font-bold text-purple-700">검토중이에요</h2>
+          <p className="text-sm text-gray-600">
+            오로라 5가 따뜻하게 확인하고 있어요.
+          </p>
+          <p className="text-xs text-gray-400">
+            승인되면 나눔에 공개됩니다.
+          </p>
+          <div className="flex justify-center gap-3 pt-4">
+            <Link
+              href="/plaza?mine=true"
+              className="rounded-lg border border-purple-400 px-4 py-2 text-sm text-purple-600 hover:bg-purple-50"
+            >
+              내 글 확인
+            </Link>
+            <Link
+              href="/plaza"
+              className="rounded-lg bg-purple-500 px-4 py-2 text-sm text-white hover:bg-purple-600"
+            >
+              다른 나눔 보기
+            </Link>
+          </div>
+        </div>
       </main>
     );
   }
@@ -37,7 +68,8 @@ export default function NewPostPage() {
       return;
     }
 
-    router.push("/plaza");
+    const post = await res.json();
+    setSubmitted({ id: post.id });
   };
 
   return (

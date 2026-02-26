@@ -21,6 +21,11 @@ export async function POST(request: NextRequest) {
 
   const userId = session.user.id;
 
+  const post = await prisma.post.findUnique({ where: { id: postId }, select: { status: true } });
+  if (!post || post.status !== "APPROVED") {
+    return NextResponse.json({ error: "좋아요할 수 없는 글입니다." }, { status: 400 });
+  }
+
   const existing = await prisma.like.findUnique({
     where: { userId_postId: { userId, postId } },
   });
