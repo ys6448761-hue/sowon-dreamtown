@@ -4,9 +4,32 @@ import { auth } from "@/lib/auth";
 import { touchLastActive } from "@/lib/activity";
 import { sanitizeText } from "@/lib/sanitize";
 
-// GET /api/post - 글 목록 조회 (공개)
-export async function GET() {
+// GET /api/post - 글 목록 조회
+// ?mine=true → 본인 글 전체 (모든 status)
+// 기본 → APPROVED만 (공개 피드)
+export async function GET(request: NextRequest) {
+  const mine = request.nextUrl.searchParams.get("mine") === "true";
+
+  if (mine) {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+    }
+
+    const posts = await prisma.post.findMany({
+      where: { authorId: session.user.id },
+      orderBy: { createdAt: "desc" },
+      include: {
+        author: { select: { id: true, nickname: true } },
+        _count: { select: { likes: true } },
+      },
+    });
+
+    return NextResponse.json(posts);
+  }
+
   const posts = await prisma.post.findMany({
+    where: { status: "APPROVED" },
     orderBy: { createdAt: "desc" },
     include: {
       author: { select: { id: true, nickname: true } },

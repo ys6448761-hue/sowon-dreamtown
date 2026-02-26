@@ -23,6 +23,7 @@ model User {
 model Post {
   id        String   @id @default(cuid())
   content   String
+  status    String   @default("PENDING")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
