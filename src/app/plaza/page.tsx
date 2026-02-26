@@ -45,6 +45,13 @@ export default function PlazaPage() {
           <Link href="/plaza/new" className="rounded-lg bg-purple-500 px-4 py-2 text-sm text-white hover:bg-purple-600">글쓰기</Link>
         )}
       </div>
+      {session?.user && posts.length === 0 && (
+        <Link href="/plaza/new" className="mb-4 block rounded-lg border-2 border-dashed border-purple-300 bg-purple-50 p-5 text-center hover:bg-purple-100">
+          <p className="mb-1 text-sm text-purple-700">오늘의 질문</p>
+          <p className="mb-3 font-medium text-purple-900">오늘 팬으로서 가장 설레는 순간은 언제였나요?</p>
+          <span className="rounded-lg bg-purple-500 px-4 py-2 text-sm text-white">첫 글 쓰기</span>
+        </Link>
+      )}
       {error && <p className="mb-4 rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">{error}</p>}
 
       <div className="space-y-3">
