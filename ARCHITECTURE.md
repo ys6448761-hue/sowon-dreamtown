@@ -1,21 +1,20 @@
-# 소원꿈터 아키텍처
+# Architecture (소원꿈터 v0)
 
-## 기술 스택
+## Stack
 
-```
-┌─────────────────────────────────────┐
-│           Next.js App Router        │
-│         (React Server Components)   │
-├─────────────────────────────────────┤
-│         API Routes (Route Handlers) │
-│         src/app/api/**/route.ts     │
-├─────────────────────────────────────┤
-│            Prisma ORM               │
-│         (Type-safe queries)         │
-├─────────────────────────────────────┤
-│     SQLite (dev) / PostgreSQL (prod)│
-└─────────────────────────────────────┘
-```
+- Web: Next.js (App Router)
+- DB: SQLite (dev) / PostgreSQL (prod)
+- ORM: Prisma **6.x pinned**
+- Deploy: TBD
+
+## Generated Prisma Client
+
+- source: `src/generated/prisma/client.ts`
+- import rule: `../generated/prisma/client`
+
+## Domain
+
+- User / Post / Like / Event / EventParticipation
 
 ## 디렉토리 구조
 
@@ -27,11 +26,9 @@ sowon-dreamtown/
 │   └── status-gate.js         # Gate 검증
 ├── src/
 │   ├── app/
-│   │   ├── api/
-│   │   │   ├── post/route.ts  # 글 CRUD API
-│   │   │   └── like/route.ts  # 좋아요 API
-│   │   ├── layout.tsx
-│   │   └── page.tsx
+│   │   └── api/
+│   │       ├── post/route.ts  # 글 CRUD API
+│   │       └── like/route.ts  # 좋아요 API
 │   └── lib/
 │       └── prisma.ts          # Prisma Client 싱글턴
 ├── AURORA-STATUS.md
@@ -40,21 +37,6 @@ sowon-dreamtown/
 ├── ARCHITECTURE.md
 └── KPI.md
 ```
-
-## 데이터 모델 (v0)
-
-```
-User ──┐
-       ├──< Post ──< Like
-       │
-       └──< EventParticipation >── Event
-```
-
-- **User**: 사용자 기본 정보
-- **Post**: 광장 게시글
-- **Like**: 좋아요 (User-Post 관계)
-- **Event**: KPI 이벤트 정의
-- **EventParticipation**: 이벤트 참여 기록
 
 ## API 엔드포인트
 
