@@ -3,7 +3,8 @@
  * 용도: PR-16B(Admin 승인 UI) 전까지 공개 피드가 비어 보이지 않도록
  * 실행: npx tsx scripts/seed-approved-posts.ts
  */
-import { PrismaClient } from "../src/generated/prisma";
+import "dotenv/config";
+import { PrismaClient } from "../src/generated/prisma/client";
 
 const prisma = new PrismaClient();
 
