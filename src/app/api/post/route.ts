@@ -11,6 +11,10 @@ export async function GET() {
     },
   });
 
+  console.log("EVENT: plaza_post_view", {
+    timestamp: new Date().toISOString(),
+  });
+
   return NextResponse.json(posts);
 }
 
@@ -31,6 +35,12 @@ export async function POST(request: NextRequest) {
     include: {
       author: { select: { id: true, nickname: true } },
     },
+  });
+
+  console.log("EVENT: plaza_post_create", {
+    postId: post.id,
+    authorId,
+    timestamp: new Date().toISOString(),
   });
 
   return NextResponse.json(post, { status: 201 });
