@@ -44,6 +44,63 @@ export async function GET(request: NextRequest) {
   return NextResponse.json(posts);
 }
 
+// PATCH /api/post - 재제출 (REDIRECT/ARCHIVED → PENDING)
+export async function PATCH(request: NextRequest) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+  }
+
+  const body = await request.json();
+  const id = (body?.id ?? "").toString().trim();
+  const content = sanitizeText(body?.content ?? "").slice(0, 5000);
+
+  if (!id) {
+    return NextResponse.json({ error: "id는 필수입니다." }, { status: 400 });
+  }
+  if (!content) {
+    return NextResponse.json({ error: "content는 필수입니다." }, { status: 400 });
+  }
+
+  const post = await prisma.post.findUnique({
+    where: { id },
+    select: { id: true, status: true, authorId: true },
+  });
+
+  if (!post) {
+    return NextResponse.json({ error: "글을 찾을 수 없습니다." }, { status: 404 });
+  }
+
+  if (post.authorId !== session.user.id) {
+    return NextResponse.json({ error: "본인 글만 수정할 수 있습니다." }, { status: 403 });
+  }
+
+  if (post.status !== "REDIRECT" && post.status !== "ARCHIVED") {
+    return NextResponse.json({ error: "전환/보관 상태의 글만 재제출할 수 있습니다." }, { status: 409 });
+  }
+
+  const updated = await prisma.post.update({
+    where: { id },
+    data: {
+      content,
+      status: "PENDING",
+      redirectReason: null,
+    },
+    include: {
+      author: { select: { id: true, nickname: true } },
+    },
+  });
+
+  console.log("EVENT: plaza_post_resubmit", {
+    postId: updated.id,
+    authorId: session.user.id,
+    previousStatus: post.status,
+    timestamp: new Date().toISOString(),
+  });
+
+  return NextResponse.json(updated);
+}
+
 // POST /api/post - 글 작성 (인증 필수)
 export async function POST(request: NextRequest) {
   const session = await auth();
