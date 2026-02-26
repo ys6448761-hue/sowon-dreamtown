@@ -10,6 +10,7 @@
 | 스택 | Next.js + Prisma + SQLite(dev) |
 | Gate 적용 완료 | ✅ |
 | Prisma v0 확정 | ✅ |
+| 광장 CRUD v0 | ✅ |
 
 ## 현재 마일스톤
 
@@ -17,7 +18,7 @@
 - [x] Next.js App Router 초기화
 - [x] Gate 시스템 적용 (5파일 + CI)
 - [x] Prisma v0 스키마 + 마이그레이션
-- [ ] 광장 최소 CRUD
+- [x] 광장 최소 CRUD
 - [ ] KPI 이벤트 로깅
 
 ## 팀
