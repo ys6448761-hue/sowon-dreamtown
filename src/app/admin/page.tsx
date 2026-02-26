@@ -67,9 +67,14 @@ export default function AdminPage() {
     <main>
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-xl font-bold">Admin</h2>
-        <Link href="/admin/posts" className="rounded-lg bg-purple-500 px-4 py-2 text-sm text-white hover:bg-purple-600">
-          나눔 검토
-        </Link>
+        <div className="flex gap-2">
+          <Link href="/admin/metrics" className="rounded-lg border border-purple-400 px-4 py-2 text-sm text-purple-600 hover:bg-purple-50">
+            메트릭스
+          </Link>
+          <Link href="/admin/posts" className="rounded-lg bg-purple-500 px-4 py-2 text-sm text-white hover:bg-purple-600">
+            나눔 검토
+          </Link>
+        </div>
       </div>
       {error && <p className="mb-4 rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">{error}</p>}
 
