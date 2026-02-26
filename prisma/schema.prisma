@@ -47,6 +47,7 @@ model Event {
   id          String   @id @default(cuid())
   name        String   @unique
   description String?
+  active      Boolean  @default(true)
   createdAt   DateTime @default(now())
 
   participations EventParticipation[]
