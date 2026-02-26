@@ -79,4 +79,6 @@ model AdminLog {
   post    Post   @relation(fields: [postId], references: [id])
   adminId String
   admin   User   @relation(fields: [adminId], references: [id])
+
+  @@index([postId, createdAt])
 }
