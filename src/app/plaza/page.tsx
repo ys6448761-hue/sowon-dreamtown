@@ -30,7 +30,11 @@ function PlazaContent() {
   const [hasPending, setHasPending] = useState(false);
   const [error, setError] = useState("");
 
+  // mine 모드인데 비로그인이면 API 호출 없이 로그인 유도
+  const needsLogin = mine && !session?.user;
+
   const fetchPosts = async () => {
+    if (needsLogin) return;
     const url = mine ? "/api/post?mine=true" : "/api/post";
     const res = await fetch(url);
     if (!res.ok) { setError("글 목록을 불러오지 못했어요."); return; }
@@ -46,7 +50,7 @@ function PlazaContent() {
     setHasPending(myPosts.some((p) => p.status === "PENDING"));
   };
 
-  useEffect(() => { fetchPosts(); }, [mine]);
+  useEffect(() => { fetchPosts(); }, [mine, needsLogin]);
   useEffect(() => {
     if (posts.length === 0 && session?.user && !mine) checkPending();
   }, [posts, session, mine]);
@@ -62,6 +66,17 @@ function PlazaContent() {
     if (!res.ok) { setError("좋아요에 실패했어요."); return; }
     fetchPosts();
   };
+
+  if (needsLogin) {
+    return (
+      <main className="py-12 text-center">
+        <p className="mb-4 text-sm text-gray-600">내 글을 확인하려면 로그인이 필요해요.</p>
+        <Link href="/plaza" className="text-sm text-purple-600 underline hover:text-purple-800">
+          광장으로 돌아가기
+        </Link>
+      </main>
+    );
+  }
 
   return (
     <main>
