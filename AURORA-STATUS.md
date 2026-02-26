@@ -14,6 +14,7 @@
 | KPI 이벤트 로깅 v0 | ✅ |
 | Auth v0 (NextAuth) | ✅ |
 | Event/미션 v0 | ✅ |
+| 리텐션 측정 v0 | ✅ |
 
 ## 현재 마일스톤
 
@@ -25,7 +26,7 @@
 - [x] KPI 이벤트 로깅
 - [x] Auth v0 (NextAuth Credentials + JWT)
 - [x] Event/미션 v0
-- [ ] 리텐션 측정 v0
+- [x] 리텐션 측정 v0 (lastActiveAt + D1 쿼리)
 
 ## 팀
 

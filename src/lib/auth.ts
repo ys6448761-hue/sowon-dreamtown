@@ -18,6 +18,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           user = await prisma.user.create({ data: { nickname } });
         }
 
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { lastActiveAt: new Date() },
+        });
+
         return { id: user.id, name: user.nickname };
       },
     }),

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { touchLastActive } from "@/lib/activity";
 
 // GET /api/post - 글 목록 조회 (공개)
 export async function GET() {
@@ -44,6 +45,8 @@ export async function POST(request: NextRequest) {
       author: { select: { id: true, nickname: true } },
     },
   });
+
+  await touchLastActive(authorId);
 
   console.log("EVENT: plaza_post_create", {
     postId: post.id,
