@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { isAdmin } from "@/lib/admin";
@@ -64,7 +65,12 @@ export default function AdminPage() {
 
   return (
     <main>
-      <h2 className="mb-6 text-xl font-bold">Admin</h2>
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-xl font-bold">Admin</h2>
+        <Link href="/admin/posts" className="rounded-lg bg-purple-500 px-4 py-2 text-sm text-white hover:bg-purple-600">
+          나눔 검토
+        </Link>
+      </div>
       {error && <p className="mb-4 rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">{error}</p>}
 
       <form onSubmit={handleCreate} className="mb-8 space-y-3 rounded-lg border p-4">
