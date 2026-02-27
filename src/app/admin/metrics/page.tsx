@@ -38,8 +38,15 @@ type Metrics = {
     templateType: string;
     redirectCount: number;
     resubmitCount: number;
+    approvalCount: number;
     resubmitConversionRate: number;
+    approvalConversionRate: number;
   }[];
+  experimentHealth: {
+    totalRedirects: number;
+    distribution: { templateType: string; count: number; ratio: number }[];
+    balanced: boolean;
+  };
   alerts: { type: string; severity: "red" | "yellow"; message: string }[];
 };
 
@@ -236,33 +243,52 @@ export default function AdminMetricsPage() {
           {/* Template Performance (A/B/C 실험) */}
           {data!.templatePerformance.some((t) => t.redirectCount > 0) && (
             <div className="rounded-lg border p-4">
-              <h3 className="mb-3 text-sm font-medium">REDIRECT 템플릿 성과</h3>
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-sm font-medium">REDIRECT 템플릿 성과</h3>
+                {!data!.experimentHealth.balanced && (
+                  <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] text-yellow-700">배분 편향</span>
+                )}
+              </div>
               <div className="grid grid-cols-3 gap-3">
                 {data!.templatePerformance.map((tp) => {
                   const lowSample = tp.redirectCount < 10;
+                  const dist = data!.experimentHealth.distribution.find((d) => d.templateType === tp.templateType);
                   return (
                     <div
                       key={tp.templateType}
                       className={`rounded-lg border p-3 ${lowSample ? "border-gray-200 bg-gray-50" : ""}`}
                     >
-                      <p className="text-xs font-medium text-gray-600">
-                        {TEMPLATE_LABELS[tp.templateType] ?? tp.templateType}
-                      </p>
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs font-medium text-gray-600">
+                          {TEMPLATE_LABELS[tp.templateType] ?? tp.templateType}
+                        </p>
+                        {dist && (
+                          <span className="text-[10px] text-gray-400">{(dist.ratio * 100).toFixed(0)}%</span>
+                        )}
+                      </div>
+                      {/* 재제출 전환율 */}
                       <p className={`mt-1 text-lg font-bold ${lowSample ? "text-gray-400" : "text-gray-900"}`}>
                         {tp.redirectCount > 0 ? `${(tp.resubmitConversionRate * 100).toFixed(1)}%` : "\u2014"}
                       </p>
-                      <p className="text-[11px] text-gray-400">
-                        REDIRECT {tp.redirectCount} &middot; RESUBMIT {tp.resubmitCount}
+                      <p className="text-[10px] text-gray-400">재제출 전환</p>
+                      {/* 승인 전환율 */}
+                      <p className={`mt-1 text-sm font-semibold ${lowSample ? "text-gray-400" : "text-purple-700"}`}>
+                        {tp.redirectCount > 0 ? `${(tp.approvalConversionRate * 100).toFixed(1)}%` : "\u2014"}
+                      </p>
+                      <p className="text-[10px] text-gray-400">승인 전환</p>
+                      {/* 표본 */}
+                      <p className="mt-1.5 text-[11px] text-gray-400">
+                        n={tp.redirectCount} &middot; resub {tp.resubmitCount} &middot; approved {tp.approvalCount}
                       </p>
                       {lowSample && tp.redirectCount > 0 && (
-                        <p className="mt-1 text-[10px] text-gray-400">n&lt;10 표본 주의</p>
+                        <p className="text-[10px] text-gray-400">표본 주의</p>
                       )}
                     </div>
                   );
                 })}
               </div>
               <p className="mt-2 text-center text-[10px] text-gray-400">
-                REDIRECT 후 재제출(PENDING 복귀) 비율. 템플릿별 효과 비교용
+                재제출 전환 = REDIRECT→PENDING 복귀 | 승인 전환 = REDIRECT→APPROVED 최종 성공
               </p>
             </div>
           )}

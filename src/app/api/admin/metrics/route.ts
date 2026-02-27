@@ -160,30 +160,58 @@ export async function GET(request: NextRequest) {
     distinct: ["postId"],
   });
 
-  const templatePerformance = TEMPLATE_TYPES.map((tt) => {
-    const logsForType = redirectLogs.filter((l) => l.templateType === tt);
-    const redirectCount = logsForType.length;
-    return { templateType: tt, redirectCount, resubmitCount: 0, resubmitConversionRate: 0 };
-  });
+  // postIds를 templateType별로 그룹화
+  const postIdsByTemplate = new Map<string, string[]>();
+  for (const log of redirectLogs) {
+    const tt = log.templateType!;
+    const arr = postIdsByTemplate.get(tt) ?? [];
+    arr.push(log.postId);
+    postIdsByTemplate.set(tt, arr);
+  }
 
-  // 재제출 수 집계 (REDIRECT 후 현재 PENDING인 post)
-  if (redirectLogs.length > 0) {
-    const postIdsByTemplate = new Map<string, string[]>();
-    for (const log of redirectLogs) {
-      const tt = log.templateType!;
-      const arr = postIdsByTemplate.get(tt) ?? [];
-      arr.push(log.postId);
-      postIdsByTemplate.set(tt, arr);
-    }
+  const templatePerformance = await Promise.all(
+    TEMPLATE_TYPES.map(async (tt) => {
+      const postIds = postIdsByTemplate.get(tt) ?? [];
+      const redirectCount = postIds.length;
+      let resubmitCount = 0;
+      let approvalCount = 0;
 
-    for (const tp of templatePerformance) {
-      const postIds = postIdsByTemplate.get(tp.templateType) ?? [];
-      if (postIds.length === 0) continue;
-      tp.resubmitCount = await prisma.post.count({
-        where: { id: { in: postIds }, status: "PENDING" },
-      });
-      tp.resubmitConversionRate = round(tp.resubmitCount / tp.redirectCount);
-    }
+      if (postIds.length > 0) {
+        // 재제출 = REDIRECT 후 현재 PENDING (재제출 대기 중)
+        resubmitCount = await prisma.post.count({
+          where: { id: { in: postIds }, status: "PENDING" },
+        });
+        // 승인 전환 = REDIRECT 후 최종 APPROVED
+        approvalCount = await prisma.post.count({
+          where: { id: { in: postIds }, status: "APPROVED" },
+        });
+      }
+
+      return {
+        templateType: tt,
+        redirectCount,
+        resubmitCount,
+        approvalCount,
+        resubmitConversionRate: redirectCount > 0 ? round(resubmitCount / redirectCount) : 0,
+        approvalConversionRate: redirectCount > 0 ? round(approvalCount / redirectCount) : 0,
+      };
+    }),
+  );
+
+  // 실험 균형 검증: 총 REDIRECT 중 templateType별 비율
+  const totalRedirects = redirectLogs.length;
+  const experimentHealth = {
+    totalRedirects,
+    distribution: TEMPLATE_TYPES.map((tt) => ({
+      templateType: tt,
+      count: postIdsByTemplate.get(tt)?.length ?? 0,
+      ratio: totalRedirects > 0 ? round((postIdsByTemplate.get(tt)?.length ?? 0) / totalRedirects) : 0,
+    })),
+    balanced: true,
+  };
+  // 40% 초과 편향 체크
+  if (totalRedirects >= 6) {
+    experimentHealth.balanced = experimentHealth.distribution.every((d) => d.ratio <= 0.4);
   }
 
   // --- Alerts (severity 정렬: red > yellow) ---
@@ -207,6 +235,13 @@ export async function GET(request: NextRequest) {
 
   if (oldestPendingHours && oldestPendingHours > 48) {
     alerts.push({ type: "STALE_PENDING", severity: "red", message: `${oldestPendingHours}h 이상 대기 중인 글이 있습니다.` });
+  }
+
+  if (!experimentHealth.balanced) {
+    const skewed = experimentHealth.distribution.find((d) => d.ratio > 0.4);
+    if (skewed) {
+      alerts.push({ type: "EXPERIMENT_SKEW", severity: "yellow", message: `템플릿 ${skewed.templateType} 비율 ${(skewed.ratio * 100).toFixed(0)}% — 균등 배분 기대치(33%) 이탈` });
+    }
   }
 
   // severity 정렬: red first
@@ -240,6 +275,7 @@ export async function GET(request: NextRequest) {
     },
     trend: { dailyReviewCounts, dailyReviewTime },
     templatePerformance,
+    experimentHealth,
     alerts,
   });
 }
