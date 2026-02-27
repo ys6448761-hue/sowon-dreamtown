@@ -214,11 +214,12 @@ export async function GET(request: NextRequest) {
     experimentHealth.balanced = experimentHealth.distribution.every((d) => d.ratio <= 0.4);
   }
 
-  // --- Alerts (severity 정렬: red > yellow) ---
+  // --- Alerts (표본 n>=20이면 정상 발동, n<20이면 yellow 제한) ---
   const alerts: Alert[] = [];
+  const lowSample = kpi.totalReviewed < 20;
 
   if (kpi.p90ReviewHours > 72) {
-    alerts.push({ type: "HIGH_P90", severity: "red", message: `p90 검토 시간이 ${kpi.p90ReviewHours}h로 72h를 초과했습니다.` });
+    alerts.push({ type: "HIGH_P90", severity: lowSample ? "yellow" : "red", message: `p90 검토 시간이 ${kpi.p90ReviewHours}h로 72h를 초과했습니다.${lowSample ? " (n<20 표본 주의)" : ""}` });
   } else if (kpi.p90ReviewHours > 24) {
     alerts.push({ type: "WARN_P90", severity: "yellow", message: `p90 검토 시간이 ${kpi.p90ReviewHours}h입니다. (목표: 24h 이내)` });
   }
@@ -230,7 +231,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (kpi.rejectionRate > 0.3) {
-    alerts.push({ type: "HIGH_REJECTION", severity: "yellow", message: `거절률 ${(kpi.rejectionRate * 100).toFixed(0)}%가 30% 임계치를 초과했습니다.` });
+    alerts.push({ type: "HIGH_REJECTION", severity: lowSample ? "yellow" : "yellow", message: `거절률 ${(kpi.rejectionRate * 100).toFixed(0)}%가 30% 임계치를 초과했습니다.${lowSample ? " (n<20 표본 주의)" : ""}` });
   }
 
   if (oldestPendingHours && oldestPendingHours > 48) {

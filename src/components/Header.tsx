@@ -16,6 +16,9 @@ export default function Header() {
       <nav className="flex items-center gap-4">
         <Link href="/plaza" className="text-sm hover:text-purple-600">광장</Link>
         <Link href="/events" className="text-sm hover:text-purple-600">이벤트</Link>
+        {session?.user && (
+          <Link href="/my/posts" className="text-sm hover:text-purple-600">내 글</Link>
+        )}
         {session?.user && isAdmin(session.user.name) && (
           <Link href="/admin" className="text-sm font-medium text-purple-600 hover:text-purple-800">Admin</Link>
         )}
