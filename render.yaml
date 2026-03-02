@@ -9,10 +9,6 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: NEXTAUTH_URL
-        value: https://plaza.dailymiracles.kr
-      - key: AUTH_SECRET
-        generateValue: true
       - key: NEXT_PUBLIC_ADMIN_ALLOWLIST
         value: 푸르미르
       - key: DATABASE_URL
