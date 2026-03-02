@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: sowon-dream-plaza
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci && npx prisma generate && npm run build
+    startCommand: npx prisma migrate deploy && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXTAUTH_URL
+        value: https://plaza.dailymiracles.kr
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: NEXT_PUBLIC_ADMIN_ALLOWLIST
+        value: 푸르미르
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sowon-dream-plaza-db
+          property: connectionString
+
+databases:
+  - name: sowon-dream-plaza-db
+    plan: free
+    region: oregon
+    databaseName: sowon_plaza
+    user: sowon_plaza_admin
