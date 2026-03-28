@@ -12,6 +12,7 @@
 
 import { Component, ReactNode, Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { readSavedStar } from "@/lib/utils/starSession";
 
 // 공개 입구에서 throw = UX 파괴 — 에러 바운더리로 완전 차단
 class PublicEntryErrorBoundary extends Component<
@@ -66,9 +67,7 @@ function DreamtownEntry() {
   useEffect(() => {
     if (!forcePublicEntry) return;
     // 자동 복귀 없음 — 존재 여부만 확인해서 복귀 버튼 노출 여부 결정
-    const saved = typeof window !== "undefined"
-      ? localStorage.getItem("dt_active_star_id")
-      : null;
+    const saved = readSavedStar();
     if (saved) setHasExistingStar(true);
   }, [forcePublicEntry]);
 

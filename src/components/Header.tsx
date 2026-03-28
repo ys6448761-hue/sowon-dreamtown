@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { readSavedStar } from "@/lib/utils/starSession";
 
 // 공개 경로 — "내 별" 버튼 숨김 (star auto-load 차단)
 const PUBLIC_ROUTES = ["/dreamtown", "/my-star"];
@@ -13,7 +14,7 @@ export default function Header() {
   const isPublicRoute = PUBLIC_ROUTES.some((r) => pathname === r || pathname.startsWith(r + "?"));
 
   function goToMyStar() {
-    const starId = localStorage.getItem("dt_active_star_id");
+    const starId = readSavedStar();
     if (starId) {
       router.push(`/home?starId=${starId}`);
     } else {

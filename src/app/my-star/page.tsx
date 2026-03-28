@@ -11,6 +11,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { readSavedStar } from "@/lib/utils/starSession";
 
 export default function MyStarPage() {
   const router = useRouter();
@@ -18,9 +19,7 @@ export default function MyStarPage() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const saved = typeof window !== "undefined"
-      ? localStorage.getItem("dt_active_star_id")
-      : null;
+    const saved = readSavedStar();
 
     if (!saved) {
       router.replace("/onboarding");
