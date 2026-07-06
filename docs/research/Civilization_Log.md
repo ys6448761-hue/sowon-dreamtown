@@ -47,3 +47,18 @@ PHX-000 및 R000 구조는 제거하고,
 - `Constitution.md`에 "Research Standards" 목록(Constitution.md / PRM.md / Research_Package_Standard_v1.0.md / 개별 연구) 및 OP-009·OP-010 참조를 추가.
 - `README.md`에 동일한 Research Standards 목록을 추가.
 - 기존 R001~R003 폴더 구조는 변경하지 않았다. "Research Standards" 트리에 표시된 `Research/` 항목은 개별 연구 문서 그룹을 가리키는 개념적 표기로 해석했으며, R00x 폴더를 별도의 `Research/` 하위 폴더로 물리적으로 이동하지 않았다(명시적 지시 시 별도 수행).
+
+## 2026-07-07 (Operating System v1.0)
+
+Phoenix Research Institute Operating System v1.0 정리
+
+- Institute Index 생성 (`Institute_Index.md`)
+- Operating System 문서 생성 (`Operating_System_v1.0.md`)
+- 연구소 운영 구조를 하나의 체계로 통합
+
+향후 모든 연구는 Constitution, PRM,
+Research Package Standard를 기반으로 수행한다.
+
+- `Evidence/`, `Papers/` 폴더 구조만 준비(빈 폴더). 실제 운영은 추후 진행한다.
+- Repository 구조 점검 결과, 운영 원칙상의 `Research` 항목에 대응하는 물리적 `Research/` 폴더는 존재하지 않으며 R001~R003 폴더가 `docs/research/` 바로 아래에 위치한다. `_TEMPLATE/`과 `PHX-004~008/`도 운영 원칙 목록 밖에 있는 구조로 확인된다. 폴더 이동은 수행하지 않았으며 보고만 한다.
+- 새로운 원칙·철학·SSOT는 추가하지 않았으며, 기존 Constitution/PRM/Research Package Standard를 요약했다.

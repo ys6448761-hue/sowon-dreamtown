@@ -1,12 +1,15 @@
 # docs/research — Phoenix Research Institute Archive
 
-이 디렉터리의 운영 원칙은 `Constitution.md`, 연구 방법론은 `PRM.md`, Research Package 작성 표준은 `Research_Package_Standard_v1.0.md`(SSOT, Frozen)를 따른다.
+이 디렉터리의 운영 원칙은 `Constitution.md`, 연구 방법론은 `PRM.md`, Research Package 작성 표준은 `Research_Package_Standard_v1.0.md`(SSOT, Frozen)를 따른다. 전체 목차는 `Institute_Index.md`, 운영 체계 요약은 `Operating_System_v1.0.md`, 변경 이력은 `Civilization_Log.md`를 참조한다.
 
 ## Research Standards
 
 - `Constitution.md`
 - `PRM.md`
 - `Research_Package_Standard_v1.0.md`
+- `Institute_Index.md`
+- `Operating_System_v1.0.md`
+- `Civilization_Log.md`
 - 개별 연구(R001~R008 등)
 
 ## 현재 구조 상태
@@ -18,6 +21,8 @@
 | `R003_Meaning_Foundation/` | 빈 폴더 |
 | `Knowledge/` | 빈 폴더 |
 | `Applications/DreamTown/` | 빈 폴더 |
+| `Evidence/` | 빈 폴더 (예정, 실제 운영은 추후 진행) |
+| `Papers/` | 빈 폴더 (예정, 실제 운영은 추후 진행) |
 | `PHX-004/` ~ `PHX-008/` | **Legacy Pending Review** |
 
 ## Legacy Pending Review — PHX-004 ~ PHX-008
