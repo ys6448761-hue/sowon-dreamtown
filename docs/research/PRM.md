@@ -1,11 +1,10 @@
 ---
-ID: PHX-000
-NAME: R000 Phoenix Methodology
+NAME: Phoenix Research Methodology (PRM)
 STATUS: Confirmed SSOT
 TIER: Tier 1
 ---
 
-# PHX-000 — Phoenix Methodology
+# PRM — Phoenix Research Methodology
 
 ## 1. Constitution
 
@@ -27,9 +26,10 @@ Phoenix Civilization Research Program(PCRP)은 별도의 연구 헌법을 가진
 
 ## 3. Research Workflow — 연구 ID 체계
 
+연구 ID는 R001부터 시작한다.
+
 | ID | 이름 | 상태 |
 |----|------|------|
-| R000 | Phoenix Methodology | Confirmed SSOT |
 | R001 | Human Foundation | — |
 | R002 | Mind | Tentative |
 | R003 | Meaning | Tentative |
@@ -74,4 +74,4 @@ Confirmed SSOT
 
 - 문서는 4절의 순서대로만 승격된다. 단계를 건너뛰지 않는다.
 - Confirmed SSOT로의 승격은 별도 검증 절차를 거친다.
-- 본 문서(PHX-000) 자체의 변경은 Constitution 변경에 준하는 절차를 따른다.
+- 본 문서(PRM) 자체의 변경은 Constitution 변경에 준하는 절차를 따른다.
