@@ -1,6 +1,13 @@
 # docs/research — Phoenix Research Institute Archive
 
-이 디렉터리의 운영 원칙은 `Constitution.md`, 연구 방법론은 `PRM.md`를 따른다.
+이 디렉터리의 운영 원칙은 `Constitution.md`, 연구 방법론은 `PRM.md`, Research Package 작성 표준은 `Research_Package_Standard_v1.0.md`(SSOT, Frozen)를 따른다.
+
+## Research Standards
+
+- `Constitution.md`
+- `PRM.md`
+- `Research_Package_Standard_v1.0.md`
+- 개별 연구(R001~R008 등)
 
 ## 현재 구조 상태
 

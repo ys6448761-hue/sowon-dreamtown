@@ -39,3 +39,11 @@ PHX-000 및 R000 구조는 제거하고,
 - 조사 과정에서 R001_Human_Foundation의 기존 archive(`v0.1-A.md`) 역시 실제 연구 내용이 아니라 등록 스텁("내용은 별도로 채워진다")뿐임을 재확인했다.
 - Code는 연구를 해석·창작하지 않으므로, R002 archive는 원본 확보 전까지 생성하지 않는다.
 - `README.md` 신설: PHX-004 ~ PHX-008을 **Legacy Pending Review**로 명시(삭제·이관 보류, 사유는 README 참조).
+
+## 2026-07-07 (SSOT 등록)
+
+- `Research_Package_Standard_v1.0.md` 신설 및 SSOT(Frozen)로 등록. Research Package(연구 인계 문서)의 표준 구조(13개 항목)와 운영 원칙(OP-009 Living Methodology Rule, OP-010 Content Before Storage Rule)을 정의한다.
+- 본 표준은 Research Package의 형식만 정의하며, 연구 결과(Research Content)의 진위는 각 Research 문서(R001~R008)가 책임진다(적용 범위 명시).
+- `Constitution.md`에 "Research Standards" 목록(Constitution.md / PRM.md / Research_Package_Standard_v1.0.md / 개별 연구) 및 OP-009·OP-010 참조를 추가.
+- `README.md`에 동일한 Research Standards 목록을 추가.
+- 기존 R001~R003 폴더 구조는 변경하지 않았다. "Research Standards" 트리에 표시된 `Research/` 항목은 개별 연구 문서 그룹을 가리키는 개념적 표기로 해석했으며, R00x 폴더를 별도의 `Research/` 하위 폴더로 물리적으로 이동하지 않았다(명시적 지시 시 별도 수행).

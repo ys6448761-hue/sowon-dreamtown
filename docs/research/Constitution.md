@@ -31,3 +31,16 @@ TIER: Tier 1
 > 먼저 질문을 정리하고,
 > 근거를 검증하며,
 > 질서를 세운 뒤에 하나의 답을 선택한다.
+
+### OP-009, OP-010
+
+Living Methodology Rule(OP-009), Content Before Storage Rule(OP-010)은 `Research_Package_Standard_v1.0.md`에 정의되어 있다. 본 문서에서는 중복 기재하지 않는다.
+
+## 4. Research Standards
+
+Phoenix Research Institute의 연구 운영 표준 문서 목록.
+
+- `Constitution.md` (본 문서)
+- `PRM.md`
+- `Research_Package_Standard_v1.0.md`
+- 개별 연구(R001~R008 등)
