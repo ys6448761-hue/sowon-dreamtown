@@ -32,3 +32,10 @@ PRM은 연구가 아니라 방법론 문서로 분리한다.
 
 PHX-000 및 R000 구조는 제거하고,
 연구 번호는 R001부터 시작한다.
+
+## 2026-07-07
+
+- R002_Mind_Foundation의 Frozen 원본 확보를 시도했으나, `daily-miracles-mvp`/`dreamtown-wishart`/`antigravity-notebooklm`/`sowon-dreamtown` 전체를 조사한 결과 실제 연구 원본을 찾지 못했다.
+- 조사 과정에서 R001_Human_Foundation의 기존 archive(`v0.1-A.md`) 역시 실제 연구 내용이 아니라 등록 스텁("내용은 별도로 채워진다")뿐임을 재확인했다.
+- Code는 연구를 해석·창작하지 않으므로, R002 archive는 원본 확보 전까지 생성하지 않는다.
+- `README.md` 신설: PHX-004 ~ PHX-008을 **Legacy Pending Review**로 명시(삭제·이관 보류, 사유는 README 참조).
