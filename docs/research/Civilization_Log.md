@@ -62,3 +62,12 @@ Research Package Standard를 기반으로 수행한다.
 - `Evidence/`, `Papers/` 폴더 구조만 준비(빈 폴더). 실제 운영은 추후 진행한다.
 - Repository 구조 점검 결과, 운영 원칙상의 `Research` 항목에 대응하는 물리적 `Research/` 폴더는 존재하지 않으며 R001~R003 폴더가 `docs/research/` 바로 아래에 위치한다. `_TEMPLATE/`과 `PHX-004~008/`도 운영 원칙 목록 밖에 있는 구조로 확인된다. 폴더 이동은 수행하지 않았으며 보고만 한다.
 - 새로운 원칙·철학·SSOT는 추가하지 않았으며, 기존 Constitution/PRM/Research Package Standard를 요약했다.
+
+## 2026-07-07 (Research Package Standard v1.1 Proposal 등록)
+
+- 사용자가 "Research Package Standard v1.0"이라는 이름으로 새 문서를 제공했으나, 기존 Frozen `Research_Package_Standard_v1.0.md`(13개 항목)와 구조가 다름을 확인(11개 항목: Metadata→Research ID 명칭 변경, Research Impact/Research Integrity Check/Legacy Note 제거, Research Status 신규 추가, 항목 순서 변경).
+- OP-009 Living Methodology Rule("표준은 사용 중 변경하지 않는다")에 따라, 검증 없이 Frozen v1.0을 덮어쓰지 않는다.
+- 사용자에게 처리 방식(v1.1 Proposal 등록 / v1.0 교체 / 참고용 별도 보관)을 확인 질문했으나 응답이 없어, 가장 보수적이고 되돌리기 쉬운 선택으로 판단해 `Research_Package_Standard_v1.1_Proposal.md`로 등록했다.
+- Classification: Proposal, Status: Pending Validation. v1.0은 Frozen 상태 그대로 유지되며 여전히 유일한 SSOT다.
+- v1.0과 v1.1 Proposal의 항목 차이표를 문서 내에 기록했다.
+- 채택 여부, v1.1 Freeze 여부는 연구소(사용자)의 결정 사항이며 Code가 임의로 확정하지 않는다.
