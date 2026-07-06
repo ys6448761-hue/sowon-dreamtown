@@ -71,3 +71,10 @@ Research Package Standard를 기반으로 수행한다.
 - Classification: Proposal, Status: Pending Validation. v1.0은 Frozen 상태 그대로 유지되며 여전히 유일한 SSOT다.
 - v1.0과 v1.1 Proposal의 항목 차이표를 문서 내에 기록했다.
 - 채택 여부, v1.1 Freeze 여부는 연구소(사용자)의 결정 사항이며 Code가 임의로 확정하지 않는다.
+
+## 2026-07-07 (v1.1 Proposal 처리 방식 확정)
+
+- 사용자가 "1번(v1.1 Proposal 등록)"으로 진행을 확정했다. `Research_Package_Standard_v1.0.md`는 Frozen 상태를 유지하고, Constitution OP-009를 그대로 적용한다.
+- `Research_Package_Standard_v1.1_Proposal.md`에 "변경 이유" 항목을 추가했다. 제출 문서에 변경 이유가 명시되어 있지 않아 **자료 없음**으로 기록했으며, Code는 변경 의도를 추측하지 않았다.
+- 실제 변경(v1.1 채택 여부)은 **R003 이후 진행되는 연구에서 실사용 검증을 거친 뒤** 결정하도록 문서에 명시했다. R001, R002에는 소급 적용하지 않는다.
+- 검증 후 채택이 확정되면 그 시점에 `Research_Package_Standard_v1.1.md`로 Freeze하고 v1.0은 이전 버전(archive)으로 보존한다.

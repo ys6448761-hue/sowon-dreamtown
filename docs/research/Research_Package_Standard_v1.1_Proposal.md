@@ -32,6 +32,13 @@ Change Policy: Freeze → 실사용 → 개선사항 기록 → Proposal → 검
 
 주요 변화: Metadata → Research ID로 명칭 변경, Research Impact/Research Integrity Check/Legacy Note 제거, Research Status 신규 추가, 항목 순서 변경(Scope↔Timeline, Decision Log 위치 이동).
 
+## 변경 이유
+
+제출된 문서 자체에는 v1.0 대비 변경 이유가 명시적으로 기술되어 있지 않다. Code는 연구를 해석하지 않으므로 변경 의도를 추측하여 기록하지 않는다.
+
+- 변경 이유: **자료 없음** (제출자가 별도로 명시할 경우 이 항목에 추가 기록한다)
+- 위 "구조 차이" 표는 Code가 두 문서를 비교하여 관찰한 사실만 기록한 것이며, 변경의 타당성에 대한 해석은 포함하지 않는다.
+
 ---
 
 # 원본 제안 내용 (사용자 제공, 그대로 보존)
@@ -305,6 +312,8 @@ PRM은 연구 방법론이다.
 
 # 다음 단계 (검증 대기)
 
-- 본 Proposal은 실사용 검증 전이다.
-- v1.0(Frozen)과 v1.1(Proposal)의 항목 차이를 검토하고 채택 여부를 확정하는 것은 연구소(사용자)의 결정 사항이다.
-- 검증 후 채택이 확정되면, 그 시점에 `Research_Package_Standard_v1.1.md`로 Freeze하고 v1.0은 이전 버전으로 보존한다(OP-009).
+- 본 Proposal은 실사용 검증 전이다. `Research_Package_Standard_v1.0.md`는 Frozen 상태를 유지하며, 현재 유효한 유일한 SSOT는 v1.0이다.
+- Constitution OP-009(Living Methodology Rule)를 그대로 적용한다: Freeze(v1.0) → 실사용 → 개선사항 기록 → Proposal(본 문서) → 검증 → 다음 버전 Freeze.
+- 실제 변경(v1.1 채택 여부)은 **R003 이후 진행되는 연구에서 본 Proposal 구조를 실사용 검증한 뒤** 결정한다. R003 이전 연구(R001, R002)에는 본 Proposal을 소급 적용하지 않는다.
+- 검증 결과 개선사항이 확인되면 그 시점에 `Research_Package_Standard_v1.1.md`로 Freeze하고 v1.0은 이전 버전(archive)으로 보존한다.
+- 채택 여부, 검증 완료 시점, v1.1 Freeze 여부는 연구소(사용자)의 결정 사항이며 Code가 임의로 확정하지 않는다.
