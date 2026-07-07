@@ -107,3 +107,11 @@ Phoenix Research Institute는 Foundation Phase를 완료하였다.
 
 - Constitution, PRM, Research Package Standard, Institute Index, Operating System v1.0, Research Quality Guideline은 이 선언에 따라 변경하지 않았다. 별도 지시가 있을 때까지 현 상태를 유지한다.
 - 이후 작업은 R003 이후 연구 축적을 기본 흐름으로 한다.
+
+## 2026-07-07 (Research Integration Workflow v1.0)
+
+- `Research_Integration_Workflow_v1.0.md` 신설. 여러 연구자(Researcher GPTs)가 생산한 Research Archive를 Comparative Analysis → Common Pattern → Research Integrator(루미)의 Research Package 작성 → 대표 승인 → Code(Chief Knowledge Steward)의 GitHub 저장 순서로 통합하는 절차를 정의한다.
+- Research Archive는 다수 존재할 수 있으나, Code가 GitHub에 저장하는 공식 연구 기록(Research Package)은 하나임을 명시한다. 개별 Archive는 Evidence로 보존되며 공식 결론으로 취급하지 않는다.
+- Code는 대표 승인이 완료된 Research Package만 저장하며, 연구 내용 수정·해석·재구성·새 SSOT 작성을 하지 않는다.
+- 기존 SSOT(Constitution, PRM, Research Package Standard, Research Quality Guideline)는 수정하지 않았다.
+- 직전 Foundation Phase 완료 선언("운영체계는 당분간 Frozen") 직후에 접수된 지시이나, 본 워크플로우는 기존 운영 문서를 변경하는 것이 아니라 다수 연구자의 결과물을 단일 공식 기록으로 접수하기 위한 절차이므로, "연구를 쌓는" 단계에 필요한 인프라로 판단해 등록했다.
