@@ -78,3 +78,21 @@ Research Package Standard를 기반으로 수행한다.
 - `Research_Package_Standard_v1.1_Proposal.md`에 "변경 이유" 항목을 추가했다. 제출 문서에 변경 이유가 명시되어 있지 않아 **자료 없음**으로 기록했으며, Code는 변경 의도를 추측하지 않았다.
 - 실제 변경(v1.1 채택 여부)은 **R003 이후 진행되는 연구에서 실사용 검증을 거친 뒤** 결정하도록 문서에 명시했다. R001, R002에는 소급 적용하지 않는다.
 - 검증 후 채택이 확정되면 그 시점에 `Research_Package_Standard_v1.1.md`로 Freeze하고 v1.0은 이전 버전(archive)으로 보존한다.
+
+## 2026-07-07 (R003 Research Quality Framework)
+
+Research Quality Guideline v1.0 생성
+
+Traceability Principle 추가
+
+Counter-Evidence Principle 추가
+
+Research Quality Checklist 추가
+
+Research Handoff에 Known Risks 추가
+
+R003부터 동일한 품질 기준 적용
+
+- `Research_Quality_Guideline_v1.0.md`는 운영 지침이며 PRM을 대체하지 않는다. PRM, Constitution, Research Package Standard는 수정하지 않았다.
+- `README.md`, `Institute_Index.md`에 참조를 추가했다.
+- R001, R002에는 소급 적용하지 않는다.

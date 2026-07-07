@@ -39,3 +39,7 @@ Confirmed SSOT로 승격된 연구가 실제로 적용되는 Application Layer�
 ## 8. Civilization Log
 
 연구소의 모든 구조적 변경과 결정을 시간 순으로 기록하는 문서다. → `Civilization_Log.md`
+
+## 9. Research Quality Guideline
+
+연구 품질 관리 지침. → `Research_Quality_Guideline_v1.0.md`

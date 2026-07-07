@@ -7,6 +7,7 @@
 - `Constitution.md`
 - `PRM.md`
 - `Research_Package_Standard_v1.0.md`
+- `Research_Quality_Guideline_v1.0.md`
 - `Institute_Index.md`
 - `Operating_System_v1.0.md`
 - `Civilization_Log.md`
