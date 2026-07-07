@@ -8,6 +8,7 @@
 - `PRM.md`
 - `Research_Package_Standard_v1.0.md`
 - `Research_Quality_Guideline_v1.0.md`
+- `Research_Fellow_Charter_v1.0_Proposal.md` — AI 및 인간 Research Fellow의 공통 운영 헌장
 - `Institute_Index.md`
 - `Operating_System_v1.0.md`
 - `Civilization_Log.md`

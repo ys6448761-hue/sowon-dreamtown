@@ -43,3 +43,7 @@ Confirmed SSOT로 승격된 연구가 실제로 적용되는 Application Layer�
 ## 9. Research Quality Guideline
 
 연구 품질 관리 지침. → `Research_Quality_Guideline_v1.0.md`
+
+## 10. Research Fellow Charter
+
+Phoenix Research Institute의 모든 Research Fellow가 공통으로 따르는 운영 헌장. → `Research_Fellow_Charter_v1.0_Proposal.md`

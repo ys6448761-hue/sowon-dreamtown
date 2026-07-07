@@ -119,3 +119,15 @@ Phoenix Research Institute는 Foundation Phase를 완료하였다.
 ## 2026-07-07 (Operational Research & Knowledge Archive Proposal v0.1 등록)
 
 - `Operational_Research_and_Knowledge_Archive_v0.1_Proposal.md` 등록. Classification: Proposal, Status: Pending Validation. R003부터 실사용 검증을 시작하며, 충분한 운영 검증 후 SSOT 승격 여부를 결정한다. Constitution과 PRM은 변경하지 않았다.
+
+## 2026-07-07 (Phoenix Research Fellow Charter v1.0 Proposal 등록)
+
+Phoenix Research Fellow Charter v1.0 Proposal 등록.
+
+본 Charter는 특정 AI의 프롬프트가 아니라 Phoenix Research Institute의 공통 연구원 운영 헌장으로 정의한다.
+
+GPT, Claude, Gemini, Perplexity 및 향후 모든 AI와 인간 연구원은 동일한 Charter를 기반으로 운영한다.
+
+Charter를 Single Source of Truth로 관리하며, AI는 Charter의 구현체로 간주한다.
+
+본 Charter는 R003~R005 실사용 검증 후 v1.0 Frozen 승격 여부를 결정한다.
