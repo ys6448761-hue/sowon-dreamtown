@@ -96,3 +96,14 @@ R003부터 동일한 품질 기준 적용
 - `Research_Quality_Guideline_v1.0.md`는 운영 지침이며 PRM을 대체하지 않는다. PRM, Constitution, Research Package Standard는 수정하지 않았다.
 - `README.md`, `Institute_Index.md`에 참조를 추가했다.
 - R001, R002에는 소급 적용하지 않는다.
+
+## 2026-07-07 (Foundation Phase 완료 선언)
+
+운영체계는 당분간 Frozen이다. 이제부터는 연구를 쌓아라.
+
+Phoenix Research Institute는 Foundation Phase를 완료하였다.
+
+이후의 모든 노력은 운영체계 구축이 아니라, 운영체계 위에 검증 가능한 연구를 축적하는 데 집중한다.
+
+- Constitution, PRM, Research Package Standard, Institute Index, Operating System v1.0, Research Quality Guideline은 이 선언에 따라 변경하지 않았다. 별도 지시가 있을 때까지 현 상태를 유지한다.
+- 이후 작업은 R003 이후 연구 축적을 기본 흐름으로 한다.
