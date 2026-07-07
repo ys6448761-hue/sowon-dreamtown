@@ -115,3 +115,7 @@ Phoenix Research Institute는 Foundation Phase를 완료하였다.
 - Code는 대표 승인이 완료된 Research Package만 저장하며, 연구 내용 수정·해석·재구성·새 SSOT 작성을 하지 않는다.
 - 기존 SSOT(Constitution, PRM, Research Package Standard, Research Quality Guideline)는 수정하지 않았다.
 - 직전 Foundation Phase 완료 선언("운영체계는 당분간 Frozen") 직후에 접수된 지시이나, 본 워크플로우는 기존 운영 문서를 변경하는 것이 아니라 다수 연구자의 결과물을 단일 공식 기록으로 접수하기 위한 절차이므로, "연구를 쌓는" 단계에 필요한 인프라로 판단해 등록했다.
+
+## 2026-07-07 (Operational Research & Knowledge Archive Proposal v0.1 등록)
+
+- `Operational_Research_and_Knowledge_Archive_v0.1_Proposal.md` 등록. Classification: Proposal, Status: Pending Validation. R003부터 실사용 검증을 시작하며, 충분한 운영 검증 후 SSOT 승격 여부를 결정한다. Constitution과 PRM은 변경하지 않았다.
