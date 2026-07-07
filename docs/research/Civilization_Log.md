@@ -131,3 +131,10 @@ GPT, Claude, Gemini, Perplexity 및 향후 모든 AI와 인간 연구원은 동�
 Charter를 Single Source of Truth로 관리하며, AI는 Charter의 구현체로 간주한다.
 
 본 Charter는 R003~R005 실사용 검증 후 v1.0 Frozen 승격 여부를 결정한다.
+
+## 2026-07-07 (R003 Week 1 Freeze 요청 — 보류)
+
+- "R003 Week 1 Research Archive Freeze v1.0" Research Package가 전달되었다. Philosophy/Psychology/Neuroscience/Evolutionary Biology/Anthropology/Religious Studies 6개 Archive를 Frozen v0.1로 저장하라는 지시였으나, 실제 연구 본문(Archive 내용)은 지시서에 포함되지 않고 제목·Quality Audit 결과(Approved)·저장 경로·커밋 메시지만 제공되었다.
+- 6개 Archive의 실제 콘텐츠를 C:\DEV 전체(sowon-dreamtown, daily-miracles-mvp, dreamtown-wishart, antigravity-notebooklm 등)에서 검색했으나 어디에도 존재하지 않음을 확인했다. `docs/research/R003_Meaning_Foundation/`은 `.gitkeep`만 있는 빈 폴더다.
+- OP-010(Content Before Storage Rule)에 따라 Code는 연구자가 없는 연구를 작성하지 않으며, 실제 본문 없이 "Frozen v0.1 / Approved"로 저장하지 않는다. 저장·Commit·Push·Verification·상태 변경(Complete)을 보류한다.
+- 실제 Archive 본문이 제공되면 그 시점에 저장을 재개한다. 저장 위치는 지시서의 `research/R003/week1/`이 아니라 기존 구조인 `docs/research/R003_Meaning_Foundation/`을 우선 사용한다(중복 폴더 생성 방지).
