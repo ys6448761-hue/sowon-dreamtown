@@ -185,3 +185,9 @@ Comparative Matrix
 - 저장소 재확인 결과 `docs/research/R003_Meaning_Foundation/`에는 Week 1의 6개 Archive만 존재하며, Comparative Matrix(R003 본연의 6-분야 비교), Common Pattern, Cross Validation, Foundation Consolidation, Foundation Validation, Research Package v1.0의 실제 본문은 어디에도 없다.
 - OP-010에 따라 실제 본문 없이 R003을 CLOSED로 표시하지 않는다. Dashboard/HOME 갱신도 대응 파일이 없어 이번에도 보류한다.
 - 실제 본문(6개 산출물 각각)이 제공되면 그 시점에 저장을 재개한다. 저장 위치는 지시서 예시의 `archives/`, `comparative/`, `common_patterns/`, `validation/`, `package/` 하위 폴더가 아니라, 기존에 이미 사용 중인 평면 구조(`docs/research/R003_Meaning_Foundation/` 바로 아래)를 우선 검토한다.
+
+## 2026-07-08 (R003 Comparative Matrix 재제출 — mismatch 재확인, 저장 보류)
+
+- "Comparative Matrix v0.1" 문서가 frontmatter에 Research ID: R003 / Title: Meaning Foundation으로 표기되어 다시 전달되었으나, 표(Comparative Matrix) 본문은 직전에 확인한 것과 동일한 YouTube vs DreamTown 추천 알고리즘 비교였다. R003의 실제 연구 주제(철학/심리학/신경과학/진화생물학/인류학/종교학의 "인간은 왜 의미를 찾는가" 비교)와 무관하다.
+- 사용자에게 처리 방식(재요청 / DreamTown 문서로만 유지)을 확인 질문했으나 응답이 없어, 라벨과 실제 내용의 불일치를 이유로 R003 폴더에 저장하지 않았다. 이미 저장된 `docs/research/Applications/DreamTown/DreamTown_Recommendation_Algorithm_Comparative_Matrix_v0.1.md`와 내용이 사실상 동일하여 중복 저장도 하지 않았다.
+- R003의 실제 Comparative Matrix(6개 학문 분야 비교) 본문은 여전히 제공되지 않은 상태이며, 이 시점까지 R003 Week 2 이후 산출물은 모두 미확보 상태로 남아 있다.
