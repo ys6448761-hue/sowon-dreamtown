@@ -163,3 +163,10 @@ Comparative Matrix
 
 - 실제 Archive 본문이 포함된 Research Package Bundle이 전달되어, 6개 Archive를 원문 그대로(요약·수정·재작성 없이) `docs/research/R003_Meaning_Foundation/`에 저장했다. 기존 구조를 유지했으며 중복 폴더(`research/R003/week1/`)는 생성하지 않았다.
 - Quality Audit(Lumi) 결과 6개 Archive 모두 Approved. Research Fellow 기준 충족을 확인했다.
+
+## 2026-07-08 (R003 Week 2 Comparative Matrix 저장 요청 — 보류)
+
+- Task R003-S2-001 "Save Comparative Matrix v0.1"이 전달되었으나, Row 1~9(Definition of Meaning, Core Explanation, Unit of Analysis, Key Concepts, Evidence Level, Counter Evidence, Open Questions, Consensus Level, Scope Limitation)의 항목명만 제공되고 6개 Archive를 비교한 실제 내용(Lumi 승인본 본문)은 포함되지 않았다.
+- OP-010(Content Before Storage Rule)에 따라 실제 본문 없이 저장하지 않는다. Week 1과 동일한 사유로 보류한다.
+- "Dashboard", "HOME" 업데이트 지시도 포함되었으나, 저장소 내 `Dashboard.md` / `HOME.md` 등 대응 파일이 존재하지 않아 무엇을 갱신해야 하는지 확인이 필요하다. 임의로 새 문서를 생성하지 않았다.
+- 기존 저장 구조 확인 결과, Week 1 Archive 6개는 지시서 예시의 `week1/` 하위 폴더가 아니라 `docs/research/R003_Meaning_Foundation/` 바로 아래에 저장되어 있다. 실제 콘텐츠 제공 시, 새 `week2/` 폴더를 임의로 만들지 않고 기존 평면 구조를 우선 사용할 예정이다(별도 확인 후 확정).
