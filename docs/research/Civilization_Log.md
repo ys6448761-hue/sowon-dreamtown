@@ -170,3 +170,11 @@ Comparative Matrix
 - OP-010(Content Before Storage Rule)에 따라 실제 본문 없이 저장하지 않는다. Week 1과 동일한 사유로 보류한다.
 - "Dashboard", "HOME" 업데이트 지시도 포함되었으나, 저장소 내 `Dashboard.md` / `HOME.md` 등 대응 파일이 존재하지 않아 무엇을 갱신해야 하는지 확인이 필요하다. 임의로 새 문서를 생성하지 않았다.
 - 기존 저장 구조 확인 결과, Week 1 Archive 6개는 지시서 예시의 `week1/` 하위 폴더가 아니라 `docs/research/R003_Meaning_Foundation/` 바로 아래에 저장되어 있다. 실제 콘텐츠 제공 시, 새 `week2/` 폴더를 임의로 만들지 않고 기존 평면 구조를 우선 사용할 예정이다(별도 확인 후 확정).
+
+## 2026-07-08 (R003 mismatch detected; redirected to Application Layer)
+
+- Task R003-S2-001로 전달된 "Comparative Matrix v0.1" 본문이 실제로는 R003 Meaning Foundation의 6개 Archive(철학/심리학/신경과학/진화생물학/인류학/종교학) 비교가 아니라, **YouTube 알고리즘을 DreamTown 추천 엔진에 적용하는 Application Layer 문서**임을 확인했다.
+- R003 mismatch detected; redirected to Application Layer.
+- Constitution 원칙("DreamTown은 연구가 아니라 Application Layer이다")에 따라 `docs/research/R003_Meaning_Foundation/`에는 저장하지 않았고, 새 `week2/` 폴더도 생성하지 않았다.
+- 사용자 확인 후 `docs/research/Applications/DreamTown/DreamTown_Recommendation_Algorithm_Comparative_Matrix_v0.1.md`로 저장했다. Status: Lumi Approved Review(Draft 아님, DEC 승격은 보류).
+- Dashboard/HOME update skipped: target file not found.
