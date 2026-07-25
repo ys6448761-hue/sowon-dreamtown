@@ -121,6 +121,26 @@ Review를 거쳐 수정한다.
 
 ---
 
+## Freeze 예외 (2026-07-25 추가)
+
+SPR-001의 Freeze는 새로운 세계관·철학·Framework의 확장을 중단하기 위한 것이다.
+
+호텔 Open Test 및 실제 운영에 직접 필요한 운영 문서(Operation Documents)는
+Freeze 대상이 아니다.
+
+Brand Language, Hotel SOP, Partner Guide, Welcome Script 등 실행을 위한
+문서는 생성 가능하다.
+
+단, 새로운 세계관, Manifesto, Framework, Foundation 철학은 Resume Trigger
+전까지 생성하지 않는다.
+
+> **적용 사례:** `CAND-BRAND-002_DreamTown_Brand_Language.md`(2026-07-25)는
+> 이 예외에 따라 Freeze 중에도 생성되었다 — 새로운 세계관이 아니라 호텔
+> 1호점 Open Test에서 바로 쓰이는 운영 언어(거래 언어→환대 언어 치환)를
+> 정의하는 실행 문서로 판단했기 때문이다.
+
+---
+
 ## Resume Trigger
 
 ```text
