@@ -10,9 +10,15 @@
  *  - //dreamtown → middleware에서 /dreamtown 으로 308 redirect
  */
 
-import { Component, ReactNode, Suspense, useEffect, useState } from "react";
+import { Component, ReactNode, Suspense, useSyncExternalStore } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { readSavedStar } from "@/lib/utils/starSession";
+
+// useSyncExternalStore용 no-op subscribe — localStorage 변경 구독이 필요 없는
+// 1회성 읽기(마운트/hydration 시점 값만 필요)라 빈 구독으로 충분하다.
+function subscribeNoop() {
+  return () => {};
+}
 
 // 공개 입구에서 throw = UX 파괴 — 에러 바운더리로 완전 차단
 class PublicEntryErrorBoundary extends Component<
@@ -54,7 +60,6 @@ export default function DreamtownEntryPage() {
 function DreamtownEntry() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [hasExistingStar, setHasExistingStar] = useState(false);
 
   // forcePublicEntry: /dreamtown 또는 ?entry=invite — star hydrate 전면 금지
   // (middleware가 invite를 /dreamtown 으로 redirect하므로 중복 방어)
@@ -64,12 +69,10 @@ function DreamtownEntry() {
         searchParams.get("entry") === "invite"
       : true;
 
-  useEffect(() => {
-    if (!forcePublicEntry) return;
-    // 자동 복귀 없음 — 존재 여부만 확인해서 복귀 버튼 노출 여부 결정
-    const saved = readSavedStar();
-    if (saved) setHasExistingStar(true);
-  }, [forcePublicEntry]);
+  // 자동 복귀 없음 — 존재 여부만 확인해서 복귀 버튼 노출 여부를 파생값으로 계산
+  // (SSR에서는 항상 없음으로 취급, 클라이언트에서 실제 localStorage 값으로 재동기화)
+  const savedStarId = useSyncExternalStore(subscribeNoop, () => readSavedStar(), () => null);
+  const hasExistingStar = forcePublicEntry && Boolean(savedStarId);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-[#0D1B2A] px-6">

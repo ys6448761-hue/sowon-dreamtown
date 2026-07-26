@@ -9,28 +9,28 @@
  *  - 별이 없으면 /onboarding으로
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { readSavedStar } from "@/lib/utils/starSession";
 
+// useSyncExternalStore용 no-op subscribe — localStorage 변경 구독이 필요 없는
+// 1회성 읽기(마운트/hydration 시점 값만 필요)라 빈 구독으로 충분하다.
+function subscribeNoop() {
+  return () => {};
+}
+
 export default function MyStarPage() {
   const router = useRouter();
-  const [starId, setStarId] = useState<string | null>(null);
-  const [ready, setReady] = useState(false);
+  // SSR에서는 항상 null, 클라이언트에서 실제 localStorage 값으로 재동기화
+  const starId = useSyncExternalStore(subscribeNoop, () => readSavedStar(), () => null);
 
   useEffect(() => {
-    const saved = readSavedStar();
-
-    if (!saved) {
+    if (!starId) {
       router.replace("/onboarding");
-      return;
     }
+  }, [starId, router]);
 
-    setStarId(saved);
-    setReady(true);
-  }, [router]);
-
-  if (!ready) return null;
+  if (!starId) return null;
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-[#0D1B2A] px-6">
