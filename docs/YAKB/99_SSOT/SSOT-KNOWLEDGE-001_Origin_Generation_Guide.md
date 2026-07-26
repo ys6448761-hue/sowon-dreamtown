@@ -5,10 +5,18 @@
 **최상위 Authority:** `docs/YAKB/00_ARCHITECTURE/Architecture_Constitution.md` (SSA — Foundation. 본 문서와 Constitution이 충돌하면 Constitution이 우선한다)
 **목적:** Legacy Website의 모든 장소/관광지/코스를 동일한 품질의 Origin Seed로 생성하기 위한 표준 절차를 정의한다.
 **상태:** 표준 확정 (ORIGIN-001 오동도, ORIGIN-002 향일암 파일럿 2건의 실제 작업 경험을 근거로 작성)
-**버전:** 1.0
+**버전:** 1.1
 **작성일:** 2026-07-03
 **근거 자료:** `ORIGIN-001_Odongdo.md`, `ORIGIN-002_Hyangiram.md`, `Inventory.md`, `SQL_Analysis.md`, `Legacy_to_Seed_Plan.md`
 **적용 대상:** 이후 생성되는 모든 `ORIGIN-xxx.md` (거문도백도 이하 8개 대기 후보 포함)
+
+---
+
+> **정정 요약(2026-07-26, v1.0→1.1, `RFC-TRUST-001/002` Execution)**:
+> 4절 하단 참고 문단에 "Trust Level 근거" 등급 정의의 출처를
+> `SSOT-TRUST-001_Trust_Framework.md`로 명시하는 한 문단을 추가했다.
+> 본 문서의 다른 절차(Source 우선순위, 생성 절차, Seed Score 등)는
+> 전혀 변경하지 않았다.
 
 ---
 
@@ -90,6 +98,8 @@ Legacy 사이트는 동일한 "지역명소" 지식이 여러 계층(정적 페�
 | 9 | 다음 단계 | 미해결 의문점, 후속 확인 필요 항목, 다음 Origin 후보 진행 상황 갱신 |
 
 > 참고: "제외된 정보"(관련 없어 배제한 게시글과 사유)와 "Trust Level 근거"는 위 9개 섹션 중 각각 4절(기본 정보)과 7절(Source Trace) 인근에 하위 소제목으로 포함시킨다 — 별도 최상위 섹션으로 두지 않는다.
+>
+> **Trust Level 정의 출처(2026-07-26 추가, `RFC-TRUST-001/002` Execution)**: "Trust Level 근거"에 기재하는 Level 1~7 등급 자체의 정의는 `docs/YAKB/99_SSOT/SSOT-TRUST-001_Trust_Framework.md`를 따른다. `ORIGIN-001`, `ORIGIN-002`가 이미 사용해 온 등급(Level 4 Field Insight, Level 6 Customer Voice)은 이 SSOT와 그대로 일치하며 소급 수정이 필요하지 않다. 이 문단은 참조만 추가한 것이며, 본 절의 다른 요구사항은 변경하지 않았다.
 
 ---
 

@@ -6,8 +6,8 @@
 **최상위 Authority:** `docs/YAKB/00_ARCHITECTURE/Architecture_Constitution.md` (SSA — Foundation. 본 문서와 Constitution이 충돌하면 Architecture Constitution이 우선한다)
 **Status:** Approved
 **Level:** Domain Constitution (Language) — Architecture Constitution 하위, 개별 SSOT-KNOWLEDGE 문서 상위
-**버전:** 1.5.1 (SSOT-STARTRACE-001 교차 참조 반영)
-**확정일:** 2026-07-03 (최초) / 2026-07-05 (RFC-LANG-001, RFC-LANG-002, Governance Update, SSOT-GROWTH-001, SSOT-STARTRACE-001 반영)
+**버전:** 1.6.0 (RFC-LANG-004 Execution — Naming Authority & Metadata 신설, 내용 추가이므로 Minor)
+**확정일:** 2026-07-03 (최초) / 2026-07-05 (RFC-LANG-001, RFC-LANG-002, Governance Update, SSOT-GROWTH-001, SSOT-STARTRACE-001 반영) / 2026-07-26 (RFC-LANG-004 Execution, 3-4절 신설)
 **변경 절차:** 10절 Change Policy 참조 — 임의 변경 금지, RFC 문서 작성 필수
 **근거 자료:** `docs/YAKB/01_RAW/Project_Phoenix_Language_Audit.md` (TASK-LANG-001, 전수 조사 원본), `SSOT-KNOWLEDGE-001/002/003`
 **동반 문서:** `SSOT-LANG-002_Language_Migration_List.md` (영향도 분석 — 자동 수정 금지)
@@ -23,6 +23,7 @@
 > **2026-07-04 (4차) — Governance Update 반영**: 별씨앗(Star Seed)에 "DreamTown 첫 번째 Physical Interface" 역할과 성장 구조를 3-3절로 추가. 이 과정에서 기존 3개 성장 시퀀스(Journey 구조/별 성장 5단계/DB enum)와 다른 **네 번째 병렬 시퀀스**임을 발견해 3-3절에 기록(통합은 하지 않음). Star Trace의 새 문구 변형(사용자/경험 기반 정의)도 발견해 3-2절에 기록했으나 LOCKED 정의는 변경하지 않음.
 > **2026-07-04 (5차) — `SSOT-GROWTH-001_Growth_Architecture.md` 반영(TASK-GROWTH-001)**: 4개 병렬 성장 시퀀스가 공식 9단계 Growth Architecture로 통합·매핑되었다. 3-3절 원문은 변경하지 않았으며, 해당 절이 사실상 새 9단계 구조의 전신이었음이 확인되었다.
 > **2026-07-05 (6차) — `SSOT-STARTRACE-001_Star_Trace.md` 반영(TASK-STARTRACE-001, 참조만 추가)**: Star Trace Canon 행에 실제 기록 체계 정의 문서로의 참조를 추가했다. LOCKED 정의는 변경하지 않았다.
+> **2026-07-26 (7차) — `RFC-LANG-004_Language_Governance_Implementation.md` Execution 반영(Execution Sprint 1)**: `RFC-LANG-003`(Terminology Governance Framework, Option A 채택)과 `RFC-LANG-004`(Implementation Plan, Phase 4 옵션(a)·Category 체계 확정)가 승인한 방향에 따라 **3-4절(Naming Authority & Metadata)을 신설**했다. 기존 3절 표(용어/정의/확정상태)와 8절(금지 용어)·9절(Alias Policy)의 원문은 **전혀 수정하지 않았다** — 신규 열을 기존 표에 추가하는 대신, 참조용 신규 절만 추가하는 최소 변경 방식을 적용했다. Official Name 신규 등록, Rename, Deprecated 처리는 이번 반영에 포함하지 않는다.
 
 ---
 
@@ -145,6 +146,58 @@ Star Seed
 > 넷 다 "성장"을 표현하지만 명칭·단계 수·순서가 서로 다르다. 이번 작업 지시는 "Star Seed 위치 명시"만 요청했으므로, 이 네 시퀀스를 하나로 통합하는 작업은 하지 않는다 — 통합이 필요하다고 판단되면 별도 RFC-LANG 대상으로 남긴다.
 >
 > **✅ 처리 현황(2026-07-04, TASK-GROWTH-001)**: `SSOT-GROWTH-001_Growth_Architecture.md`가 이 네 시퀀스(및 그 밖의 Reward/AI Prompt 등)를 공식 9단계 Growth Architecture(Origin→Wish→Star Seed→Journey→Action→Growth→Star→Constellation→Galaxy)에 매핑했다. **이 절의 7단계 구조가 사실상 그 9단계의 전신이었다**(Origin·Journey만 추가됨). 본 절의 원문은 변경하지 않았다 — 상세 매핑은 `SSOT-GROWTH-001` 5-2절 참조.
+
+---
+
+### 3-4. Naming Authority & Metadata (2026-07-26, RFC-LANG-004 Execution)
+
+`RFC-LANG-003`(Option A 채택)·`RFC-LANG-004`(Phase 1~4 승인 내용)에 따라
+3절 Canon Language 표를 보강하는 참조용 메타데이터다. **3절 원문(용어/
+정의/확정상태)은 변경하지 않았다** — 이 절은 기존 서술을 구조화된
+필드로 재정리한 것이며, 새로운 정의를 만들지 않는다.
+
+**기본값(Default)** — 아래 표에 개별 표기가 없는 항목은 이 기본값을
+따른다: **Authority** = `Architecture_Constitution.md`(SSA, 문서 전체
+최상위 Authority 상속) · **Allowed Context** = 모든 공식 문서/SSOT/코드
+주석/AI Prompt/영상/제품/UX(상단 "분류" 필드 기준) · **Forbidden
+Context** = 없음 · **Owner** = 문서 전체 관리 주체(개별 용어 단위 Owner는
+아직 지정되지 않음 — 임의로 지어내지 않고 미지정 상태 그대로 기록) ·
+**Review Cycle** = 정기 주기 없음, 10절 Change Policy에 따라 RFC 발생
+시에만 재검토.
+
+**Category 체계(`RFC-LANG-004` Decision 2 확정)**: 신규 분류를 만들지
+않고, 이 문서의 기존 절 이름(Canon Language/Journey Language/Product
+Language/Place Language/AI Language)을 그대로 Category 값으로 사용한다.
+
+| 용어 | Category | Scope | Allowed Context(기본값과 다른 경우만) | Forbidden Context(기본값과 다른 경우만) | Deprecated Alias 참조 |
+|---|---|---|---|---|---|
+| 예비 소원이 | Canon Language(World/Character) | DreamTown 진입 초기(소원을 품기 전) 상태 서술 | — | — | 없음(8절 미해당) |
+| 소원이 (Sowoni) | Canon Language(World/Character) | DreamTown 세계관의 주인공 지칭 | — | — | 없음 |
+| 소망이 (Somangi) | Canon Language(World/Character) | 성장의 도달 상태(도달점이 아니라 되어가는 상태) 지칭 | — | — | → 8절 "Somanggi(겹자 g)" 참조 |
+| 아우룸 (Aurum) | Canon Language(World/Character), 7절 AI Language와 표기 중복(정합 확인됨, 충돌 아님) | 소원 전달·안내 캐릭터 전반 | — | — | 없음 |
+| DreamTown | Canon Language(World) | Journey Platform의 첫 번째 Application(Authority 근거: `Architecture_Constitution.md` 제4장 직접 인용) | — | — | 없음 |
+| Journey | Journey Language(4절과 직결) | 시스템명·제품명·국제 커뮤니케이션 | 영문 브랜드 문맥 | "여정"의 대체어로 오용하지 않음(병행 정책, 3절 정의 참조) | 없음 |
+| 여정 | Journey Language(4절과 직결, Authority 근거: `RFC-LANG-001` 항목1) | 국문 문서·화면 카피·서술형 설명 | 국문 서술 문맥 | "Journey"의 오기(誤記)나 Alias로 취급하지 않음 | 없음 |
+| 세 이레(21일) | Journey Language(Authority 근거: `RFC-LANG-001` 항목2) | Journey가 일상 리듬으로 자리 잡는 첫 동행 기간 | — | — | 없음 |
+| 재회 | Journey Language(Authority 근거: `RFC-LANG-001` 항목3) | 과거의 자신과 현재의 자신이 다시 만나는 Journey 의식 | **AI, 앱, 영상, DreamTown, 사용자 메시지**(3-1절) | **운영/CRM/통계/크론잡/관리자 문맥에서는 "재방문"을 사용, "재회"로 대체하지 않음**(3-1절) | 없음(단 "재방문"과의 역할 경계는 3-1절 참조) |
+| 별씨앗 (Star Seed) | Canon Language(Physical Interface/Product-adjacent, Authority 근거: 3-3절) | 소원-행동 연결의 첫 물리적 증표, 3-3절 성장 시퀀스 | — | — | → 8절 "Star Seed(별의 씨앗)→New Light(새빛)→…" 계열 참조(주의: 이 계열은 별씨앗이라는 용어 자체가 아니라 구 성장단계 명칭 계열이 폐기 대상이었음) |
+| 공명 (Resonance) | Canon Language(Community/Reaction) | 나눔과 구분되는 감정 공감 반응 체계 | — | 나눔과 혼용하지 않음(8절 "나눔/공명의 혼용" 참조) | → 8절 "나눔/공명의 혼용" 항목 참조(폐기 아닌 공존 확정) |
+| Long-Term Companion | AI Language(7절과 동일 표기, Authority 근거: `DreamTown_Aurora5_System_SSOT.md` §12, 이 저장소 범위 밖 원출처) | "동행"의 공식 영문 표기 | — | — | 없음 |
+| Witness | AI Language(7절과 동일 표기, Authority 근거: `DreamTown_Star_Birth_Policy_Design.md`, 이 저장소 범위 밖 원출처) | 아우룸의 공식 역할(별 탄생의 증인) — 별도 시스템 아님 | — | — | 없음 |
+| Star Trace (별의 흔적) | Canon Language(**LOCKED**, Authority 근거: `RFC-LANG-002` + `SSOT-STARTRACE-001`) | Origin~Connection까지의 전체 성장 기록 지칭(3-2절 포함범위) | — | "Life Trace" 표현 사용 금지(폐기, 개정이력 3차 참조) | → 개정이력 3차(Life Trace, 8절 표에는 미등재 — 상단 개정이력에서만 기록됨) |
+
+> **Review Cycle 예외**: Star Trace는 위 기본값("RFC 발생 시에만 재검토")
+> 대신 **LOCKED** 상태다 — 3-2절 마지막 문단에 이미 명시된 대로, 정기
+> 재검토 대상이 아니며 Manifesto 개정에 준하는 별도 명시 승인 없이는
+> 불변이다. 이 절은 그 기존 규칙을 재확인할 뿐, 새로 정하지 않는다.
+
+> **Framework 연계 원칙(`RFC-LANG-003` 추가 원칙 인용, 이번 반영에서
+> 신규 절차를 만들지 않음)**: ProjectPhoenix Framework 등 하위 계층
+> 문서가 제안하는 용어는 이 표에 직접 등재되지 않는다 — Framework는
+> Official Name을 확정할 수 없고 Candidate만 제안할 수 있으며, 공식
+> 용어는 Language Governance 승인(본 문서 10절 Change Policy에 따른
+> RFC) 이후에만 이 표에 등재된다. 이 원칙은 이번 3-4절 신설과 별개로
+> 이미 `RFC-LANG-003`에서 확정되었으며, 여기서는 참조만 한다.
 
 ---
 
