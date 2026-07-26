@@ -69,6 +69,83 @@ model EventParticipation {
   @@unique([userId, eventId])
 }
 
+// ── DreamTown Core Tables (SSOT v1) ──────────────────────────────────────
+
+model DtStar {
+  id        String   @id
+  userId    String
+  starName  String
+  createdAt DateTime @default(now())
+  dayCount  Int      @default(1)
+  starStage Int      @default(1)
+
+  // CHECKIN-001: 안내판 QR 체크인 (우주민 등록)
+  visitorName String?
+  photoUrl    String?
+
+  wishes      DtWish[]
+  journals    DtJournal[]
+  nanums      DtNanum[]
+  connections DtConnection[]
+
+  @@index([userId])
+  @@map("dt_stars")
+}
+
+model DtWish {
+  id        String   @id
+  starId    String
+  star      DtStar   @relation(fields: [starId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([starId])
+  @@index([createdAt(sort: Desc)])
+  @@map("dt_wishes")
+}
+
+model DtJournal {
+  id         String   @id
+  starId     String
+  star       DtStar   @relation(fields: [starId], references: [id], onDelete: Cascade)
+  emotion    String // 숨이 놓였어요 | 믿고 싶어졌어요 | 정리됐어요 | 용기났어요
+  helpTag    String // 위로 | 결심 | 쉼 | 연결 | 실행 (구: "시작" → 20260328 마이그레이션으로 "연결" 전환)
+  growthLine String // 조금 가벼워졌어요 | 조금 또렷해졌어요 | 조금 용감해졌어요
+  createdAt  DateTime @default(now())
+
+  @@index([starId])
+  @@index([createdAt(sort: Desc)])
+  @@map("dt_journals")
+}
+
+model DtNanum {
+  id        String   @id
+  starId    String
+  star      DtStar   @relation(fields: [starId], references: [id], onDelete: Cascade)
+  type      String // miracle | wisdom | thanks (thanks는 API count 제외 — UI 정책)
+  message   String
+  createdAt DateTime @default(now())
+
+  @@index([starId])
+  @@index([type])
+  @@index([createdAt(sort: Desc)])
+  @@map("dt_nanum")
+}
+
+// 연결 완료 이벤트 (connection_completed)
+// acknowledged = false 인 항목만 ConnectionMoment로 1회 노출
+model DtConnection {
+  id          String   @id
+  starId      String
+  star        DtStar   @relation(fields: [starId], references: [id], onDelete: Cascade)
+  otherStarId String   // 연결된 다른 별 (익명 — 이름/프로필 미노출)
+  acknowledged Boolean @default(false)
+  createdAt   DateTime @default(now())
+
+  @@index([starId, acknowledged])
+  @@map("dt_connections")
+}
+
 model AdminLog {
   id             String   @id @default(cuid())
   action         String
