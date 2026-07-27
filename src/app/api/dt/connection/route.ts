@@ -35,6 +35,14 @@ export async function POST(req: NextRequest) {
   if (!starId || !otherStarId) return NextResponse.json({ error: "starId and otherStarId required" }, { status: 400 });
 
   try {
+    const star = await prisma.dtStar.findUnique({ where: { id: starId } });
+    if (!star) return NextResponse.json({ error: "star not found" }, { status: 404 });
+
+    const otherStar = await prisma.dtStar.findUnique({ where: { id: otherStarId } });
+    if (!otherStar) return NextResponse.json({ error: "other star not found" }, { status: 404 });
+
+    if (starId === otherStarId) return NextResponse.json({ error: "cannot connect to self" }, { status: 400 });
+
     const conn = await prisma.dtConnection.create({
       data: { id: crypto.randomUUID(), starId, otherStarId },
     });

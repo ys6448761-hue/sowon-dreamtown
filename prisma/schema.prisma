@@ -8,6 +8,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ── [DORMANT FEATURE] AIL-RESV-001: Internal Ops Scheduler ────────────────────
+// 현재 MVP에서는 비활성 (Admin UI 진입점 없음, 워커 기본 비활성). 삭제하지 않음 —
+// 호텔 예약/별공방 예약/예약 발송/후속 알림/기념일 메시지 등에서 재사용 예정.
+
+enum ScheduleStatus {
+  SCHEDULED
+  DONE
+  CANCELED
+}
+
+enum JobStatus {
+  PENDING
+  PROCESSING
+  SENT
+  FAILED
+  DEAD
+  CANCELED
+}
+
+enum TriggerType {
+  BEFORE_30M
+  DAILY_DIGEST
+  TEST
+}
+
 model User {
   id           String    @id @default(cuid())
   nickname     String
@@ -23,16 +48,33 @@ model User {
 
 model Post {
   id             String   @id @default(cuid())
-  content        String
+  content        String   @default("")
   status         String   @default("PENDING")
   redirectReason String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  authorId String
-  author   User   @relation(fields: [authorId], references: [id])
-  likes    Like[]
+  // AIL-109: AI 요약 (TEXT 타입 전용)
+  summaryText      String?
+  summaryStatus    String    @default("NONE") // NONE | PENDING | READY | FAILED
+  summaryUpdatedAt DateTime?
+  contentHash      String?
+
+  // AIL-112: 카드 타입 확장
+  postType     String  @default("TEXT") // TEXT | WISH | FILM
+  wishId       String? // 소원 연결 ID (daily-miracles-mvp wish_entries.id 문자열)
+  thumbnailUrl String? // 소원/필름 썸네일 URL
+  badgeText    String? // "Day 1" | "🎬 완주" 등
+  themeCode    String? // Hope / Career 등 (향후 필터링)
+
+  // WISH/FILM 카드는 authorId null 가능 (익명, 소원꿈터 정책)
+  authorId  String?
+  author    User?      @relation(fields: [authorId], references: [id])
+  likes     Like[]
   adminLogs AdminLog[]
+
+  @@index([postType, status])
+  @@index([wishId])
 }
 
 model Like {
@@ -69,7 +111,74 @@ model EventParticipation {
   @@unique([userId, eventId])
 }
 
+// AIL-110: 일일 큐레이션 캐시 (KST 날짜 기준)
+model DailyCuration {
+  id            String   @id @default(cuid())
+  dateKey       String   @unique // KST YYYY-MM-DD
+  wisdomPostId  String?
+  miraclePostId String?
+  wisdomLine    String?
+  miracleLine   String?
+  createdAt     DateTime @default(now())
+}
+
+// AIL-RESV-001: 예약 마스터 테이블
+model Schedule {
+  id           String         @id @default(cuid())
+  title        String
+  startAt      DateTime // UTC 저장 (KST 입력 → 서버 변환)
+  endAt        DateTime
+  status       ScheduleStatus @default(SCHEDULED)
+  customerName String?
+  phone        String?
+  memo         String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  notifications NotificationJob[]
+}
+
+// AIL-RESV-001: 알람 발송 Job (Outbox 패턴)
+model NotificationJob {
+  id         String    @id @default(cuid())
+  scheduleId String?
+  schedule   Schedule? @relation(fields: [scheduleId], references: [id])
+
+  targetKey   String // scheduleId OR "DIGEST:adminEmail:YYYY-MM-DD" OR "TEST:scheduleId:minuteBucket"
+  triggerType TriggerType
+  triggerAt   DateTime // 발송 예정 시각 (UTC, 사전 계산)
+  status      JobStatus   @default(PENDING)
+
+  payloadJson  Json? // Digest HTML 사전 렌더링 결과
+  retryCount   Int      @default(0)
+  errorMessage String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Dev Lock 8-1: 중복 발송 방지 복합 유니크
+  @@unique([targetKey, triggerType, triggerAt], name: "idx_unique_alarm")
+  // Dev Lock 8-5: 워커 선점 스캔 필수 인덱스
+  @@index([status, triggerAt], name: "idx_status_trigger")
+}
+
 // ── DreamTown Core Tables (SSOT v1) ──────────────────────────────────────
+
+// OWN-001: Guest Identity — Star 소유권 증명 (tokenHash만 저장, 원문 저장 금지)
+model DtGuestIdentity {
+  id            String    @id
+  tokenHash     String    @unique
+  expiresAt     DateTime
+  lastUsedAt    DateTime?
+  claimedUserId String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  stars DtStar[]
+
+  @@index([claimedUserId])
+  @@index([expiresAt])
+  @@map("dt_guest_identities")
+}
 
 model DtStar {
   id        String   @id
@@ -83,12 +192,17 @@ model DtStar {
   visitorName String?
   photoUrl    String?
 
+  // OWN-001: Guest Identity 연결 (nullable — 기존 anonymous Star는 NULL)
+  guestIdentityId String?
+  guestIdentity   DtGuestIdentity? @relation(fields: [guestIdentityId], references: [id], onDelete: SetNull)
+
   wishes      DtWish[]
   journals    DtJournal[]
   nanums      DtNanum[]
   connections DtConnection[]
 
   @@index([userId])
+  @@index([guestIdentityId])
   @@map("dt_stars")
 }
 

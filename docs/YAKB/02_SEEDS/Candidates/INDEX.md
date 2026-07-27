@@ -39,6 +39,7 @@ Candidate가 `99_SSOT/`로 승격되면 이 표에서는 "Promoted"로 표시하
 | CAND-BRAND-001 | `CAND-BRAND-001_DreamTown_Platform_Philosophy.md` | Brand / Constitution | Idea | `MANIFESTO-001` + daily-miracles-mvp CAND-BRAND-001과 함께 검토 | DreamTown Platform Philosophy. "플랫폼" 용어 3자 경합. ⚠️ ID 중복(daily-miracles-mvp에 별도 동명 문서). **(브랜치 `docs/cand-brand-001-dreamtown-platform-philosophy`)** |
 | CAND-MEAN-001 | `CAND-MEAN-001_Three_Perspectives_Interpretation_Framework.md` | Framework | Idea | `Meaning Engine SSOT`(가칭), CON-004 충돌 해소 선행 | Core Meaning + 별빛/달빛/소망 3관점. **🚨 심각한 충돌**: `dreamtown-wishart/CON-004`(LOCKED)와 근본적으로 다른 모델. **(브랜치 `docs/cand-mean-001-three-perspectives-framework`)** |
 | CAND-BRAND-002 | `CAND-BRAND-002_DreamTown_Brand_Language.md` | Brand | Idea | `SSOT-BRAND-{n}`(가칭) | 거래 언어→환대 언어 치환 어휘집. `SPR-001` Freeze 예외(운영 문서) 근거로 생성. 번호 정정(제안 001→002, 기존 CAND-BRAND-001과 구분). **(브랜치 `docs/cand-brand-002-dreamtown-brand-language`)** |
+| CAND-DOM-001 | `CAND-DOM-001_DreamTown_Domain_Model_Audit.md` | Engineering / Domain | Idea | `SSOT-ENG-001_DreamTown_Domain_Model.md` (신규 제안) | DreamTown DDD 감사. OWN-001~006(Guest Identity 기반 Ownership 시스템) 구현 완료 ✅ (2026-07-27). DT-AUTH-002, DT-RF-005 미구현. 구현 이력: `docs/YAKB/Research/RSR-2026-07-27_DreamTown_Ownership_System_Implementation.md`. **(브랜치 `feature/checkin-mvp`)** |
 
 **참고:** `SSOT-KNOWLEDGE-004`의 구조 설계는
 `docs/YAKB/Planning/SSOT-KNOWLEDGE-004_Draft_Design_Outline.md`에 있다(설계만,
