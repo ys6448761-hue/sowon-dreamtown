@@ -33,6 +33,13 @@
 | OWN-004 — Ownership Guard (ownership-guard.ts) | §11 DS-03, §7 | ✅ 구현 완료 | 2026-07-27 |
 | OWN-005 — Wishes/Journals Write 보호 (Guard 적용) | §7, §11 DS-03 | ✅ 구현 완료 | 2026-07-27 |
 | OWN-006 — Connection 참조 무결성 (connection/route.ts) | §6 BR-N-02, §10 ISS-004 | ✅ 구현 완료 | 2026-07-27 |
+| OWN-007 — Nanum/Connection/Acknowledge Write 보호 (Guard 적용) | §7, §11 DS-03 | ✅ 구현 완료 | 2026-07-27 |
+| OWN-007A — Nanum API Contract 정규화 (fromStarId Body 필수화) | §11 DS-03 | ✅ 구현 완료 | 2026-07-27 |
+| OWN-008 — Guest Identity Claim API (POST /api/dt/claim) | §4 userId no FK, §11 DS-03 | ✅ 구현 완료 | 2026-07-27 |
+| OWN-008A — Claim Transaction Hardening (Atomic Claim, Race Condition 차단) | §11 DS-03 | ✅ 구현 완료 | 2026-07-27 |
+| OWN-009 — Claim UX Integration (ClaimModal + SessionProvider) | §11 DS-03 | ✅ 구현 완료 | 2026-07-27 |
+| OWN-010 — Ownership E2E Integration Tests (Vitest 2.x, 44 pass / 1 skip*) | §7, §11 DS-03 | ✅ 구현 완료 | 2026-07-27 |
+| DT-MVP-001 — My Star Read API (GET /api/dt/me/star, 13 tests pass) | §4 userId, §11 DS-03 | ✅ 구현 완료 | 2026-07-28 |
 | DT-AUTH-002 — ClaimToken Schema | §4 userId no FK | 미구현 (Phase 2) | — |
 | DT-RF-005 — DtConnection unique constraint | §10 ISS-004 | 미구현 (Phase 4) | — |
 
@@ -43,6 +50,12 @@
 > **claimedUserId 임시 상태:**
 > `DtGuestIdentity.claimedUserId`는 현재 단순 `String?` 임시 필드이며,
 > Claim 정책 안정화(OWN-008) 이후 `User` relation 승격 여부를 재검토한다.
+>
+> **OWN-010 구현 노트 (2026-07-27):**
+> 테스트 프레임워크: Vitest 2.1.9 (기존 도구 없음 — TypeScript-native, Next.js 생태계 정합).
+> 44 pass / 1 skip. Skip 1건: Scenario 6 (Atomic Claim 동시성) — `TEST_DATABASE_URL` 없이
+> 실행 불가. PostgreSQL 행 잠금 기반 atomicity는 모킹으로 검증 불가; DB 환경 구성 시
+> `TEST_DATABASE_URL=<url> npm test`로 실행. 실행 명령: `npm test`.
 
 ---
 
