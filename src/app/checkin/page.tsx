@@ -1,16 +1,29 @@
 "use client";
 
 /**
- * /checkin — QR 체크인 (CHECKIN-001 / CHECKIN-002)
+ * /checkin — QR 체크인 (CHECKIN-001 / CHECKIN-002) + Soft Open Resume
  *
- * 흐름: 환영 → 우주민 등록(이름+전화) → 정면사진 → 소원 작성 → 소원 확인 → 완료
- * 완료 후: starId를 localStorage에 저장하고 /home?starId=... 로 이동 가능
+ * 흐름:
+ * - 신규: 환영 → 우주민 등록 → 정면사진 → 소원 작성 → 소원 확인 → 완료
+ * - 기존 (starId=...): 현재 상태 조회 → 자동 라우팅 → 결과 공개 (Step 7)
+ *
+ * Phase A (Soft Open): 정적 이미지만 공개, WishArt 생성 없음
  */
 
-import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRef, useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
-type Step = 1 | 2 | 3 | 4 | 5 | 6;
+type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+type CheckinStatus = {
+  status: "no_data" | "photo_missing" | "wish_missing" | "ready" | "revealed";
+  visitorName: string | null;
+  photoUrl: string | null;
+  wishContent: string | null;
+  wishImageUrl: string | null;
+  wishImageStatus: string;
+  wishImageRevealedAt: string | null;
+};
 
 const NAME_MAX = 50;
 const PHONE_MAX = 20;
@@ -18,6 +31,7 @@ const WISH_MAX = 200;
 
 export default function CheckinPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [step, setStep] = useState<Step>(1);
 
   // 입력값
@@ -32,10 +46,70 @@ export default function CheckinPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [completedStarId, setCompletedStarId] = useState<string | null>(null);
 
+  // Phase A: Resume state
+  const [resumeStarId, setResumeStarId] = useState<string | null>(null);
+  const [checkinStatus, setCheckinStatus] = useState<CheckinStatus | null>(null);
+  const [isInitializing, setIsInitializing] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const trimName = name.trim();
   const trimPhone = phone.trim();
   const trimWish = wish.trim();
+
+  // Phase A: Auto-initialize if starId present
+  useEffect(() => {
+    const starId = searchParams.get("starId");
+    if (starId) {
+      setResumeStarId(starId);
+      setIsInitializing(true);
+      fetchCheckinStatus(starId);
+    }
+  }, [searchParams]);
+
+  async function fetchCheckinStatus(starId: string) {
+    try {
+      const res = await fetch(`/api/dt/checkin-status?starId=${starId}`);
+      if (!res.ok) {
+        setErrorMsg("진행 상태를 불러오지 못했습니다.");
+        setIsInitializing(false);
+        return;
+      }
+      const data: CheckinStatus = await res.json();
+      setCheckinStatus(data);
+      routeToCorrectStep(data);
+    } catch (err) {
+      console.error("fetchCheckinStatus error:", err);
+      setErrorMsg("네트워크 연결을 확인해 주세요.");
+      setIsInitializing(false);
+    }
+  }
+
+  function routeToCorrectStep(status: CheckinStatus) {
+    switch (status.status) {
+      case "no_data":
+        // starId는 있지만 완전히 새로운 상태 → Step 1
+        setStep(1);
+        break;
+      case "photo_missing":
+        // 사진이 없음 → Step 3 (정면사진 업로드)
+        setStep(3);
+        break;
+      case "wish_missing":
+        // 소원이 없음 → Step 4 (소원 작성)
+        setStep(4);
+        if (status.photoUrl) {
+          setPhotoPreview(status.photoUrl);
+        }
+        break;
+      case "ready":
+      case "revealed":
+        // 완성됨 → Step 7 (reveal)
+        setStep(7);
+        if (status.visitorName) setName(status.visitorName);
+        break;
+    }
+    setIsInitializing(false);
+  }
 
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null;
@@ -75,6 +149,43 @@ export default function CheckinPage() {
       setCompletedStarId(data.starId);
       setStatus("idle");
       setStep(6);
+    } catch {
+      setErrorMsg("네트워크 연결을 확인하고 다시 시도해 주세요.");
+      setStatus("error");
+    }
+  }
+
+  async function handleReveal() {
+    if (!resumeStarId || status === "loading") return;
+    setStatus("loading");
+    setErrorMsg("");
+
+    try {
+      const res = await fetch("/api/dt/wishes/reveal", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ starId: resumeStarId }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setErrorMsg((data as { error?: string }).error ?? "공개 처리 중 오류가 발생했습니다.");
+        setStatus("error");
+        return;
+      }
+
+      const data = await res.json();
+      setCheckinStatus((prev) =>
+        prev
+          ? {
+              ...prev,
+              status: "revealed",
+              wishImageRevealedAt: data.wishImageRevealedAt,
+            }
+          : null
+      );
+      setStatus("idle");
+      setStep(7); // Reveal shown
     } catch {
       setErrorMsg("네트워크 연결을 확인하고 다시 시도해 주세요.");
       setStatus("error");
@@ -348,6 +459,108 @@ export default function CheckinPage() {
                 별빛항로 안내 보기
               </button>
             </div>
+          </section>
+        )}
+
+        {/* Step 7: Reveal (Phase A — Soft Open Resume) */}
+        {step === 7 && checkinStatus && (
+          <section className="text-center">
+            {isInitializing ? (
+              <div className="py-8">
+                <p className="text-sm text-gray-400">로딩 중…</p>
+              </div>
+            ) : checkinStatus.status === "revealed" ? (
+              // 이미 공개됨
+              <>
+                <p
+                  className="text-4xl"
+                  style={{ filter: "drop-shadow(0 0 14px rgba(155,135,245,0.55))" }}
+                  aria-hidden="true"
+                >
+                  ✨
+                </p>
+                <h1 className="mt-5 text-lg font-semibold text-gray-800">
+                  {trimName || "소원이"}님의
+                  <br />
+                  소원그림이 공개되었습니다.
+                </h1>
+                <p className="mt-4 text-sm leading-relaxed text-gray-400">
+                  당신의 소원이 담긴
+                  <br />
+                  하멜등대의 별빛을 만나보세요.
+                </p>
+
+                {checkinStatus.wishImageUrl && (
+                  <div className="mt-8">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={checkinStatus.wishImageUrl}
+                      alt="소원그림"
+                      className="w-full rounded-2xl shadow-lg"
+                    />
+                  </div>
+                )}
+
+                <div className="mt-8 space-y-3">
+                  <button
+                    onClick={() => {
+                      if (resumeStarId) {
+                        router.push(`/home?starId=${resumeStarId}`);
+                      }
+                    }}
+                    className="w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white"
+                  >
+                    내 소원별 만나기
+                  </button>
+                  <button
+                    onClick={() => router.push("/dreamtown")}
+                    className="w-full rounded-full border border-[#9B87F5]/30 py-3 text-sm text-[#9B87F5]/70 hover:bg-[#9B87F5]/5 transition-colors"
+                  >
+                    별빛항로 안내 보기
+                  </button>
+                </div>
+              </>
+            ) : (
+              // 준비됨 — 공개 대기
+              <>
+                <p
+                  className="text-4xl"
+                  style={{ filter: "drop-shadow(0 0 14px rgba(155,135,245,0.55))" }}
+                  aria-hidden="true"
+                >
+                  ⭐
+                </p>
+                <h1 className="mt-5 text-lg font-semibold text-gray-800">
+                  {trimName || "소원이"}님의<br />
+                  소원그림이 준비되었습니다.
+                </h1>
+                <p className="mt-4 text-sm leading-relaxed text-gray-400">
+                  하멜등대의 별빛 속에서<br />
+                  당신의 소원이 빛나고 있습니다.
+                </p>
+
+                {status === "error" && (
+                  <div className="mt-4 rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-center">
+                    <p className="text-sm text-amber-700">{errorMsg}</p>
+                  </div>
+                )}
+
+                <button
+                  onClick={handleReveal}
+                  disabled={status === "loading"}
+                  className="mt-8 w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white disabled:opacity-40"
+                >
+                  {status === "loading" ? "공개 중…" : "소원그림 공개하기"}
+                </button>
+
+                <button
+                  onClick={() => router.push("/dreamtown")}
+                  className="mt-3 w-full py-2 text-xs text-gray-300 hover:text-gray-400 transition-colors"
+                >
+                  별빛항로 안내 보기
+                </button>
+              </>
+            )}
           </section>
         )}
       </div>
