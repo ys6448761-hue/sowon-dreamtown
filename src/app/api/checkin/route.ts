@@ -1,9 +1,12 @@
 /**
- * CHECKIN-001: 안내판 QR 체크인 API
+ * CHECKIN-001 / CHECKIN-002: QR 체크인 API
  * POST /api/checkin
  *
- * 입력: multipart/form-data { name, photo, wish }
- * 처리: 정면사진을 public/uploads/checkin에 저장 → DtStar(우주민) + DtWish 생성
+ * 입력: multipart/form-data { name, phone?, photo, wish }
+ * 처리:
+ *   1. 정면사진 → public/uploads/checkin 저장
+ *   2. GuestIdentity 생성 + DtStar + DtWish + DtJournal 트랜잭션
+ *   3. 소원그림 배정 (사전 생성 이미지 pool → starId 결정론적 배정, 비공개)
  * 산출물: { success, starId }
  */
 
@@ -21,8 +24,11 @@ import {
   hashGuestToken,
   calculateGuestIdentityExpiry,
 } from "@/lib/utils/guest-identity";
+import { assignWishImageUrl } from "@/lib/utils/checkin-wish-image";
+import { logCheckinEvent } from "@/lib/utils/checkin-events";
 
 const NAME_MAX = 50;
+const PHONE_MAX = 20;
 const WISH_MAX = 200;
 const PHOTO_MAX_BYTES = 8 * 1024 * 1024; // 8MB
 const ALLOWED_MIME: Record<string, string> = {
@@ -45,15 +51,26 @@ export async function POST(req: NextRequest) {
   }
 
   const rawName = form.get("name");
+  const rawPhone = form.get("phone");
   const rawWish = form.get("wish");
   const photo = form.get("photo");
 
   const name = typeof rawName === "string" ? sanitizeText(rawName) : "";
+  const phone =
+    typeof rawPhone === "string" && rawPhone.trim().length > 0
+      ? sanitizeText(rawPhone.trim())
+      : null;
   const wish = typeof rawWish === "string" ? sanitizeText(rawWish) : "";
 
   if (!name || name.length > NAME_MAX) {
     return NextResponse.json(
       { error: "name required (1~50자)", request_id: requestId },
+      { status: 400 },
+    );
+  }
+  if (phone && phone.length > PHONE_MAX) {
+    return NextResponse.json(
+      { error: "phone too long (max 20자)", request_id: requestId },
       { status: 400 },
     );
   }
@@ -94,13 +111,13 @@ export async function POST(req: NextRequest) {
     await writeFile(filePath, buffer);
     const photoUrl = `/uploads/checkin/${fileName}`;
 
+    logCheckinEvent({ event: "portrait_uploaded", requestId });
+
     const existingToken = req.cookies.get(GUEST_TOKEN_COOKIE_NAME)?.value;
 
     let starId: string;
     let tokenForCookie: string;
     try {
-      // Identity 조회·생성·갱신 + Star/Wish/Journal을 단일 트랜잭션으로 처리 (ISS-002, OWN-003)
-      // Identity 분기가 필요해 interactive transaction 사용
       ({ starId, tokenForCookie } = await prisma.$transaction(async (tx) => {
         const now = new Date();
         let identityId: string;
@@ -111,7 +128,6 @@ export async function POST(req: NextRequest) {
           const existing = await tx.dtGuestIdentity.findUnique({ where: { tokenHash } });
 
           if (existing && existing.expiresAt > now) {
-            // 유효 Identity 재사용 — sliding expiration
             await tx.dtGuestIdentity.update({
               where: { id: existing.id },
               data: { lastUsedAt: now, expiresAt: calculateGuestIdentityExpiry(now) },
@@ -119,7 +135,6 @@ export async function POST(req: NextRequest) {
             identityId = existing.id;
             tokenForCookie = existingToken;
           } else {
-            // Identity 없거나 만료 — 새 Identity 생성
             const newToken = generateGuestToken();
             const created = await tx.dtGuestIdentity.create({
               data: {
@@ -133,7 +148,6 @@ export async function POST(req: NextRequest) {
             tokenForCookie = newToken;
           }
         } else {
-          // Cookie 없음 — 새 Identity 생성
           const newToken = generateGuestToken();
           const created = await tx.dtGuestIdentity.create({
             data: {
@@ -147,14 +161,19 @@ export async function POST(req: NextRequest) {
           tokenForCookie = newToken;
         }
 
-        const starId = crypto.randomUUID();
+        const newStarId = crypto.randomUUID();
+        const wishImageUrl = assignWishImageUrl(newStarId);
+
         await tx.dtStar.create({
           data: {
-            id: starId,
+            id: newStarId,
             userId: "anonymous",
             starName: "나의 별",
             visitorName: name,
             photoUrl,
+            phone,
+            wishImageUrl,
+            wishImageStatus: "ready", // 사전 생성 이미지 즉시 ready — 비공개는 wishImageRevealedAt=null로 보장
             dayCount: 1,
             starStage: 1,
             guestIdentityId: identityId,
@@ -164,7 +183,7 @@ export async function POST(req: NextRequest) {
         await tx.dtWish.create({
           data: {
             id: crypto.randomUUID(),
-            starId,
+            starId: newStarId,
             content: wish,
           },
         });
@@ -172,28 +191,27 @@ export async function POST(req: NextRequest) {
         await tx.dtJournal.create({
           data: {
             id: crypto.randomUUID(),
-            starId,
+            starId: newStarId,
             ...DAY_ZERO_JOURNAL,
           },
         });
 
-        return { starId, tokenForCookie };
+        return { starId: newStarId, tokenForCookie };
       }));
     } catch (dbErr) {
-      // DB 실패 보상: 업로드 파일 삭제 (고아 파일 방지)
       try {
         await unlink(filePath);
       } catch (cleanupError) {
-        console.error("[CHECKIN] upload_cleanup_failed", {
-          requestId,
-          filePath,
-          cleanupError,
-        });
+        console.error("[CHECKIN] upload_cleanup_failed", { requestId, filePath, cleanupError });
       }
       throw dbErr;
     }
 
-    // Transaction 성공 후에만 Cookie 설정
+    logCheckinEvent({ event: "star_created", starId, requestId });
+    logCheckinEvent({ event: "wish_image_generation_started", starId, requestId });
+    logCheckinEvent({ event: "wish_image_generation_completed", starId, requestId });
+    logCheckinEvent({ event: "checkin_completed", starId, requestId });
+
     const response = NextResponse.json({ success: true, starId });
 
     response.cookies.set(GUEST_TOKEN_COOKIE_NAME, tokenForCookie, {

@@ -191,6 +191,12 @@ model DtStar {
   // CHECKIN-001: 안내판 QR 체크인 (우주민 등록)
   visitorName String?
   photoUrl    String?
+  phone       String?   // 체크인 시 등록한 연락처 (암호화 없이 저장 — Soft Open MVP)
+
+  // CHECKIN-002: 소원그림 (비공개 — Hamel Reveal 연출에서만 공개)
+  wishImageUrl        String?
+  wishImageStatus     String    @default("pending") // pending | generating | ready | failed | revealed
+  wishImageRevealedAt DateTime? // null = 비공개
 
   // OWN-001: Guest Identity 연결 (nullable — 기존 anonymous Star는 NULL)
   guestIdentityId String?
