@@ -44,6 +44,7 @@ Candidate가 `99_SSOT/`로 승격되면 이 표에서는 "Promoted"로 표시하
 | CAND-OPS-005 | `CAND-OPS-005_Ownership_Implementation_Lifecycle.md` | Operations | Idea | Operations SSOT / Backend Architecture SSOT / QA·Verification SSOT | Guest Ownership 구현 라이프사이클 표준 (OWN-001~010). Atomic Claim·Integration Test 포함 완료 기준. 44 Pass / 1 Skip. **(⚠️ CAND-OPS-004는 Reunion_Operations.md 선점 — 005로 할당)** **(브랜치 `feature/checkin-mvp`)** |
 | CAND-OPS-006 | `CAND-OPS-006_DreamTown_Command_Center.md` | Operations / Architecture | Idea | `SSOT-OPS-001_DreamTown_Operations_Architecture.md` (신규 제안) | DreamTown 3-Dashboard 운영 아키텍처 (소원이/관리자 Command Center/Partner). 감정 항로 퍼널이 핵심 운영 지표. **(⚠️ CAND-OPS-005는 Ownership_Implementation_Lifecycle.md 선점 — 006으로 할당)** **(브랜치 `feature/checkin-mvp`)** |
 | CAND-KW-001 | `CAND-KW-001_K-Wisdom_Governance.md` | Framework / Knowledge | Idea | Knowledge Governance SSOT / K-Wisdom SSOT / DreamTown Constitution | K-Wisdom 거버넌스 — Experience(개인)→Insight(패턴)→Wisdom(공동체 자산) 3계층. 명언집·사례집과의 차이: 출처·검증·피드백 루프 포함. Route뿐 아니라 DreamTown 생태계 전체에서 축적. **신규 KW 카테고리 계열 시작.** **(브랜치 `feature/checkin-mvp`)** |
+| CAND-OPS-007 | `CAND-OPS-007_Session_Asset_Governance.md` | Operations / Constitution | **Review → Promoted** — `SSOT-OPS-SESSION-001`로 즉시 승격 (2026-07-28, 오너 결정) | `SSOT-OPS-SESSION-001_Session_Asset_and_Knowledge_Inheritance.md` ✅ | 세션 종료 시 Session Asset 작성 + 대물림 원칙. 반복 맥락 단절 문제 실증 확인으로 즉시 승격. **(브랜치 `feature/checkin-mvp`)** |
 
 **참고:** `SSOT-KNOWLEDGE-004`의 구조 설계는
 `docs/YAKB/Planning/SSOT-KNOWLEDGE-004_Draft_Design_Outline.md`에 있다(설계만,
