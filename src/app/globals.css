@@ -25,6 +25,27 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* ── AIL-112.5: 기적나눔 파티클 애니메이션 ───────────────────────────────── */
+
+/* 일반 모드: 상단으로 날아가는 파티클 */
+@keyframes miracleFly {
+  0%   { transform: translate(0, 0) scale(1);   opacity: 1; }
+  100% { transform: translate(var(--mx, 0px), var(--my, -80px)) scale(0.3); opacity: 0; }
+}
+
+/* 저사양/모션 감소 모드: 단순 페이드아웃 */
+@keyframes miracleFade {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-12px) scale(0.8); }
+}
+
+/* 콤보 뱃지 팝 효과 */
+@keyframes miracleCombo {
+  0%   { transform: translateX(-50%) scale(0.6); opacity: 0; }
+  40%  { transform: translateX(-50%) scale(1.2); opacity: 1; }
+  100% { transform: translateX(-50%) scale(1);   opacity: 1; }
+}
+
 /* ── DreamTown Birth Moment — 별 탄생 의식 애니메이션 ─────────────────────── */
 @keyframes starBirth {
   from { opacity: 0; transform: scale(0.5); }
