@@ -5,6 +5,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { GUEST_TOKEN_COOKIE_NAME } from "@/lib/utils/guest-identity";
+import { verifyStarOwnership } from "@/lib/utils/ownership-guard";
 
 // ── GET ───────────────────────────────────────────────────────────────────
 
@@ -68,9 +70,13 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const star = await prisma.dtStar.findUnique({ where: { id: starId } });
-    if (!star) {
-      return NextResponse.json({ error: "star not found" }, { status: 404 });
+    const token = req.cookies.get(GUEST_TOKEN_COOKIE_NAME)?.value;
+    const guard = await verifyStarOwnership(starId, token);
+    if (!guard.ok) {
+      if (guard.reason === "star_not_found") {
+        return NextResponse.json({ error: "star not found" }, { status: 404 });
+      }
+      return NextResponse.json({ error: "forbidden" }, { status: 403 });
     }
 
     const journal = await prisma.dtJournal.create({

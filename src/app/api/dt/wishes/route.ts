@@ -6,6 +6,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { serverError, makeRequestId } from "@/lib/apiError";
+import { DAY_ZERO_JOURNAL } from "@/lib/utils/day-zero-journal";
+import {
+  GUEST_TOKEN_COOKIE_NAME,
+  GUEST_TOKEN_MAX_AGE_SECONDS,
+  generateGuestToken,
+  hashGuestToken,
+  calculateGuestIdentityExpiry,
+} from "@/lib/utils/guest-identity";
+import { verifyStarOwnership } from "@/lib/utils/ownership-guard";
 
 // ── GET ───────────────────────────────────────────────────────────────────
 
@@ -67,53 +76,144 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    let resolvedStarId = starId;
-
     // starId 없으면 새 별 생성 (Option B — 최초 소원 흐름)
-    if (!resolvedStarId) {
-      const newStar = await prisma.dtStar.create({
-        data: {
-          id: crypto.randomUUID(),
-          userId: "anonymous", // 인증 연결 전 임시값
-          starName: "나의 별",
-          dayCount: 1,
-          starStage: 1,
+    if (!starId) {
+      const existingToken = req.cookies.get(GUEST_TOKEN_COOKIE_NAME)?.value;
+
+      // Identity 조회·생성·갱신 + Star/Wish/Journal을 단일 트랜잭션으로 처리 (ISS-001, OWN-002)
+      // Identity 분기가 필요해 interactive transaction 사용
+      const { newStarId, wish, tokenForCookie } = await prisma.$transaction(async (tx) => {
+        const now = new Date();
+        let identityId: string;
+        let tokenForCookie: string;
+
+        if (existingToken !== undefined) {
+          const tokenHash = hashGuestToken(existingToken);
+          const existing = await tx.dtGuestIdentity.findUnique({ where: { tokenHash } });
+
+          if (existing && existing.expiresAt > now) {
+            // 유효 Identity 재사용 — sliding expiration
+            await tx.dtGuestIdentity.update({
+              where: { id: existing.id },
+              data: { lastUsedAt: now, expiresAt: calculateGuestIdentityExpiry(now) },
+            });
+            identityId = existing.id;
+            tokenForCookie = existingToken;
+          } else {
+            // Identity 없거나 만료 — 새 Identity 생성
+            const newToken = generateGuestToken();
+            const created = await tx.dtGuestIdentity.create({
+              data: {
+                id: crypto.randomUUID(),
+                tokenHash: hashGuestToken(newToken),
+                expiresAt: calculateGuestIdentityExpiry(now),
+                lastUsedAt: now,
+              },
+            });
+            identityId = created.id;
+            tokenForCookie = newToken;
+          }
+        } else {
+          // Cookie 없음 — 새 Identity 생성
+          const newToken = generateGuestToken();
+          const created = await tx.dtGuestIdentity.create({
+            data: {
+              id: crypto.randomUUID(),
+              tokenHash: hashGuestToken(newToken),
+              expiresAt: calculateGuestIdentityExpiry(now),
+              lastUsedAt: now,
+            },
+          });
+          identityId = created.id;
+          tokenForCookie = newToken;
+        }
+
+        const newStarId = crypto.randomUUID();
+        await tx.dtStar.create({
+          data: {
+            id: newStarId,
+            userId: "anonymous",
+            starName: "나의 별",
+            dayCount: 1,
+            starStage: 1,
+            guestIdentityId: identityId,
+          },
+        });
+
+        const wish = await tx.dtWish.create({
+          data: {
+            id: crypto.randomUUID(),
+            starId: newStarId,
+            content: content.trim(),
+          },
+        });
+
+        await tx.dtJournal.create({
+          data: {
+            id: crypto.randomUUID(),
+            starId: newStarId,
+            ...DAY_ZERO_JOURNAL,
+          },
+        });
+
+        return { newStarId, wish, tokenForCookie };
+      });
+
+      // Transaction 성공 후에만 Cookie 설정
+      const response = NextResponse.json({
+        success: true,
+        starId: newStarId,
+        wish: {
+          id: wish.id,
+          content: wish.content,
+          createdAt: wish.createdAt.toISOString().slice(0, 10),
         },
       });
-      resolvedStarId = newStar.id;
-    } else {
-      // starId 전달 시 존재 여부 확인
-      const exists = await prisma.dtStar.findUnique({ where: { id: resolvedStarId } });
-      if (!exists) {
+
+      response.cookies.set(GUEST_TOKEN_COOKIE_NAME, tokenForCookie, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: GUEST_TOKEN_MAX_AGE_SECONDS,
+      });
+
+      return response;
+    }
+
+    // starId 전달 시 소유권 확인 (OWN-005)
+    const token = req.cookies.get(GUEST_TOKEN_COOKIE_NAME)?.value;
+    const guard = await verifyStarOwnership(starId, token);
+    if (!guard.ok) {
+      if (guard.reason === "star_not_found") {
         return NextResponse.json({ error: "star not found" }, { status: 404 });
       }
+      return NextResponse.json({ error: "forbidden" }, { status: 403 });
     }
 
     const wish = await prisma.dtWish.create({
       data: {
         id: crypto.randomUUID(),
-        starId: resolvedStarId,
+        starId,
         content: content.trim(),
       },
     });
 
     // 첫 소원일 때만 Day 0 항해기록 자동 생성 (중복 방지)
-    const wishCount = await prisma.dtWish.count({ where: { starId: resolvedStarId } });
+    const wishCount = await prisma.dtWish.count({ where: { starId } });
     if (wishCount === 1) {
       await prisma.dtJournal.create({
         data: {
           id: crypto.randomUUID(),
-          starId: resolvedStarId,
-          emotion: "믿고 싶어졌어요",
-          helpTag: "연결",               // 유효값: 위로|결심|쉼|연결|실행
-          growthLine: "조금 가벼워졌어요", // 유효값 3종 중 하나
+          starId,
+          ...DAY_ZERO_JOURNAL,
         },
       });
     }
 
     return NextResponse.json({
       success: true,
-      starId: resolvedStarId,
+      starId,
       wish: {
         id: wish.id,
         content: wish.content,

@@ -15,6 +15,16 @@ services:
         fromDatabase:
           name: sowon-dream-plaza-db
           property: connectionString
+      # Cloudflare R2 — 사진 스토리지 (private bucket, Phase A Safety)
+      # 실제 값은 Render 대시보드 Environment에서 수동 설정
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET_NAME
+        sync: false
 
 databases:
   - name: sowon-dream-plaza-db
