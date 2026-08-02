@@ -128,11 +128,21 @@ export default function CheckinPageContent() {
         return;
       }
 
-      const data: { success: boolean; starId: string } = await res.json();
+      const data: { success: boolean; starId: string; isResuming?: boolean } =
+        await res.json();
 
       // 별 ID를 localStorage에 저장 — 이후 /home에서 복귀 가능
       if (typeof window !== "undefined") {
         localStorage.setItem("dt_active_star_id", data.starId);
+      }
+
+      if (data.isResuming) {
+        // 기존 별 발견 — 현재 상태를 조회해 올바른 단계로 이동
+        setResumeStarId(data.starId);
+        setStatus("idle");
+        setIsInitializing(true);
+        fetchCheckinStatus(data.starId);
+        return;
       }
 
       setCompletedStarId(data.starId);
@@ -474,6 +484,19 @@ export default function CheckinPageContent() {
             ) : checkinStatus.status === "revealed" ? (
               // 이미 공개됨
               <>
+                {/* 재회 메시지 — ?starId= 재진입 또는 isResuming 경로일 때만 표시 */}
+                {resumeStarId !== null && completedStarId === null && (
+                  <div className="mb-6 text-center">
+                    <p className="text-sm font-medium text-[#9B87F5]/80">
+                      다시 만나서 반가워요.
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-gray-400">
+                      당신의 별은
+                      <br />
+                      여전히 빛나고 있습니다.
+                    </p>
+                  </div>
+                )}
                 <p
                   className="text-4xl"
                   style={{ filter: "drop-shadow(0 0 14px rgba(155,135,245,0.55))" }}

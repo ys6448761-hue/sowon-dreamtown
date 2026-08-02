@@ -101,6 +101,50 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const existingToken = req.cookies.get(GUEST_TOKEN_COOKIE_NAME)?.value;
+
+    // ── Deduplication guard ──────────────────────────────────────────────────
+    // 동일 GuestIdentity에 DtStar가 이미 존재하면 R2 업로드 없이 기존 별을 반환한다.
+    // 선택 기준: createdAt DESC 첫 번째 — /api/dt/me/star 와 동일 (DT-MVP-001).
+    if (existingToken !== undefined) {
+      const tokenHash = hashGuestToken(existingToken);
+      const existingIdentity = await prisma.dtGuestIdentity.findUnique({
+        where: { tokenHash },
+      });
+      if (existingIdentity && existingIdentity.expiresAt > new Date()) {
+        const existingStar = await prisma.dtStar.findFirst({
+          where: { guestIdentityId: existingIdentity.id },
+          orderBy: { createdAt: "desc" },
+          select: { id: true },
+        });
+        if (existingStar) {
+          await prisma.dtGuestIdentity.update({
+            where: { id: existingIdentity.id },
+            data: {
+              lastUsedAt: new Date(),
+              expiresAt: calculateGuestIdentityExpiry(new Date()),
+            },
+          });
+          logCheckinEvent({ event: "checkin_resumed", starId: existingStar.id, requestId });
+
+          const resumeResponse = NextResponse.json({
+            success: true,
+            starId: existingStar.id,
+            isResuming: true,
+          });
+          resumeResponse.cookies.set(GUEST_TOKEN_COOKIE_NAME, existingToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/",
+            maxAge: GUEST_TOKEN_MAX_AGE_SECONDS,
+          });
+          return resumeResponse;
+        }
+      }
+    }
+
+    // ── 신규 별 생성 ─────────────────────────────────────────────────────────
     // starId를 트랜잭션 전에 결정 → R2 object key에 사용
     const newStarId = crypto.randomUUID();
     const fileId = crypto.randomUUID();
@@ -111,8 +155,6 @@ export async function POST(req: NextRequest) {
     // DB 실패 시 R2에 고아 객체가 남을 수 있으나 파일럿 규모(20인)에서 수용 가능.
     await uploadToR2(photoKey, buffer, photo.type);
     logCheckinEvent({ event: "portrait_uploaded", requestId });
-
-    const existingToken = req.cookies.get(GUEST_TOKEN_COOKIE_NAME)?.value;
 
     let starId: string;
     let tokenForCookie: string;

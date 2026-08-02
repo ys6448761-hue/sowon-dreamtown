@@ -13,7 +13,8 @@ type CheckinEvent =
   | "star_created"
   | "wish_image_generation_started"
   | "wish_image_generation_completed"
-  | "checkin_completed";
+  | "checkin_completed"
+  | "checkin_resumed";
 
 interface CheckinEventPayload {
   event: CheckinEvent;
