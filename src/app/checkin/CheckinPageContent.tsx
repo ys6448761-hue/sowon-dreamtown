@@ -193,7 +193,7 @@ export default function CheckinPageContent() {
               DreamTown Check-in
             </h1>
             <p className="mt-5 text-base leading-relaxed text-gray-600">
-              환영합니다, 소원이님.
+              당신의 별씨앗이 기다리고 있어요.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-gray-400">
               별들의 고향에 도착하셨습니다.
@@ -403,13 +403,16 @@ export default function CheckinPageContent() {
           <section className="text-center">
             <p
               className="text-4xl"
-              style={{ filter: "drop-shadow(0 0 14px rgba(155,135,245,0.55))" }}
+              style={{
+                filter: "drop-shadow(0 0 14px rgba(155,135,245,0.55))",
+                animation: "starBirth 0.8s ease forwards",
+              }}
               aria-hidden="true"
             >
               ★
             </p>
             <h1 className="mt-5 text-lg font-semibold text-gray-800">
-              소원이님의 별이
+              {trimName}님의 별이
               <br />
               태어났습니다.
             </h1>
@@ -430,7 +433,14 @@ export default function CheckinPageContent() {
               </p>
             </div>
 
-            <div className="mt-6 space-y-3">
+            <div
+              className="mt-6 space-y-3"
+              style={{
+                opacity: 0,
+                animation: "fadeIn 0.8s ease forwards",
+                animationDelay: "2s",
+              }}
+            >
               <button
                 onClick={() => {
                   if (completedStarId) {
@@ -447,6 +457,9 @@ export default function CheckinPageContent() {
               >
                 별빛항로 안내 보기
               </button>
+              <p className="pt-3 text-xs text-center text-gray-300">
+                오늘, 미소를 품은 소원이가 되었습니다.
+              </p>
             </div>
           </section>
         )}
@@ -507,6 +520,9 @@ export default function CheckinPageContent() {
                   >
                     별빛항로 안내 보기
                   </button>
+                  <p className="pt-3 text-xs text-center text-gray-300">
+                    오늘, 미소를 품은 소원이가 되었습니다.
+                  </p>
                 </div>
               </>
             ) : (
