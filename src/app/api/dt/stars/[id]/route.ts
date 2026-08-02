@@ -5,6 +5,17 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { toKst } from "@/lib/kst";
+
+// KST 날짜 기준 D+N 계산. 생성일 당일 = D+1.
+function calcDayCount(createdAt: Date): number {
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const kstNow = toKst(new Date());
+  const kstCreated = toKst(createdAt);
+  const nowMidnight = Date.UTC(kstNow.getFullYear(), kstNow.getMonth(), kstNow.getDate());
+  const createdMidnight = Date.UTC(kstCreated.getFullYear(), kstCreated.getMonth(), kstCreated.getDate());
+  return Math.max(1, Math.floor((nowMidnight - createdMidnight) / msPerDay) + 1);
+}
 
 export async function GET(
   _req: NextRequest,
@@ -29,7 +40,7 @@ export async function GET(
       id: star.id,
       starName: star.starName,
       createdAt: star.createdAt.toISOString().slice(0, 10),
-      dayCount: star.dayCount,
+      dayCount: calcDayCount(star.createdAt),
       starStage: star.starStage,
       currentWish: currentWish ?? null,
     });

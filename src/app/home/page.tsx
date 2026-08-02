@@ -63,7 +63,7 @@ const MOCK_STAR: Star = {
   id: "star_1",
   starName: "작은 빛의 시작",
   createdAt: "2026-03-20",
-  dayCount: 7,
+  dayCount: 1,
   starStage: 2,
   currentWish: { id: "wish_10", content: "조금 더 나를 믿고 싶어요" },
 };
