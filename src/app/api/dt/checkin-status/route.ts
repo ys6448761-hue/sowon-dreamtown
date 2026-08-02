@@ -7,12 +7,13 @@
  * 응답: {
  *   status: 'no_data' | 'photo_missing' | 'wish_missing' | 'ready' | 'revealed',
  *   visitorName: string | null,
- *   photoUrl: string | null,
  *   wishContent: string | null,
  *   wishImageUrl: string | null,
  *   wishImageStatus: 'pending' | 'generating' | 'ready' | 'failed' | 'revealed',
  *   wishImageRevealedAt: string (ISO) | null
  * }
+ *
+ * 주의: photoUrl은 개인정보 보호를 위해 응답에서 제외 (Phase A Safety, S4)
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -37,7 +38,7 @@ export async function GET(req: NextRequest) {
       select: {
         id: true,
         visitorName: true,
-        photoUrl: true,
+        photoUrl: true, // 상태 판단에만 사용 — 응답에 미포함 (S4)
         wishImageUrl: true,
         wishImageStatus: true,
         wishImageRevealedAt: true,
@@ -76,7 +77,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       status,
       visitorName: star.visitorName,
-      photoUrl: star.photoUrl,
+      // photoUrl 제외 — 개인 얼굴 사진 key를 소유 확인 없이 반환하지 않음 (S4)
       wishContent: latestWish?.content ?? null,
       wishImageUrl: star.wishImageUrl,
       wishImageStatus: star.wishImageStatus,

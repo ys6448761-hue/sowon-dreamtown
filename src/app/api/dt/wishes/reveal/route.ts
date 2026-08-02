@@ -9,11 +9,17 @@
  * - WishArt 생성 없음
  * - 이미지는 할당된 상태로 존재
  * - 공개 시간 기록만 필요
+ *
+ * 보안 (S3): dt_guest_token 쿠키 → GuestIdentity → Star 소유 확인 필수
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { serverError, makeRequestId } from "@/lib/apiError";
+import {
+  GUEST_TOKEN_COOKIE_NAME,
+  hashGuestToken,
+} from "@/lib/utils/guest-identity";
 
 export async function PATCH(req: NextRequest) {
   const requestId = makeRequestId();
@@ -37,16 +43,41 @@ export async function PATCH(req: NextRequest) {
     );
   }
 
+  // 소유권 검증 (S3): 쿠키 → GuestIdentity → star.guestIdentityId 일치 확인
+  const cookieToken = req.cookies.get(GUEST_TOKEN_COOKIE_NAME)?.value;
+  if (!cookieToken) {
+    return NextResponse.json(
+      { error: "unauthorized", request_id: requestId },
+      { status: 401 }
+    );
+  }
+
   try {
+    const tokenHash = hashGuestToken(cookieToken);
+    const identity = await prisma.dtGuestIdentity.findUnique({ where: { tokenHash } });
+    if (!identity) {
+      return NextResponse.json(
+        { error: "unauthorized", request_id: requestId },
+        { status: 401 }
+      );
+    }
+
     const star = await prisma.dtStar.findUnique({
       where: { id: starId },
-      select: { id: true, wishImageUrl: true, wishImageRevealedAt: true },
+      select: { id: true, wishImageUrl: true, wishImageRevealedAt: true, guestIdentityId: true },
     });
 
     if (!star) {
       return NextResponse.json(
         { error: "star not found", request_id: requestId },
         { status: 404 }
+      );
+    }
+
+    if (star.guestIdentityId !== identity.id) {
+      return NextResponse.json(
+        { error: "forbidden", request_id: requestId },
+        { status: 403 }
       );
     }
 
