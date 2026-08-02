@@ -28,7 +28,7 @@ services:
 
 databases:
   - name: sowon-dream-plaza-db
-    plan: free
+    plan: basic-256mb
     region: oregon
     databaseName: sowon_plaza
     user: sowon_plaza_admin
