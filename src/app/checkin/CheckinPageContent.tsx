@@ -44,21 +44,35 @@ export default function CheckinPageContent() {
   // Phase A: Resume state
   const [resumeStarId, setResumeStarId] = useState<string | null>(null);
   const [checkinStatus, setCheckinStatus] = useState<CheckinStatus | null>(null);
-  const [isInitializing, setIsInitializing] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const trimName = name.trim();
   const trimPhone = phone.trim();
   const trimWish = wish.trim();
 
-  // Phase A: Auto-initialize if starId present
+  // Phase A: Auto-initialize — ?starId= URL 우선, 없으면 쿠키로 기존 별 조회
   useEffect(() => {
     const starId = searchParams.get("starId");
     if (starId) {
       setResumeStarId(starId);
-      setIsInitializing(true);
       fetchCheckinStatus(starId);
+      return;
     }
+
+    // ?starId= 없음 — dt_guest_token 쿠키 기반으로 기존 별 조회 (서버에서 쿠키 읽음)
+    // 기존 /api/dt/me/star 재사용. 신규 사용자(401)는 Step 1으로 자연스럽게 진입.
+    fetch("/api/dt/me/star")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { ok: boolean; star: { id: string } } | null) => {
+        if (data?.ok && data.star?.id) {
+          setResumeStarId(data.star.id);
+          fetchCheckinStatus(data.star.id);
+        } else {
+          setIsInitializing(false);
+        }
+      })
+      .catch(() => setIsInitializing(false));
   }, [searchParams]);
 
   async function fetchCheckinStatus(starId: string) {
@@ -195,8 +209,15 @@ export default function CheckinPageContent() {
     <main className="flex min-h-[85vh] flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm">
 
+        {/* 초기 로딩 — 쿠키 확인 중 (isInitializing=true && step===1) */}
+        {isInitializing && step === 1 && (
+          <div className="py-12 text-center">
+            <p className="text-sm text-gray-400">…</p>
+          </div>
+        )}
+
         {/* Step 1: 환영 */}
-        {step === 1 && (
+        {step === 1 && !isInitializing && (
           <section className="text-center">
             <p className="text-3xl" aria-hidden="true">✦</p>
             <h1 className="mt-4 text-lg font-semibold text-gray-800">
