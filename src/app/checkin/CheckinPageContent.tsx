@@ -41,6 +41,8 @@ export default function CheckinPageContent() {
   const [errorMsg, setErrorMsg] = useState("");
   const [completedStarId, setCompletedStarId] = useState<string | null>(null);
 
+  const [showImmediateConfirm, setShowImmediateConfirm] = useState(false);
+
   // Phase A: Resume state
   const [resumeStarId, setResumeStarId] = useState<string | null>(null);
   const [checkinStatus, setCheckinStatus] = useState<CheckinStatus | null>(null);
@@ -474,11 +476,7 @@ export default function CheckinPageContent() {
               }}
             >
               <button
-                onClick={() => {
-                  if (completedStarId) {
-                    router.push(`/home?starId=${completedStarId}`);
-                  }
-                }}
+                onClick={() => router.push("/my-star")}
                 className="w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white"
               >
                 내 소원별 만나기
@@ -571,7 +569,7 @@ export default function CheckinPageContent() {
                 </div>
               </>
             ) : (
-              // 준비됨 — 공개 대기
+              // 준비됨 — 공개 선택
               <>
                 <p
                   className="text-4xl"
@@ -581,34 +579,65 @@ export default function CheckinPageContent() {
                   ⭐
                 </p>
                 <h1 className="mt-5 text-lg font-semibold text-gray-800">
-                  {trimName || "소원이"}님의<br />
-                  소원그림이 준비되었습니다.
+                  당신의 소원그림이<br />준비되었습니다
                 </h1>
-                <p className="mt-4 text-sm leading-relaxed text-gray-400">
-                  하멜등대의 별빛 속에서<br />
-                  당신의 소원이 빛나고 있습니다.
-                </p>
 
-                {status === "error" && (
-                  <div className="mt-4 rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-center">
-                    <p className="text-sm text-amber-700">{errorMsg}</p>
-                  </div>
+                {!showImmediateConfirm ? (
+                  <>
+                    <p className="mt-4 text-sm leading-relaxed text-gray-400">
+                      여수의 밤이 깊어질수록<br />
+                      당신의 소원그림은 별빛을 머금습니다.<br />
+                      <br />
+                      하멜등대에서 처음 만나면<br />
+                      더 오래 기억될 거예요.
+                    </p>
+
+                    <div className="mt-8 space-y-3">
+                      <button
+                        onClick={() => router.push("/my-star")}
+                        className="w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white"
+                      >
+                        하멜등대에서 만날게요
+                      </button>
+                      <button
+                        onClick={() => setShowImmediateConfirm(true)}
+                        className="w-full rounded-full border border-[#9B87F5]/30 py-3 text-sm text-[#9B87F5]/70 hover:bg-[#9B87F5]/5 transition-colors"
+                      >
+                        그래도 지금 볼래요
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="mt-4 text-sm leading-relaxed text-gray-400">
+                      지금 만나도 괜찮아요.<br />
+                      다만 하멜등대에서의 첫 만남을 추천드려요.
+                    </p>
+
+                    {status === "error" && (
+                      <div className="mt-4 rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-center">
+                        <p className="text-sm text-amber-700">{errorMsg}</p>
+                      </div>
+                    )}
+
+                    <div className="mt-8 space-y-3">
+                      <button
+                        onClick={handleReveal}
+                        disabled={status === "loading"}
+                        className="w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white disabled:opacity-40"
+                      >
+                        {status === "loading" ? "공개 중…" : "지금 공개하기"}
+                      </button>
+                      <button
+                        onClick={() => { setShowImmediateConfirm(false); setErrorMsg(""); setStatus("idle"); }}
+                        disabled={status === "loading"}
+                        className="w-full rounded-full border border-[#9B87F5]/30 py-3 text-sm text-[#9B87F5]/70 hover:bg-[#9B87F5]/5 transition-colors disabled:opacity-40"
+                      >
+                        하멜등대에서 기다리기
+                      </button>
+                    </div>
+                  </>
                 )}
-
-                <button
-                  onClick={handleReveal}
-                  disabled={status === "loading"}
-                  className="mt-8 w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white disabled:opacity-40"
-                >
-                  {status === "loading" ? "공개 중…" : "소원그림 공개하기"}
-                </button>
-
-                <button
-                  onClick={() => router.push("/dreamtown")}
-                  className="mt-3 w-full py-2 text-xs text-gray-300 hover:text-gray-400 transition-colors"
-                >
-                  별빛항로 안내 보기
-                </button>
               </>
             )}
           </section>

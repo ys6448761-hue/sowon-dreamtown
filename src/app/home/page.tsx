@@ -509,7 +509,7 @@ function WishTab({ wishes }: { wishes: WishesData | null }) {
       <div className="py-14 text-center">
         <p className="mb-5 text-sm text-gray-400">아직 소원이 없어요.</p>
         <Link
-          href="/plaza/new"
+          href="/checkin"
           className="inline-block rounded-full bg-[#9B87F5] px-6 py-2.5 text-sm text-white"
         >
           첫 소원 세우기
@@ -533,7 +533,7 @@ function WishTab({ wishes }: { wishes: WishesData | null }) {
 
       {/* 새 소원 버튼 */}
       <Link
-        href="/plaza/new"
+        href="/checkin"
         className="block rounded-xl border border-dashed border-[#9B87F5]/40 px-4 py-4 text-center text-sm text-[#9B87F5]/70 hover:bg-[#9B87F5]/5"
       >
         + 새 소원 남기기
