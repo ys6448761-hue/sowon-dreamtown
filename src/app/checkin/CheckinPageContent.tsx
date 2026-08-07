@@ -102,8 +102,9 @@ export default function CheckinPageContent() {
         setStep(3);
         break;
       case "wish_missing":
-        // photoUrl은 보안상 API에서 반환하지 않으므로 미리보기 없이 진입
-        setStep(4);
+        // 사진은 이미 저장되어 있으나 미리보기 불가(보안). Step 3부터 재진입해 사진 재선택 후 소원 작성.
+        if (status.visitorName) setName(status.visitorName);
+        setStep(3);
         break;
       case "ready":
       case "revealed":
