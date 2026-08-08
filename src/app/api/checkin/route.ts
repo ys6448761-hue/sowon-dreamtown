@@ -115,18 +115,33 @@ export async function POST(req: NextRequest) {
         const existingStar = await prisma.dtStar.findFirst({
           where: { guestIdentityId: existingIdentity.id },
           orderBy: { createdAt: "desc" },
-          select: { id: true, wishImageStatus: true, wishImageUrl: true },
+          select: {
+            id: true,
+            wishImageStatus: true,
+            wishImageUrl: true,
+            photoUrl: true,
+            _count: { select: { wishes: true } },
+          },
         });
         if (existingStar) {
-          // 완료 상태: 동일 GuestIdentity 아래 신규 별 생성 허용
+          // AI 완료 상태: 동일 GuestIdentity 아래 신규 별 생성 허용
           // ready / revealed / Phase A 정적 이미지 → fall through to new star creation
-          // pending / generating / failed → resume (기존 starId 유지)
-          const isComplete =
+          const isAiComplete =
             existingStar.wishImageStatus === "ready" ||
             existingStar.wishImageStatus === "revealed" ||
             existingStar.wishImageUrl?.startsWith("/images/");
 
-          if (!isComplete) {
+          // 실제 재개 가능 조건:
+          // 1. AI가 아직 완료되지 않았고 (pending / generating / failed)
+          // 2. photoUrl이 있고 (R2 업로드 + DB 트랜잭션이 실제로 완료된 별)
+          // 3. DtWish가 존재함 (소원이 실제로 저장된 별)
+          // 위 조건 미충족 시 zombie star로 간주 → 신규 별 생성 허용
+          const shouldResume =
+            !isAiComplete &&
+            !!existingStar.photoUrl &&
+            existingStar._count.wishes > 0;
+
+          if (shouldResume) {
             await prisma.dtGuestIdentity.update({
               where: { id: existingIdentity.id },
               data: {
