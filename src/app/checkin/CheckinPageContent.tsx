@@ -117,13 +117,13 @@ export default function CheckinPageContent() {
         setStep(1);
         break;
       case "photo_missing":
-        if (status.visitorName) setName(status.visitorName);
-        setStep(3);
-        break;
       case "wish_missing":
-        // 사진은 이미 저장되어 있으나 미리보기 불가(보안). Step 3부터 재진입해 사진 재선택 후 소원 작성.
-        if (status.visitorName) setName(status.visitorName);
-        setStep(3);
+        if (status.visitorName) {
+          setName(status.visitorName);
+          setStep(3);
+        } else {
+          setStep(2);
+        }
         break;
       case "ready":
       case "revealed":
