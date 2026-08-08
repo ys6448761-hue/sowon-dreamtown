@@ -11,7 +11,6 @@ export async function generateWishartFromPhoto(
   formData.append("prompt", prompt);
   formData.append("size", "1024x1536");
   formData.append("quality", "high");
-  formData.append("response_format", "b64_json");
   formData.append("image", new Blob([photoBuffer], { type: mimeType }), "photo.jpg");
 
   const res = await fetch("https://api.openai.com/v1/images/edits", {
