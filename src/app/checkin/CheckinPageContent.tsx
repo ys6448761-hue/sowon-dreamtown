@@ -142,7 +142,24 @@ export default function CheckinPageContent() {
   }
 
   async function handleSubmit() {
-    if (!trimName || !photoFile || !trimWish || status === "loading") {
+    if (status === "loading") return;
+
+    if (!trimName) {
+      setErrorMsg("이름 정보가 사라졌어요. 이름부터 다시 확인해 주세요.");
+      setStatus("error");
+      setStep(2);
+      return;
+    }
+    if (!photoFile) {
+      setErrorMsg("사진을 다시 선택해 주세요.");
+      setStatus("error");
+      setStep(3);
+      return;
+    }
+    if (!trimWish) {
+      setErrorMsg("소원을 다시 확인해 주세요.");
+      setStatus("error");
+      setStep(4);
       return;
     }
     setStatus("loading");
@@ -276,7 +293,10 @@ export default function CheckinPageContent() {
 
             <input
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                if (status === "error") { setStatus("idle"); setErrorMsg(""); }
+              }}
               placeholder="이름을 입력해주세요"
               maxLength={NAME_MAX}
               className="mt-6 w-full rounded-xl border border-[#9B87F5]/30 bg-white px-4 py-3 text-sm text-gray-800 placeholder-gray-300 outline-none focus:border-[#9B87F5] focus:ring-1 focus:ring-[#9B87F5]/40"
@@ -295,6 +315,10 @@ export default function CheckinPageContent() {
             <p className="mt-3 text-xs leading-relaxed text-gray-300 text-center">
               연락처는 DreamTown 운영에만 사용되며 외부에 제공되지 않습니다.
             </p>
+
+            {status === "error" && errorMsg && (
+              <p className="mt-3 text-xs text-center text-amber-500">{errorMsg}</p>
+            )}
 
             <button
               onClick={() => setStep(3)}
@@ -350,8 +374,20 @@ export default function CheckinPageContent() {
               </p>
             </div>
 
+            {status === "error" && errorMsg && (
+              <p className="mt-4 text-xs text-center text-amber-500">{errorMsg}</p>
+            )}
+
             <button
-              onClick={() => setStep(4)}
+              onClick={() => {
+                if (!trimName) {
+                  setErrorMsg("이름 정보가 사라졌어요. 이름부터 다시 확인해 주세요.");
+                  setStatus("error");
+                  setStep(2);
+                  return;
+                }
+                setStep(4);
+              }}
               disabled={!photoFile}
               className="mt-8 w-full rounded-full bg-[#9B87F5] py-3 text-sm font-medium text-white disabled:opacity-40"
             >
@@ -389,7 +425,21 @@ export default function CheckinPageContent() {
             </p>
 
             <button
-              onClick={() => setStep(5)}
+              onClick={() => {
+                if (!trimName) {
+                  setErrorMsg("이름 정보가 사라졌어요. 이름부터 다시 확인해 주세요.");
+                  setStatus("error");
+                  setStep(2);
+                  return;
+                }
+                if (!photoFile) {
+                  setErrorMsg("사진을 다시 선택해 주세요.");
+                  setStatus("error");
+                  setStep(3);
+                  return;
+                }
+                setStep(5);
+              }}
               disabled={trimWish.length < 2}
               className="mt-5 w-full rounded-full bg-[#9B87F5] py-3 text-sm font-medium text-white disabled:opacity-40"
             >
