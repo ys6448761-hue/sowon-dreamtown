@@ -141,7 +141,24 @@ export default function CheckinPageContent() {
   }
 
   async function handleSubmit() {
-    if (!trimName || !photoFile || !trimWish || status === "loading") return;
+    console.log("[CHECKIN_SUBMIT_CLICK]", {
+      step,
+      hasPhotoFile: !!photoFile,
+      photoFileName: photoFile?.name ?? null,
+      hasName: !!trimName,
+      hasWish: !!trimWish,
+      status,
+    });
+
+    if (!trimName || !photoFile || !trimWish || status === "loading") {
+      console.warn("[CHECKIN_SUBMIT_BLOCKED]", {
+        missingName: !trimName,
+        missingPhoto: !photoFile,
+        missingWish: !trimWish,
+        loading: status === "loading",
+      });
+      return;
+    }
     setStatus("loading");
     setErrorMsg("");
 
