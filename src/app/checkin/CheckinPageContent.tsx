@@ -332,70 +332,92 @@ export default function CheckinPageContent() {
           </section>
         )}
 
-        {/* Step 3: 정면사진 업로드 */}
+        {/* Step 3: 정면사진 선택 */}
         {step === 3 && (
           <section>
-            {status === "error" && errorMsg && (
-              <div className="mb-6 rounded-xl border border-amber-100 bg-amber-50 px-4 py-4">
-                <p className="text-sm leading-relaxed text-amber-700 whitespace-pre-line">{errorMsg}</p>
-              </div>
-            )}
-            <h2 className="text-center text-lg font-semibold text-gray-800">
-              정면사진 등록
-            </h2>
-            <p className="mt-2 text-center text-sm leading-relaxed text-gray-400">
-              당신의 가장 빛나는 모습을 담기 위해
-              <br />
-              얼굴이 잘 보이는 정면사진 한 장을 등록해 주세요.
-            </p>
+            {!photoFile ? (
+              /* State A — 사진 없음: 선택 유도 */
+              <>
+                {status === "error" && errorMsg && (
+                  <div className="mb-6 rounded-xl border border-amber-100 bg-amber-50 px-4 py-4">
+                    <p className="text-sm leading-relaxed text-amber-700 whitespace-pre-line">{errorMsg}</p>
+                  </div>
+                )}
+                <h2 className="text-center text-lg font-semibold text-gray-800">
+                  정면사진 선택
+                </h2>
+                <p className="mt-2 text-center text-sm leading-relaxed text-gray-400">
+                  소원그림에 사용할
+                  <br />
+                  정면사진 한 장을 선택해 주세요.
+                </p>
 
-            <div className="mt-6 flex flex-col items-center">
-              {photoPreview ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={photoPreview}
-                  alt="정면사진 미리보기"
-                  className="h-44 w-44 rounded-2xl object-cover shadow-md"
-                />
-              ) : (
-                <div className="flex h-44 w-44 items-center justify-center rounded-2xl border border-dashed border-[#9B87F5]/40 text-xs text-gray-300">
-                  사진을 선택해주세요
+                <div className="mt-6 flex flex-col items-center">
+                  <div className="flex h-44 w-44 items-center justify-center rounded-2xl border border-dashed border-[#9B87F5]/40 text-xs text-gray-300">
+                    사진을 선택해주세요
+                  </div>
+
+                  <label className="mt-5 cursor-pointer rounded-full bg-[#9B87F5] px-6 py-2.5 text-sm font-medium text-white hover:bg-[#8B77E5] transition-colors">
+                    사진 선택 또는 촬영
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      capture="user"
+                      onChange={handlePhotoChange}
+                      className="sr-only"
+                    />
+                  </label>
+
+                  <p className="mt-3 text-xs text-gray-300 text-center">
+                    모자나 선글라스가 없는 밝은 사진을 권장합니다.
+                  </p>
                 </div>
-              )}
+              </>
+            ) : (
+              /* State B — 사진 있음: 선택 완료 확인 */
+              <>
+                <div className="mb-6 text-center">
+                  <p className="text-sm font-medium text-[#9B87F5]">사진 선택 완료 ✓</p>
+                  <p className="mt-1 text-xs text-gray-400">이 사진으로 소원그림을 준비할게요.</p>
+                </div>
 
-              {/* 카메라 촬영 + 갤러리 선택 모두 지원 */}
-              <label className="mt-5 cursor-pointer rounded-full border border-[#9B87F5]/40 px-5 py-2 text-sm text-[#9B87F5] hover:bg-[#9B87F5]/5 transition-colors">
-                {photoFile ? "다시 선택하기" : "사진 선택 또는 촬영"}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  capture="user"
-                  onChange={handlePhotoChange}
-                  className="sr-only"
-                />
-              </label>
+                <div className="flex flex-col items-center">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={photoPreview ?? ""}
+                    alt="정면사진 미리보기"
+                    className="h-44 w-44 rounded-2xl object-cover shadow-md"
+                  />
 
-              <p className="mt-3 text-xs text-gray-300 text-center">
-                모자나 선글라스가 없는 밝은 사진을 권장합니다.
-              </p>
-            </div>
+                  <label className="mt-4 cursor-pointer text-sm text-gray-300 hover:text-gray-400 transition-colors">
+                    다시 선택하기
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      capture="user"
+                      onChange={handlePhotoChange}
+                      className="sr-only"
+                    />
+                  </label>
+                </div>
 
-            <button
-              onClick={() => {
-                if (!trimName) {
-                  setErrorMsg("이름 정보가 확인되지 않았어요.\n이름만 다시 입력하면 계속 진행할 수 있어요.");
-                  setStatus("error");
-                  setStep(2);
-                  return;
-                }
-                setStep(4);
-              }}
-              disabled={!photoFile}
-              className="mt-8 w-full rounded-full bg-[#9B87F5] py-3 text-sm font-medium text-white disabled:opacity-40"
-            >
-              {status === "error" ? "다시 등록하고 계속하기" : "다음"}
-            </button>
+                <button
+                  onClick={() => {
+                    if (!trimName) {
+                      setErrorMsg("이름 정보가 확인되지 않았어요.\n이름만 다시 입력하면 계속 진행할 수 있어요.");
+                      setStatus("error");
+                      setStep(2);
+                      return;
+                    }
+                    setStep(4);
+                  }}
+                  className="mt-8 w-full rounded-full bg-[#9B87F5] py-3 text-sm font-medium text-white"
+                >
+                  이 사진으로 계속하기
+                </button>
+              </>
+            )}
           </section>
         )}
 
