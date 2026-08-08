@@ -50,6 +50,21 @@ export default function MyStarPage() {
       .catch(() => {/* silent fail — fallback to default UI */});
   }, [starId, router]);
 
+  // 소원그림 생성 중 폴링
+  useEffect(() => {
+    const ws = starStatus?.wishImageStatus;
+    if (!starId || (ws !== "pending" && ws !== "generating")) return;
+
+    const id = setInterval(() => {
+      fetch(`/api/dt/checkin-status?starId=${starId}`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data: StarStatus | null) => { if (data) setStarStatus(data); })
+        .catch(() => {});
+    }, 3000);
+
+    return () => clearInterval(id);
+  }, [starId, starStatus?.wishImageStatus]);
+
   async function handleReveal() {
     if (!starId || isRevealing) return;
     setIsRevealing(true);
@@ -62,7 +77,12 @@ export default function MyStarPage() {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setRevealError((data as { error?: string }).error ?? "공개 처리 중 오류가 발생했습니다.");
+        const typed = data as { error?: string; wishImageStatus?: string };
+        if (res.status === 409) {
+          setRevealError("소원그림이 아직 준비되지 않았습니다. 잠시 후 다시 시도해 주세요.");
+        } else {
+          setRevealError(typed.error ?? "공개 처리 중 오류가 발생했습니다.");
+        }
         return;
       }
       const data = await res.json();
@@ -87,7 +107,10 @@ export default function MyStarPage() {
   if (!starId) return null;
 
   const isRevealed = starStatus?.status === "revealed";
-  const isReady = starStatus?.status === "ready";
+  const wishImageStatus = starStatus?.wishImageStatus;
+  const isGenerating = starStatus?.status === "ready" && (wishImageStatus === "pending" || wishImageStatus === "generating");
+  const isFailed = starStatus?.status === "ready" && wishImageStatus === "failed";
+  const isReady = starStatus?.status === "ready" && !isGenerating && !isFailed;
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-[#0D1B2A] px-6">
@@ -125,6 +148,58 @@ export default function MyStarPage() {
               className="w-full rounded-full border border-white/15 py-3 text-sm text-white/50 hover:text-white/70 transition-colors"
             >
               새 별 만들기
+            </button>
+          </div>
+        </div>
+      ) : isGenerating ? (
+        /* ── 소원그림 생성 중 ── */
+        <div className="w-full max-w-xs text-center">
+          <div className="mb-6 text-3xl animate-pulse" aria-hidden="true">✨</div>
+          <p className="text-sm font-medium text-white/70">소원그림을 그리는 중이에요</p>
+          <p className="mt-2 text-xs text-white/40">완성되면 여기서 만날 수 있어요.</p>
+          <div className="mt-6 flex justify-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-[#9B87F5] animate-bounce [animation-delay:0ms]" />
+            <span className="h-2 w-2 rounded-full bg-[#9B87F5] animate-bounce [animation-delay:150ms]" />
+            <span className="h-2 w-2 rounded-full bg-[#9B87F5] animate-bounce [animation-delay:300ms]" />
+          </div>
+        </div>
+      ) : isFailed ? (
+        /* ── 소원그림 생성 실패 ── */
+        <div className="w-full max-w-xs text-center">
+          <p className="text-3xl mb-5" aria-hidden="true">🌙</p>
+          <p className="text-sm font-medium text-white/70">그림을 완성하지 못했어요</p>
+          <p className="mt-2 text-xs text-white/40">다시 시도하거나 스태프에게 말씀해 주세요.</p>
+          {revealError && <p className="mt-3 text-xs text-amber-400">{revealError}</p>}
+          <div className="mt-6 space-y-3">
+            <button
+              onClick={async () => {
+                if (!starId || isRevealing) return;
+                setIsRevealing(true);
+                setRevealError("");
+                try {
+                  const res = await fetch("/api/dt/wishart/retry", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ starId }),
+                  });
+                  if (!res.ok) {
+                    const d = await res.json().catch(() => ({}));
+                    setRevealError((d as { error?: string }).error === "generation unavailable"
+                      ? "현재 그림 생성이 준비 중이에요. 스태프에게 문의해 주세요."
+                      : "다시 시도 중 오류가 발생했습니다.");
+                    return;
+                  }
+                  setStarStatus((prev) => prev ? { ...prev, wishImageStatus: "pending" } : prev);
+                } catch {
+                  setRevealError("네트워크 연결을 확인해 주세요.");
+                } finally {
+                  setIsRevealing(false);
+                }
+              }}
+              disabled={isRevealing}
+              className="w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white disabled:opacity-40"
+            >
+              {isRevealing ? "시도 중…" : "다시 시도하기"}
             </button>
           </div>
         </div>

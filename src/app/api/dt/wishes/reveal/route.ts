@@ -20,6 +20,7 @@ import {
   GUEST_TOKEN_COOKIE_NAME,
   hashGuestToken,
 } from "@/lib/utils/guest-identity";
+import { getSignedGetUrl } from "@/lib/r2";
 
 export async function PATCH(req: NextRequest) {
   const requestId = makeRequestId();
@@ -64,7 +65,7 @@ export async function PATCH(req: NextRequest) {
 
     const star = await prisma.dtStar.findUnique({
       where: { id: starId },
-      select: { id: true, wishImageUrl: true, wishImageRevealedAt: true, guestIdentityId: true },
+      select: { id: true, wishImageUrl: true, wishImageStatus: true, wishImageRevealedAt: true, guestIdentityId: true },
     });
 
     if (!star) {
@@ -81,13 +82,24 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
+    // 이미지가 아직 생성되지 않은 경우 공개 불가
+    if (star.wishImageStatus !== "ready") {
+      return NextResponse.json(
+        { error: "image not ready", wishImageStatus: star.wishImageStatus, request_id: requestId },
+        { status: 409 }
+      );
+    }
+
     // 이미 공개된 경우
     if (star.wishImageRevealedAt) {
+      const alreadyUrl = star.wishImageUrl?.startsWith("wishart/")
+        ? await getSignedGetUrl(star.wishImageUrl, 7 * 24 * 60 * 60)
+        : star.wishImageUrl;
       return NextResponse.json({
         success: true,
         starId,
         message: "already revealed",
-        wishImageUrl: star.wishImageUrl,
+        wishImageUrl: alreadyUrl,
         wishImageRevealedAt: star.wishImageRevealedAt.toISOString(),
       });
     }
@@ -95,7 +107,7 @@ export async function PATCH(req: NextRequest) {
     // 공개 처리
     const updated = await prisma.dtStar.update({
       where: { id: starId },
-      data: { wishImageRevealedAt: new Date() },
+      data: { wishImageRevealedAt: new Date(), wishImageStatus: "revealed" },
       select: {
         id: true,
         wishImageUrl: true,
@@ -103,10 +115,14 @@ export async function PATCH(req: NextRequest) {
       },
     });
 
+    const resolvedUrl = updated.wishImageUrl?.startsWith("wishart/")
+      ? await getSignedGetUrl(updated.wishImageUrl, 7 * 24 * 60 * 60)
+      : updated.wishImageUrl;
+
     return NextResponse.json({
       success: true,
       starId: updated.id,
-      wishImageUrl: updated.wishImageUrl,
+      wishImageUrl: resolvedUrl,
       wishImageRevealedAt: updated.wishImageRevealedAt!.toISOString(),
     });
   } catch (err) {

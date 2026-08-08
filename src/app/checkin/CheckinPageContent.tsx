@@ -77,6 +77,22 @@ export default function CheckinPageContent() {
       .catch(() => setIsInitializing(false));
   }, [searchParams]);
 
+  // 소원그림 생성 중 폴링 — wishImageStatus가 pending|generating인 동안 3초마다 재조회
+  useEffect(() => {
+    const isGenerating =
+      step === 7 &&
+      checkinStatus?.wishImageStatus !== undefined &&
+      (checkinStatus.wishImageStatus === "pending" || checkinStatus.wishImageStatus === "generating");
+
+    if (!isGenerating || !resumeStarId) return;
+
+    const id = setInterval(() => {
+      fetchCheckinStatus(resumeStarId);
+    }, 3000);
+
+    return () => clearInterval(id);
+  }, [step, checkinStatus?.wishImageStatus, resumeStarId]);
+
   async function fetchCheckinStatus(starId: string) {
     try {
       const res = await fetch(`/api/dt/checkin-status?starId=${starId}`);
@@ -566,6 +582,84 @@ export default function CheckinPageContent() {
                   <p className="pt-3 text-xs text-center text-gray-300">
                     오늘, 미소를 품은 소원이가 되었습니다.
                   </p>
+                </div>
+              </>
+            ) : checkinStatus?.wishImageStatus === "pending" || checkinStatus?.wishImageStatus === "generating" ? (
+              // 소원그림 생성 중
+              <>
+                <div
+                  className="text-4xl animate-pulse"
+                  aria-hidden="true"
+                >
+                  ✨
+                </div>
+                <h1 className="mt-5 text-lg font-semibold text-gray-800">
+                  소원그림을 그리는 중이에요
+                </h1>
+                <p className="mt-4 text-sm leading-relaxed text-gray-400">
+                  당신의 소원과 얼굴을 담아<br />
+                  세상에 하나뿐인 그림을 만들고 있어요.<br />
+                  <br />
+                  잠시 기다려 주세요.
+                </p>
+                <div className="mt-6 flex justify-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-[#9B87F5] animate-bounce [animation-delay:0ms]" />
+                  <span className="h-2 w-2 rounded-full bg-[#9B87F5] animate-bounce [animation-delay:150ms]" />
+                  <span className="h-2 w-2 rounded-full bg-[#9B87F5] animate-bounce [animation-delay:300ms]" />
+                </div>
+              </>
+            ) : checkinStatus?.wishImageStatus === "failed" ? (
+              // 소원그림 생성 실패
+              <>
+                <p className="text-4xl" aria-hidden="true">🌙</p>
+                <h1 className="mt-5 text-lg font-semibold text-gray-800">
+                  그림을 완성하지 못했어요
+                </h1>
+                <p className="mt-4 text-sm leading-relaxed text-gray-400">
+                  잠시 별빛이 닿지 않았나 봐요.<br />
+                  다시 시도하거나 스태프에게 말씀해 주세요.
+                </p>
+                {status === "error" && errorMsg && (
+                  <p className="mt-3 text-xs text-amber-600">{errorMsg}</p>
+                )}
+                <div className="mt-8 space-y-3">
+                  <button
+                    onClick={async () => {
+                      if (!resumeStarId || status === "loading") return;
+                      setStatus("loading");
+                      setErrorMsg("");
+                      try {
+                        const res = await fetch("/api/dt/wishart/retry", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ starId: resumeStarId }),
+                        });
+                        if (!res.ok) {
+                          const d = await res.json().catch(() => ({}));
+                          setErrorMsg((d as { error?: string }).error === "generation unavailable"
+                            ? "현재 그림 생성이 준비 중이에요. 스태프에게 문의해 주세요."
+                            : "다시 시도 중 오류가 발생했습니다.");
+                          setStatus("error");
+                          return;
+                        }
+                        setStatus("idle");
+                        setCheckinStatus((prev) => prev ? { ...prev, wishImageStatus: "pending" } : prev);
+                      } catch {
+                        setErrorMsg("네트워크 연결을 확인해 주세요.");
+                        setStatus("error");
+                      }
+                    }}
+                    disabled={status === "loading"}
+                    className="w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white disabled:opacity-40"
+                  >
+                    {status === "loading" ? "시도 중…" : "다시 시도하기"}
+                  </button>
+                  <button
+                    onClick={() => router.push("/my-star")}
+                    className="w-full rounded-full border border-[#9B87F5]/30 py-3 text-sm text-[#9B87F5]/70 hover:bg-[#9B87F5]/5 transition-colors"
+                  >
+                    내 소원별 보기
+                  </button>
                 </div>
               </>
             ) : (

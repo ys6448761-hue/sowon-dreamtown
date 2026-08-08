@@ -1,4 +1,5 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 function getR2Client(): S3Client {
   const accountId = process.env.R2_ACCOUNT_ID;
@@ -25,4 +26,27 @@ export async function uploadToR2(key: string, body: Buffer, contentType: string)
   if (!bucket) throw new Error("R2_BUCKET_NAME not configured");
   const client = getR2Client();
   await client.send(new PutObjectCommand({ Bucket: bucket, Key: key, Body: body, ContentType: contentType }));
+}
+
+export async function getSignedGetUrl(key: string, expirySeconds: number): Promise<string> {
+  const bucket = process.env.R2_BUCKET_NAME;
+  if (!bucket) throw new Error("R2_BUCKET_NAME not configured");
+  const client = getR2Client();
+  return getSignedUrl(client, new GetObjectCommand({ Bucket: bucket, Key: key }), { expiresIn: expirySeconds });
+}
+
+export async function downloadFromR2(key: string): Promise<{ body: Buffer; contentType: string }> {
+  const bucket = process.env.R2_BUCKET_NAME;
+  if (!bucket) throw new Error("R2_BUCKET_NAME not configured");
+  const client = getR2Client();
+  const res = await client.send(new GetObjectCommand({ Bucket: bucket, Key: key }));
+  if (!res.Body) throw new Error(`Empty R2 response for key: ${key}`);
+  const chunks: Uint8Array[] = [];
+  for await (const chunk of res.Body as AsyncIterable<Uint8Array>) {
+    chunks.push(chunk);
+  }
+  return {
+    body: Buffer.concat(chunks),
+    contentType: res.ContentType ?? "image/jpeg",
+  };
 }

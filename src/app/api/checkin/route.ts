@@ -24,8 +24,8 @@ import {
   hashGuestToken,
   calculateGuestIdentityExpiry,
 } from "@/lib/utils/guest-identity";
-import { assignWishImageUrl } from "@/lib/utils/checkin-wish-image";
 import { logCheckinEvent } from "@/lib/utils/checkin-events";
+import { runWishartGeneration } from "@/lib/wishart/run-generation";
 
 const NAME_MAX = 50;
 const PHONE_MAX = 20;
@@ -202,8 +202,6 @@ export async function POST(req: NextRequest) {
         tokenForCookie = newToken;
       }
 
-      const wishImageUrl = assignWishImageUrl(newStarId);
-
       await tx.dtStar.create({
         data: {
           id: newStarId,
@@ -212,8 +210,7 @@ export async function POST(req: NextRequest) {
           visitorName: name,
           photoUrl: photoKey, // R2 object key 저장 (공개 URL 아님)
           phone,
-          wishImageUrl,
-          wishImageStatus: "ready", // 사전 생성 이미지 즉시 ready — 비공개는 wishImageRevealedAt=null로 보장
+          // wishImageUrl: null (기본값), wishImageStatus: "pending" (기본값)
           dayCount: 1,
           starStage: 1,
           guestIdentityId: identityId,
@@ -240,9 +237,18 @@ export async function POST(req: NextRequest) {
     }));
 
     logCheckinEvent({ event: "star_created", starId, requestId });
-    logCheckinEvent({ event: "wish_image_generation_started", starId, requestId });
-    logCheckinEvent({ event: "wish_image_generation_completed", starId, requestId });
     logCheckinEvent({ event: "checkin_completed", starId, requestId });
+
+    if (process.env.OPENAI_API_KEY) {
+      logCheckinEvent({ event: "wish_image_generation_started", starId, requestId });
+      void runWishartGeneration(starId, buffer, wish, photo.type);
+    } else {
+      // API Key 미설정 — pending 고착 방지: 즉시 failed로 전환
+      void prisma.dtStar.update({
+        where: { id: starId },
+        data: { wishImageStatus: "failed" },
+      }).catch(() => {});
+    }
 
     const response = NextResponse.json({ success: true, starId });
 

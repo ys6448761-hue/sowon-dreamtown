@@ -19,6 +19,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { serverError, makeRequestId } from "@/lib/apiError";
+import { getSignedGetUrl } from "@/lib/r2";
 
 export async function GET(req: NextRequest) {
   const requestId = makeRequestId();
@@ -74,12 +75,18 @@ export async function GET(req: NextRequest) {
       status = "ready";
     }
 
+    // wishart/ prefix → presigned URL (7일 TTL), 그 외는 정적 경로 그대로 반환
+    let resolvedWishImageUrl = star.wishImageUrl;
+    if (resolvedWishImageUrl?.startsWith("wishart/")) {
+      resolvedWishImageUrl = await getSignedGetUrl(resolvedWishImageUrl, 7 * 24 * 60 * 60);
+    }
+
     return NextResponse.json({
       status,
       visitorName: star.visitorName,
       // photoUrl 제외 — 개인 얼굴 사진 key를 소유 확인 없이 반환하지 않음 (S4)
       wishContent: latestWish?.content ?? null,
-      wishImageUrl: star.wishImageUrl,
+      wishImageUrl: resolvedWishImageUrl,
       wishImageStatus: star.wishImageStatus,
       wishImageRevealedAt: star.wishImageRevealedAt?.toISOString() ?? null,
     });
