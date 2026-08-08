@@ -170,11 +170,11 @@ export default function CheckinPageContent() {
       }
 
       if (data.isResuming) {
-        // 기존 별 발견 — 현재 상태를 조회해 올바른 단계로 이동
+        // 기존 별 발견 — fetchCheckinStatus 완료 전까지 loading 유지 (버튼 조기 복귀 방지)
         setResumeStarId(data.starId);
-        setStatus("idle");
         setIsInitializing(true);
-        fetchCheckinStatus(data.starId);
+        await fetchCheckinStatus(data.starId);
+        setStatus("idle");
         return;
       }
 

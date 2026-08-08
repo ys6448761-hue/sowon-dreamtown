@@ -115,31 +115,42 @@ export async function POST(req: NextRequest) {
         const existingStar = await prisma.dtStar.findFirst({
           where: { guestIdentityId: existingIdentity.id },
           orderBy: { createdAt: "desc" },
-          select: { id: true },
+          select: { id: true, wishImageStatus: true, wishImageUrl: true },
         });
         if (existingStar) {
-          await prisma.dtGuestIdentity.update({
-            where: { id: existingIdentity.id },
-            data: {
-              lastUsedAt: new Date(),
-              expiresAt: calculateGuestIdentityExpiry(new Date()),
-            },
-          });
-          logCheckinEvent({ event: "checkin_resumed", starId: existingStar.id, requestId });
+          // 완료 상태: 동일 GuestIdentity 아래 신규 별 생성 허용
+          // ready / revealed / Phase A 정적 이미지 → fall through to new star creation
+          // pending / generating / failed → resume (기존 starId 유지)
+          const isComplete =
+            existingStar.wishImageStatus === "ready" ||
+            existingStar.wishImageStatus === "revealed" ||
+            existingStar.wishImageUrl?.startsWith("/images/");
 
-          const resumeResponse = NextResponse.json({
-            success: true,
-            starId: existingStar.id,
-            isResuming: true,
-          });
-          resumeResponse.cookies.set(GUEST_TOKEN_COOKIE_NAME, existingToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            path: "/",
-            maxAge: GUEST_TOKEN_MAX_AGE_SECONDS,
-          });
-          return resumeResponse;
+          if (!isComplete) {
+            await prisma.dtGuestIdentity.update({
+              where: { id: existingIdentity.id },
+              data: {
+                lastUsedAt: new Date(),
+                expiresAt: calculateGuestIdentityExpiry(new Date()),
+              },
+            });
+            logCheckinEvent({ event: "checkin_resumed", starId: existingStar.id, requestId });
+
+            const resumeResponse = NextResponse.json({
+              success: true,
+              starId: existingStar.id,
+              isResuming: true,
+            });
+            resumeResponse.cookies.set(GUEST_TOKEN_COOKIE_NAME, existingToken, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "lax",
+              path: "/",
+              maxAge: GUEST_TOKEN_MAX_AGE_SECONDS,
+            });
+            return resumeResponse;
+          }
+          // isComplete → fall through: 기존 identity 재사용, 신규 별 생성
         }
       }
     }
