@@ -139,25 +139,26 @@ export default function CheckinPageContent() {
     setPhotoFile(file);
     if (photoPreview) URL.revokeObjectURL(photoPreview);
     setPhotoPreview(file ? URL.createObjectURL(file) : null);
+    if (file && status === "error") { setStatus("idle"); setErrorMsg(""); }
   }
 
   async function handleSubmit() {
     if (status === "loading") return;
 
     if (!trimName) {
-      setErrorMsg("이름 정보가 사라졌어요. 이름부터 다시 확인해 주세요.");
+      setErrorMsg("이름 정보가 확인되지 않았어요.\n이름만 다시 입력하면 계속 진행할 수 있어요.");
       setStatus("error");
       setStep(2);
       return;
     }
     if (!photoFile) {
-      setErrorMsg("사진을 다시 선택해 주세요.");
+      setErrorMsg("사진 정보가 저장되지 않았어요.\n소원은 그대로 보관되어 있으니 사진만 다시 선택해 주세요.");
       setStatus("error");
       setStep(3);
       return;
     }
     if (!trimWish) {
-      setErrorMsg("소원을 다시 확인해 주세요.");
+      setErrorMsg("소원 내용이 확인되지 않았어요.\n소원만 다시 확인해 주세요.");
       setStatus("error");
       setStep(4);
       return;
@@ -282,6 +283,11 @@ export default function CheckinPageContent() {
         {/* Step 2: 우주민 등록 (이름 + 전화번호) */}
         {step === 2 && (
           <section>
+            {status === "error" && errorMsg && (
+              <div className="mb-6 rounded-xl border border-amber-100 bg-amber-50 px-4 py-4">
+                <p className="text-sm leading-relaxed text-amber-700 whitespace-pre-line">{errorMsg}</p>
+              </div>
+            )}
             <h2 className="text-center text-lg font-semibold text-gray-800">
               우주민 등록
             </h2>
@@ -316,16 +322,12 @@ export default function CheckinPageContent() {
               연락처는 DreamTown 운영에만 사용되며 외부에 제공되지 않습니다.
             </p>
 
-            {status === "error" && errorMsg && (
-              <p className="mt-3 text-xs text-center text-amber-500">{errorMsg}</p>
-            )}
-
             <button
               onClick={() => setStep(3)}
               disabled={!trimName}
               className="mt-6 w-full rounded-full bg-[#9B87F5] py-3 text-sm font-medium text-white disabled:opacity-40"
             >
-              다음
+              {status === "error" ? "확인하고 계속하기" : "다음"}
             </button>
           </section>
         )}
@@ -333,6 +335,11 @@ export default function CheckinPageContent() {
         {/* Step 3: 정면사진 업로드 */}
         {step === 3 && (
           <section>
+            {status === "error" && errorMsg && (
+              <div className="mb-6 rounded-xl border border-amber-100 bg-amber-50 px-4 py-4">
+                <p className="text-sm leading-relaxed text-amber-700 whitespace-pre-line">{errorMsg}</p>
+              </div>
+            )}
             <h2 className="text-center text-lg font-semibold text-gray-800">
               정면사진 등록
             </h2>
@@ -374,14 +381,10 @@ export default function CheckinPageContent() {
               </p>
             </div>
 
-            {status === "error" && errorMsg && (
-              <p className="mt-4 text-xs text-center text-amber-500">{errorMsg}</p>
-            )}
-
             <button
               onClick={() => {
                 if (!trimName) {
-                  setErrorMsg("이름 정보가 사라졌어요. 이름부터 다시 확인해 주세요.");
+                  setErrorMsg("이름 정보가 확인되지 않았어요.\n이름만 다시 입력하면 계속 진행할 수 있어요.");
                   setStatus("error");
                   setStep(2);
                   return;
@@ -391,7 +394,7 @@ export default function CheckinPageContent() {
               disabled={!photoFile}
               className="mt-8 w-full rounded-full bg-[#9B87F5] py-3 text-sm font-medium text-white disabled:opacity-40"
             >
-              다음
+              {status === "error" ? "다시 등록하고 계속하기" : "다음"}
             </button>
           </section>
         )}
@@ -399,6 +402,11 @@ export default function CheckinPageContent() {
         {/* Step 4: 소원 작성 */}
         {step === 4 && (
           <section>
+            {status === "error" && errorMsg && (
+              <div className="mb-6 rounded-xl border border-amber-100 bg-amber-50 px-4 py-4">
+                <p className="text-sm leading-relaxed text-amber-700 whitespace-pre-line">{errorMsg}</p>
+              </div>
+            )}
             <h2 className="text-center text-lg font-semibold text-gray-800">
               소원 작성
             </h2>
@@ -427,13 +435,13 @@ export default function CheckinPageContent() {
             <button
               onClick={() => {
                 if (!trimName) {
-                  setErrorMsg("이름 정보가 사라졌어요. 이름부터 다시 확인해 주세요.");
+                  setErrorMsg("이름 정보가 확인되지 않았어요.\n이름만 다시 입력하면 계속 진행할 수 있어요.");
                   setStatus("error");
                   setStep(2);
                   return;
                 }
                 if (!photoFile) {
-                  setErrorMsg("사진을 다시 선택해 주세요.");
+                  setErrorMsg("사진 정보가 저장되지 않았어요.\n소원은 그대로 보관되어 있으니 사진만 다시 선택해 주세요.");
                   setStatus("error");
                   setStep(3);
                   return;
