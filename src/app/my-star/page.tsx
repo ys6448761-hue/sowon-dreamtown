@@ -33,6 +33,7 @@ export default function MyStarPage() {
   const starId = useSyncExternalStore(subscribeNoop, () => readSavedStar(), () => null);
 
   const [starStatus, setStarStatus] = useState<StarStatus | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [showRevealConfirm, setShowRevealConfirm] = useState(false);
   const [isRevealing, setIsRevealing] = useState(false);
   const [revealError, setRevealError] = useState("");
@@ -46,8 +47,9 @@ export default function MyStarPage() {
       .then((res) => (res.ok ? res.json() : null))
       .then((data: StarStatus | null) => {
         if (data) setStarStatus(data);
+        setIsLoaded(true);
       })
-      .catch(() => {/* silent fail — fallback to default UI */});
+      .catch(() => { setIsLoaded(true); });
   }, [starId, router]);
 
   // 소원그림 생성 중 폴링
@@ -105,6 +107,14 @@ export default function MyStarPage() {
   }
 
   if (!starId) return null;
+
+  if (!isLoaded) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center bg-[#0D1B2A] px-6">
+        <p className="text-sm text-white/40">내 별을 불러오고 있어요</p>
+      </main>
+    );
+  }
 
   const isRevealed = starStatus?.status === "revealed";
   const wishImageStatus = starStatus?.wishImageStatus;

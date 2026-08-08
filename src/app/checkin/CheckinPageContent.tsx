@@ -550,19 +550,17 @@ export default function CheckinPageContent() {
               태어났습니다.
             </h1>
             <p className="mt-4 text-sm leading-relaxed text-gray-400">
-              당신의 소원은 지금
+              소원그림이 지금 준비되고 있어요.
               <br />
-              DreamTown의 별빛 속에서 자라고 있습니다.
+              잠시 후 내 별에서 만나볼 수 있어요.
             </p>
 
             <div className="mt-8 rounded-2xl border border-[#9B87F5]/20 bg-[#9B87F5]/[0.04] px-5 py-5 text-center">
               <p className="text-xs font-medium text-[#9B87F5]/70">하멜등대 예고</p>
               <p className="mt-2 text-sm leading-relaxed text-gray-500">
-                오늘 저녁,
+                소원그림이 완성되면
                 <br />
-                별빛항로의 끝에서
-                <br />
-                DreamTown이 준비한 선물을 만나게 됩니다.
+                하멜등대에서 만나볼 수 있어요.
               </p>
             </div>
 
@@ -578,7 +576,7 @@ export default function CheckinPageContent() {
                 onClick={() => router.push("/my-star")}
                 className="w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white"
               >
-                내 소원별 만나기
+                소원그림 보러 가기
               </button>
               <button
                 onClick={() => router.push("/dreamtown")}
