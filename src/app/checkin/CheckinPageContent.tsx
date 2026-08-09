@@ -5,7 +5,7 @@
  * useSearchParams()를 사용하므로 page.tsx의 <Suspense> 내부에서만 렌더링.
  */
 
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7;
@@ -23,6 +23,61 @@ type CheckinStatus = {
 const NAME_MAX = 50;
 const PHONE_MAX = 20;
 const WISH_MAX = 200;
+
+// ─── Photo optimization ───────────────────────────────────────────────────────
+// Browser-native canvas resize + JPEG encode. No external packages.
+// Handles EXIF orientation via imageOrientation:"from-image" (Chrome 81+, Safari 15.4+, FF 93+).
+async function optimizePhoto(file: File): Promise<File> {
+  const MAX_SIDE = 2048;
+  const QUALITY = 0.92;
+
+  let bitmap: ImageBitmap;
+  try {
+    bitmap = await createImageBitmap(file, {
+      imageOrientation: "from-image" as ImageOrientation,
+    });
+  } catch {
+    throw new Error(
+      "이 사진 형식은 바로 사용할 수 없어요.\n사진첩에서 JPG 또는 PNG 사진을 선택해 주세요.",
+    );
+  }
+
+  const { width, height } = bitmap;
+  const longest = Math.max(width, height);
+  const scale = longest > MAX_SIDE ? MAX_SIDE / longest : 1;
+  const outW = Math.round(width * scale);
+  const outH = Math.round(height * scale);
+
+  const canvas = document.createElement("canvas");
+  canvas.width = outW;
+  canvas.height = outH;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    bitmap.close();
+    throw new Error("사진을 처리하지 못했어요. 다른 사진을 선택해 주세요.");
+  }
+  ctx.drawImage(bitmap, 0, 0, outW, outH);
+  bitmap.close();
+
+  return new Promise<File>((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) {
+          reject(new Error("사진을 처리하지 못했어요. 다른 사진을 선택해 주세요."));
+          return;
+        }
+        if (blob.size > 20 * 1024 * 1024) {
+          reject(new Error("사진을 처리하지 못했어요. 다른 사진을 선택해 주세요."));
+          return;
+        }
+        const baseName = file.name.replace(/\.[^.]+$/, "") || "photo";
+        resolve(new File([blob], `${baseName}.jpg`, { type: "image/jpeg" }));
+      },
+      "image/jpeg",
+      QUALITY,
+    );
+  });
+}
 
 export default function CheckinPageContent() {
   const router = useRouter();
@@ -48,7 +103,7 @@ export default function CheckinPageContent() {
   const [checkinStatus, setCheckinStatus] = useState<CheckinStatus | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isProcessingPhoto, setIsProcessingPhoto] = useState(false);
   const trimName = name.trim();
   const trimPhone = phone.trim();
   const trimWish = wish.trim();
@@ -140,12 +195,26 @@ export default function CheckinPageContent() {
     setIsInitializing(false);
   }
 
-  function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null;
-    setPhotoFile(file);
+    e.target.value = "";
+    if (!file) return;
     if (photoPreview) URL.revokeObjectURL(photoPreview);
-    setPhotoPreview(file ? URL.createObjectURL(file) : null);
-    if (file && status === "error") { setStatus("idle"); setErrorMsg(""); }
+    setPhotoFile(null);
+    setPhotoPreview(null);
+    setIsProcessingPhoto(true);
+    setStatus("idle");
+    setErrorMsg("");
+    try {
+      const optimized = await optimizePhoto(file);
+      setPhotoFile(optimized);
+      setPhotoPreview(URL.createObjectURL(optimized));
+    } catch (err) {
+      setStatus("error");
+      setErrorMsg(err instanceof Error ? err.message : "사진을 처리하지 못했어요. 다른 사진을 선택해 주세요.");
+    } finally {
+      setIsProcessingPhoto(false);
+    }
   }
 
   async function handleSubmit() {
@@ -342,7 +411,7 @@ export default function CheckinPageContent() {
         {step === 3 && (
           <section>
             {!photoFile ? (
-              /* State A — 사진 없음: 선택 유도 */
+              /* State A — 사진 없음 또는 처리 중 */
               <>
                 {status === "error" && errorMsg && (
                   <div className="mb-6 rounded-xl border border-amber-100 bg-amber-50 px-4 py-4">
@@ -359,23 +428,46 @@ export default function CheckinPageContent() {
                 </p>
 
                 <div className="mt-6 flex flex-col items-center">
-                  <div className="flex h-44 w-44 items-center justify-center rounded-2xl border border-dashed border-[#9B87F5]/40 text-xs text-gray-300">
-                    사진을 선택해주세요
+                  {isProcessingPhoto ? (
+                    <div className="flex h-44 w-44 items-center justify-center rounded-2xl border border-[#9B87F5]/30 bg-[#9B87F5]/[0.04]">
+                      <p className="animate-pulse text-xs text-[#9B87F5]/60">사진을 준비하고 있어요…</p>
+                    </div>
+                  ) : (
+                    <div className="flex h-44 w-44 items-center justify-center rounded-2xl border border-dashed border-[#9B87F5]/40 text-xs text-gray-300">
+                      사진을 선택해주세요
+                    </div>
+                  )}
+
+                  <div className="mt-5 w-full space-y-3">
+                    <label
+                      className={`flex cursor-pointer items-center justify-center rounded-full bg-[#9B87F5] py-3 text-sm font-medium text-white transition-colors${isProcessingPhoto ? " pointer-events-none opacity-40" : " hover:bg-[#8B77E5]"}`}
+                    >
+                      📷 지금 사진 찍기
+                      <input
+                        type="file"
+                        accept="image/*"
+                        capture="user"
+                        onChange={handlePhotoChange}
+                        className="sr-only"
+                        disabled={isProcessingPhoto}
+                      />
+                    </label>
+
+                    <label
+                      className={`flex cursor-pointer items-center justify-center rounded-full border border-[#9B87F5]/50 py-3 text-sm font-medium text-[#9B87F5] transition-colors${isProcessingPhoto ? " pointer-events-none opacity-40" : " hover:bg-[#9B87F5]/5"}`}
+                    >
+                      🖼️ 사진첩에서 선택하기
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/*"
+                        onChange={handlePhotoChange}
+                        className="sr-only"
+                        disabled={isProcessingPhoto}
+                      />
+                    </label>
                   </div>
 
-                  <label className="mt-5 cursor-pointer rounded-full bg-[#9B87F5] px-6 py-2.5 text-sm font-medium text-white hover:bg-[#8B77E5] transition-colors">
-                    사진 선택 또는 촬영
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp"
-                      capture="user"
-                      onChange={handlePhotoChange}
-                      className="sr-only"
-                    />
-                  </label>
-
-                  <p className="mt-3 text-xs text-gray-300 text-center">
+                  <p className="mt-3 text-center text-xs text-gray-300">
                     모자나 선글라스가 없는 밝은 사진을 권장합니다.
                   </p>
                 </div>
@@ -396,14 +488,16 @@ export default function CheckinPageContent() {
                     className="h-44 w-44 rounded-2xl object-cover shadow-md"
                   />
 
-                  <label className="mt-4 cursor-pointer text-sm text-gray-300 hover:text-gray-400 transition-colors">
+                  <label
+                    className={`mt-4 cursor-pointer text-sm text-gray-300 transition-colors${isProcessingPhoto ? " pointer-events-none opacity-40" : " hover:text-gray-400"}`}
+                  >
                     다시 선택하기
                     <input
                       type="file"
-                      accept="image/jpeg,image/png,image/webp"
-                      capture="user"
+                      accept="image/jpeg,image/png,image/webp,image/*"
                       onChange={handlePhotoChange}
                       className="sr-only"
+                      disabled={isProcessingPhoto}
                     />
                   </label>
                 </div>
@@ -418,7 +512,8 @@ export default function CheckinPageContent() {
                     }
                     setStep(4);
                   }}
-                  className="mt-8 w-full rounded-full bg-[#9B87F5] py-3 text-sm font-medium text-white"
+                  disabled={isProcessingPhoto}
+                  className="mt-8 w-full rounded-full bg-[#9B87F5] py-3 text-sm font-medium text-white disabled:opacity-40"
                 >
                   이 사진으로 계속하기
                 </button>

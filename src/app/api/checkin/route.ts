@@ -30,7 +30,7 @@ import { runWishartGeneration } from "@/lib/wishart/run-generation";
 const NAME_MAX = 50;
 const PHONE_MAX = 20;
 const WISH_MAX = 200;
-const PHOTO_MAX_BYTES = 8 * 1024 * 1024; // 8MB
+const PHOTO_MAX_BYTES = 20 * 1024 * 1024; // 20MB — frontend optimizePhoto() post-compress limit
 const ALLOWED_MIME: Record<string, string> = {
   "image/jpeg": "jpg",
   "image/png": "png",
