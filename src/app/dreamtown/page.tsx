@@ -94,7 +94,7 @@ function DreamtownEntry() {
       {/* 메인 CTA */}
       <div className="w-full max-w-xs space-y-3">
         <button
-          onClick={() => router.push("/onboarding")}
+          onClick={() => router.push("/checkin")}
           className="w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white"
         >
           별 만들기
