@@ -16,10 +16,13 @@ If the photo shows a person with glasses, keep the glasses.
 If the photo shows a person with short hair, keep the short hair.`;
 
 const HOPE_RESTORATION_RULE = `HOPE RESTORATION RULE:
-The subject's expression in the output must reflect quiet confidence, warmth, or gentle joy —
-even if the input photo shows a sad or neutral expression.
-Do NOT make the person look fearful, melancholic, or distressed in the final image.
-The WishArt is a moment of hope, not sorrow.`;
+Show the happiness that already exists in the person — slightly more open and at ease.
+Quiet genuine happiness: mouth corners gently raised, eyes softly crinkled, cheeks naturally lifted,
+relaxed facial muscles, soft warm gaze.
+Do NOT force a larger smile than the person naturally has.
+Do NOT make the person look fearful, melancholic, or distressed.
+Do NOT show exaggerated toothy grin, forced smile, or commercial advertising smile.
+The WishArt is a moment of hope — not sorrow, and not a performance.`;
 
 const WORLD_RESPONSE_RULE = `WORLD RESPONSE RULE:
 The environment around the subject must visually "respond" to the wish text.
@@ -56,8 +59,29 @@ Leave breathing room at the top for atmosphere; the subject's face should occupy
 
 const CANVAS_RULE = `CANVAS RULE:
 Output size: 1024×1536 (portrait).
-Style: photorealistic with a painterly, cinematic finish — not illustration, not anime.
-The image should feel like a high-quality editorial photograph, slightly enhanced.`;
+Style: 2D Korean webtoon illustration with hand-painted watercolor finish.
+Rendering balance: Korean webtoon 40% / watercolor 40% / realism 20%.
+Visible watercolor paper texture throughout the entire image.
+Soft flat watercolor washes. Restrained cel-shaded outlines.
+Soft hand-painted edges. Korean comic proportions.
+The image must NOT look photorealistic, 3D-rendered, or CGI.
+This is a hand-painted illustration — not a photograph or photo-manipulation.`;
+
+const FACE_STYLE_RULE = `FACE RENDERING RULE:
+Do NOT render any face as 3D.
+Paint every face using flat watercolor washes, soft hand-painted edges, and restrained line work.
+Subtle watercolor paper texture must remain visible through skin tones.
+Cheeks and highlights are soft watercolor color blooms — not photographic gradients.
+Cel-shading is subtle and restrained — not heavy anime outlines.
+The face must not look like a 3D render, CGI portrait, beauty filter, or photorealistic AI photo.`;
+
+const VITALITY_RULE = `VITALITY RULE:
+Show the subject with slightly more youthful vitality —
+as if during a healthy and genuinely happy period of their life,
+approximately 5–10 years fresher in energy.
+Do NOT change facial structure, age identity, or recognizability.
+Do NOT perform teenage transformation, dramatic rejuvenation, or face reshaping.
+This is an energy shift in the illustration — not a facial reconstruction.`;
 
 const WISH_MOMENT_SCENE = `WISH MOMENT SCENE:
 The image captures the exact moment the wish is being released into the world.
@@ -68,9 +92,15 @@ const NEGATIVE_RULE = `NEGATIVE RULE (what to avoid):
 - Do NOT add text, logos, or watermarks.
 - Do NOT show violence, fear, or distress.
 - Do NOT alter the subject's race, gender, or age significantly.
-- Do NOT use cartoon, anime, or illustration styles.
+- Do NOT render photorealistic portrait, cinematic photo, 3D render, or CGI face.
+- Do NOT create plastic skin, hyperreal skin, or beauty-filter face.
+- Do NOT use Pixar-like face, game character face, or sharp anime proportions.
+- Do NOT apply V-shaped jaw or artificially enlarged eyes.
+- Do NOT replace, redesign, or idealize the subject's facial identity.
+- Do NOT show exaggerated toothy grin, forced smile, or commercial advertising smile.
 - Do NOT show impossible physics (floating people, etc.) unless the wish text explicitly calls for it.
-- Do NOT make the background generic (plain studio backdrop, plain gradient).`;
+- Do NOT make the background generic (plain studio backdrop, plain gradient).
+- Do NOT compose as a tourism poster or add floating lanterns and fantasy particle explosions.`;
 
 // ─── Gemstone detection ───────────────────────────────────────────────────────
 
@@ -147,6 +177,10 @@ ${POSTER_COMPOSITION_RULE}
 
 ${CANVAS_RULE}
 
+${FACE_STYLE_RULE}
+
+${VITALITY_RULE}
+
 ${WISH_MOMENT_SCENE}
 
 ${NEGATIVE_RULE}
@@ -166,5 +200,5 @@ WISH TEXT (what this person is wishing for):
 
 ---
 
-Create a WishArt portrait: the subject from the uploaded photo, standing at or near the Hamel Lighthouse at DreamTown (Yeosu, Korea), at the moment their wish is released into the world. The environment responds to the wish text above. The gemstone color permeates the light and atmosphere. The image is photorealistic, cinematic, portrait orientation (1024×1536), and feels like a meaningful personal keepsake.`;
+Create a WishArt portrait: a 2D hand-painted watercolor illustration of the subject from the uploaded photo, at or near the Hamel Lighthouse at DreamTown (Yeosu, Korea), at the moment their wish is released into the world. The environment responds to the wish text above. The gemstone color permeates the light and atmosphere. The image is a Korean webtoon-style hand-painted illustration, portrait orientation (1024×1536), and feels like a meaningful personal keepsake the subject would want to keep.`;
 }
