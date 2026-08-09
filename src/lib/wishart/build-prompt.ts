@@ -29,32 +29,37 @@ Do NOT replace, idealize, anonymize, or redesign any person's identity.
 Do NOT apply V-shaped jaw, enlarged eyes, or generic attractive face.
 The viewer must immediately say "that's me" — not "that looks like someone like me."`;
 
-const HOPE_RESTORATION_RULE = `HOPE RESTORATION RULE:
-The goal is NOT a big smile. It is the person's most comfortable and genuinely happy state.
+const HOPE_RESTORATION_RULE = `HAPPY SELF RESTORATION RULE:
+The goal is NOT a big smile or a forced expression.
+The goal is to show this person as they look at their happiest and most alive —
+the happiest believable version of themselves, as if captured at the best moment in their life.
+
+Not a smile imposed from outside. The happiness that is already in them, brought forward.
 
 Preserve the person's real expression structure first. Then apply the minimum change needed:
 
 If already smiling in the photo:
-  → Keep the actual smile pattern. Do not enlarge or intensify it.
+  → Keep the actual smile pattern. Let it shine with natural warmth.
   → Change intensity: 0–10% from original.
 
 If showing a weak or subtle smile:
-  → Gently reinforce: slightly lifted cheeks, softened eyes, natural mouth corners.
+  → Gently reinforce: lifted cheeks, softened eyes, natural mouth corners rising.
   → Change intensity: 10–20% from original.
 
 If neutral expression:
-  → Lift mouth corners very slightly. Soften the eyes. Relax facial tension.
+  → Lift mouth corners gently. Soften the eyes. Release any held facial tension.
   → Closed-mouth gentle expression only. Do not invent or add teeth.
   → Change intensity: 20–30% from original.
 
 If tense, tired, or guarded:
-  → Restore relaxation first. Reduce jaw tension, soften eyes, release facial muscles.
-  → Smile is secondary to relaxation.
+  → First restore ease: relax jaw tension, soften eyes, release held facial muscles.
+  → Then add the quietest hint of warmth — mouth corners gently lifted.
   → Change intensity: 0–20% from original.
 
+The person should look like themselves — in the happiest moment of their life.
 Do NOT create a smile that was not present in the original.
-Do NOT force a smile larger than what the person naturally shows.
-The person should look like themselves — on one of their best and most comfortable days.`;
+Do NOT make the smile larger or more intense than what the person can naturally hold.
+Do NOT apply a performance smile, commercial smile, or advertisement smile.`;
 
 const TEETH_RULE = `TEETH RULE:
 If the reference photo shows teeth naturally: preserve the original teeth pattern as-is.
