@@ -92,10 +92,22 @@ Express emotion through:
 
 The person exists within the world's emotional response — the world celebrates their wish.`;
 
+const ORIGIN_LAYER_RULE = `ORIGIN LAYER PRINCIPLE:
+The real Yeosu location must remain clearly identifiable.
+Preserve the location's essential visual anchors before applying DreamTown interpretation.
+
+DreamTown light, color, atmosphere, and emotional treatment are layered onto the real place.
+They must not replace, distort, or overpower the identity of the location.
+
+Think: Real Yeosu Origin 70 / DreamTown emotional interpretation 30.
+
+The person remains the emotional center of the image.
+The Origin holds the person; it does not compete with them.`;
+
 const DREAMTOWN_VISUAL_RULE = `DREAMTOWN VISUAL SIGNATURE RULE:
 The image must carry DreamTown's emotional visual signature — not generic tourism photography.
 Use 2–3 of the following atmospheric elements as needed, in harmony with the person:
-- watercolor flowers (soft, present but not dominant)
+- watercolor flowers (soft, present but not dominant; camellia-dominant scenery belongs to Odongdo only — non-Odongdo Origins use generic soft blooms that do not evoke camellia groves)
 - emotional sky: golden hour, twilight, soft dawn, or starlit evening
 - Yeosu sea light: reflected watercolor shimmer on the water
 - warm atmospheric haze or light diffusion over the harbor
@@ -210,57 +222,57 @@ const LOCATION_KEYWORDS: Record<LocationType, string[]> = {
 
 const LOCATION_RULES: Record<LocationType, string> = {
   healing: `LOCATION — ODONGDO ISLAND (오동도), Yeosu, Korea:
-A small island connected to the mainland by a 768-meter wooden walkway over the sea.
-Famous for its dense camellia forest and a lighthouse at the island's tip.
-Key visual elements: wooden sea-walkway, camellia blossoms (red and pink), calm sheltered cove,
-soft morning or sunset light filtering through camellia trees.
-The atmosphere is quiet, healing, and intimately natural.
-Paint in DreamTown watercolor style: drifting camellia petals, reflected light on the walkway water,
-warm gentle sunlight diffused through the trees.
-Scale: the island path and trees are background context — the person is the center.`,
+A small island reached by a 768-meter wooden walkway over the sea.
+Visual anchors:
+- 768-meter wooden sea-walkway stretching over calm water
+- camellia forest: dense trees with red and pink blossoms (동백꽃)
+- lighthouse at the island's tip
+- calm sheltered cove and shoreline
+Light: soft morning or sunset light filtering through camellia trees.
+Note: Camellia blossoms (동백꽃) are the identity anchor of this Origin — do not carry them into other locations.`,
 
   new_beginning: `LOCATION — YEOSU EXPO STATION (여수엑스포역), Yeosu, Korea:
-A modern station with a sweeping curved roof, opening directly toward Yeosu harbor.
-The station represents the gateway to a new journey — arrival and departure in one place.
-Key visual elements: curved modern roof forms, open sky, harbor visible beyond the platform,
-light streaming through glass and steel, sense of a journey about to begin.
-The atmosphere is hopeful, forward-looking, full of new possibility.
-Paint in DreamTown watercolor style: fresh morning light, open sky washes of color,
-architectural lines softened into watercolor edges.
-Scale: the station forms are background context — the person is the center.`,
+A modern station opening directly toward Yeosu harbor — a gateway between land and sea.
+Visual anchors:
+- sweeping curved modern roof
+- harbor and open sky visible beyond the platform
+- glass and steel structure with light streaming through
+- sense of a journey beginning — arrival and departure in one place
+Light: fresh morning light, open sky.
+Do NOT show: generic European railway station — the station must read as Yeosu coastal context.`,
 
   courage: `LOCATION — YEOSU MARITIME CABLE CAR (여수해상케이블카), Yeosu, Korea:
-Cable car gondolas suspended over the open sea between Dolsan Island and the Yeosu mainland.
-The cable car experience is about height, wind, and the courage to cross above the sea.
-Key visual elements: cable car gondola, aerial perspective over Yeosu harbor,
-deep blue sea below, distant islands, cable lines receding into the horizon.
-The atmosphere is exhilarating, expansive, courageous.
-Paint in DreamTown watercolor style: deep blue sea with watercolor shimmer,
-soft aerial haze, wind-swept watercolor sky.
-Scale: the gondola and sea are background context — the person is the center.`,
+Cable car gondolas suspended over the open sea between Dolsan Island and Yeosu mainland.
+Visual anchors:
+- cable car gondola suspended over open sea
+- aerial perspective — significant height above the water
+- deep blue Yeosu sea below
+- cable lines receding toward the horizon
+- distant islands visible
+Light: wind-swept sky, deep blue sea.
+Do NOT show: generic mountain cable car or inland gondola — this must read as open Yeosu sea.`,
 
   wisdom: `LOCATION — HAMEL LIGHTHOUSE (하멜등대), DreamTown, Yeosu, Korea:
-A RED cylindrical lighthouse standing on a harbor breakwater visibly connected to the land.
-Appearance: red cylindrical body, white lantern room at the top.
-Key visual elements: red lighthouse, harbor breakwater, deep blue Yeosu sea,
-distant cable car lights where composition permits.
-The atmosphere is reflective, directional — a moment of clarity at the edge of the sea.
-Paint in DreamTown watercolor style: deep harbor blues, red lighthouse as warm anchor,
-watercolor light on the breakwater stones.
-If text renders naturally: vertical "하멜등대" Korean signage on the lighthouse body.
-SCALE RULE: The lighthouse is context — not the hero of the image.
-It must NOT dominate the composition or compete with the subject's face.
-Do NOT show: white lighthouse, European lighthouse, hilltop lighthouse, floating lighthouse.`,
+A RED cylindrical lighthouse standing on a harbor breakwater connected to land.
+Visual anchors:
+- RED cylindrical body (not white — the red color is the identity)
+- white lantern room at the top
+- harbor breakwater visibly connected to land — grounded, not floating
+- "하멜등대" vertical Korean signage (optional, supporting — not required for identity)
+Light: deep harbor blues, red lighthouse as warm anchor point.
+Do NOT show: a floating lighthouse not grounded on its breakwater; do not make the lighthouse the dominant visual element over the people.`,
 
   gratitude: `LOCATION — YI SUN-SIN PLAZA (이순신광장), Yeosu, Korea:
-A harbor-front promenade plaza in the heart of Yeosu, facing the open sea.
-The plaza is a place of gathering — where people celebrate relationships and the sea.
-Key visual elements: harbor promenade, Yeosu bay, warm evening or golden hour light,
-sense of togetherness, gentle sea breeze, the Admiral Yi Sun-sin statue as a distant silhouette.
-The atmosphere is warm, grateful, and celebratory of bonds between people.
-Paint in DreamTown watercolor style: golden sunset over the harbor, soft sea reflections,
-warm gathering light.
-Scale: the plaza and harbor are background context — the people are the center.`,
+A wide open harbor square at the heart of urban Yeosu, facing the sea.
+Visual anchors:
+- Admiral Yi Sun-sin statue: standing figure in military armor, on a base with
+  turtle-ship (거북선) motifs, facing the Yeosu harbor
+- the statue is identifiable — not a distant silhouette, but a recognizable armored general
+- turtle ship (거북선): secondary recognizable landmark, visible when composition permits
+- open stone-paved harbor square and Yeosu sea stretching to the horizon
+Light: warm evening or golden hour over the harbor.
+Do NOT show: generic military statue without turtle-ship context, camellia flowers
+(that is Odongdo, not here), generic seaside park, European waterfront, or a monument dominating the portrait.`,
 };
 
 const LOCATION_NAMES: Record<LocationType, string> = {
@@ -354,6 +366,8 @@ ${TEETH_RULE}
 ${COUPLE_EXPRESSION_RULE}
 
 ${WORLD_RESPONSE_RULE}
+
+${ORIGIN_LAYER_RULE}
 
 ${locationRule}
 
