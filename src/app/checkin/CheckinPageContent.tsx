@@ -578,12 +578,6 @@ export default function CheckinPageContent() {
               >
                 소원그림 보러 가기
               </button>
-              <button
-                onClick={() => router.push("/dreamtown")}
-                className="w-full rounded-full border border-[#9B87F5]/30 py-3 text-sm text-[#9B87F5]/70 hover:bg-[#9B87F5]/5 transition-colors"
-              >
-                별빛항로 안내 보기
-              </button>
               <p className="pt-3 text-xs text-center text-gray-300">
                 오늘, 미소를 품은 소원이가 되었습니다.
               </p>
@@ -653,12 +647,6 @@ export default function CheckinPageContent() {
                     className="w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white"
                   >
                     내 소원별 만나기
-                  </button>
-                  <button
-                    onClick={() => router.push("/dreamtown")}
-                    className="w-full rounded-full border border-[#9B87F5]/30 py-3 text-sm text-[#9B87F5]/70 hover:bg-[#9B87F5]/5 transition-colors"
-                  >
-                    별빛항로 안내 보기
                   </button>
                   <p className="pt-3 text-xs text-center text-gray-300">
                     오늘, 미소를 품은 소원이가 되었습니다.
