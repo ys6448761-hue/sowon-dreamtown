@@ -29,17 +29,26 @@ Do NOT replace, idealize, anonymize, or redesign any person's identity.
 Do NOT apply V-shaped jaw, enlarged eyes, or generic attractive face.
 The viewer must immediately say "that's me" — not "that looks like someone like me."`;
 
-const HOPE_RESTORATION_RULE = `HAPPY SELF RESTORATION RULE:
-The goal is NOT a big smile or a forced expression.
-The goal is to show this person as they look at their happiest and most alive —
-the happiest believable version of themselves, as if captured at the best moment in their life.
+const HOPE_RESTORATION_RULE = `HAPPIEST BELIEVABLE SELF RULE (IDENTITY LOCK APPLIES FIRST):
+The goal is to show this person as their Happiest Believable Self —
+the happiest, most alive, most vital version of themselves that is still unmistakably THEM.
 
 Not a smile imposed from outside. The happiness that is already in them, brought forward.
+Not a copy of today's fatigue or tension. The best of who they already are.
 
-Preserve the person's real expression structure first. Then apply the minimum change needed:
+HAPPINESS EVIDENCE FIRST:
+When the reference photo shows genuine happiness — bright smile, lifted cheeks, smiling eyes,
+affectionate family interaction, or a joyful child's expression:
+  → This IS the happiness evidence. Preserve and honor it fully.
+  → Do NOT suppress, flatten, or reduce the happiness that already exists.
+  → Do NOT tone down a genuine smile because it shows teeth or looks joyful.
+  → Let the smile remain as expressed. Change intensity: 0% from original.
+
+EXPRESSION RESTORATION (reference-guided, minimum change):
+Apply only what the reference supports:
 
 If already smiling in the photo:
-  → Keep the actual smile pattern. Let it shine with natural warmth.
+  → Keep the actual smile pattern exactly. Let it shine with natural warmth.
   → Change intensity: 0–10% from original.
 
 If showing a weak or subtle smile:
@@ -56,10 +65,10 @@ If tense, tired, or guarded:
   → Then add the quietest hint of warmth — mouth corners gently lifted.
   → Change intensity: 0–20% from original.
 
-The person should look like themselves — in the happiest moment of their life.
-Do NOT create a smile that was not present in the original.
-Do NOT make the smile larger or more intense than what the person can naturally hold.
-Do NOT apply a performance smile, commercial smile, or advertisement smile.`;
+The person should look like themselves — at their best and most alive.
+Do NOT create a smile larger than what the reference supports or what this person can naturally hold.
+Do NOT apply a performance smile, commercial smile, or advertisement smile.
+SUCCESS: "That's me — but from when I was genuinely happy and at my best."`;
 
 const TEETH_RULE = `TEETH RULE:
 If the reference photo shows teeth naturally: preserve the original teeth pattern as-is.
@@ -172,13 +181,38 @@ Cheeks and highlights are soft watercolor color blooms — not photographic grad
 Cel-shading is subtle and restrained — not heavy anime outlines.
 The face must not look like a 3D render, CGI portrait, beauty filter, or photorealistic AI photo.`;
 
-const VITALITY_RULE = `VITALITY RULE:
-Show the subject with slightly more youthful vitality —
-as if during a healthy and genuinely happy period of their life,
-approximately 5–10 years fresher in energy.
-Do NOT change facial structure, age identity, or recognizability.
-Do NOT perform teenage transformation, dramatic rejuvenation, or face reshaping.
-This is an energy shift in the illustration — not a facial reconstruction.`;
+const VITALITY_RULE = `VITALITY RULE (ADAPTIVE — judge each person independently):
+The goal is NOT uniform rejuvenation applied to everyone.
+The goal is to restore the vitality that is already the person's own best self —
+adaptive to what the reference photo actually shows.
+
+CASE A — Reference already shows genuine happiness, bright smile, or healthy energy:
+  → Vitality restoration: minimal to none. The reference IS the target.
+  → The person already looks alive and well. Preserve that energy as-is.
+
+CASE B — Reference shows a calm, neutral, or mildly tired adult:
+  → Gently restore: brighten eyes, lift skin vitality, release surface fatigue.
+  → Energy range: up to approximately 5 years fresher. Subtle, not dramatic.
+
+CASE C — Reference shows significant fatigue, tension, or low vitality in an adult:
+  → Restore vitality more actively: ease tired-looking skin, release facial tension,
+     restore cheek vitality, brighten the eyes.
+  → Energy range: approximately 5–10 years fresher (maximum allowed range).
+
+ALWAYS MAINTAIN regardless of case:
+  - face shape, eye shape, nose shape, jaw identity
+  - hairstyle, hairline, and hair color
+  - glasses and accessories
+  - recognizable age category (no teenage transformation)
+  - all distinctive personal features
+
+NEVER apply to children — no vitality modification or age shift for minors whatsoever.
+For multi-person photos: judge each person independently.
+  → Do NOT apply the same vitality level to everyone in the photo.
+  → A child who is already joyful: zero change.
+  → An adult who appears tired: restore per Case B or C above.
+
+This is energy and vitality — NOT a facial reconstruction or identity replacement.`;
 
 const WISH_MOMENT_SCENE = `WISH MOMENT SCENE:
 The image captures the exact moment the wish is being released into the world.
@@ -194,7 +228,7 @@ const NEGATIVE_RULE = `NEGATIVE RULE (what to avoid):
 - Do NOT use Pixar-like face, game character face, or sharp anime proportions.
 - Do NOT apply V-shaped jaw or artificially enlarged eyes.
 - Do NOT replace, redesign, or idealize the subject's facial identity.
-- Do NOT show exaggerated toothy grin, forced smile, or commercial advertising smile.
+- Do NOT show AI-invented exaggerated toothy grin, forced smile, or commercial advertising smile — a genuine open smile that is already present in the reference photo is NOT a "toothy grin" and must be preserved.
 - Do NOT show artificial perfect teeth or a forced open-mouth smile that did not exist in the original.
 - Do NOT apply identical smiles or identical expressions across multiple people.
 - Do NOT show impossible physics (floating people, etc.) unless the wish text explicitly calls for it.
