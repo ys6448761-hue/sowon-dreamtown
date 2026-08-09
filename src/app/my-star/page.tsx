@@ -157,7 +157,7 @@ export default function MyStarPage() {
               onClick={() => router.push("/checkin")}
               className="w-full rounded-full border border-white/15 py-3 text-sm text-white/50 hover:text-white/70 transition-colors"
             >
-              새 별 만들기
+              + 새 별 만들기
             </button>
           </div>
         </div>
