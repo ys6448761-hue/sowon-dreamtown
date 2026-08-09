@@ -16,7 +16,7 @@ export default function Home() {
       <h2 className="text-3xl font-bold">소원을 나누고, 함께 응원해요</h2>
       <div className="flex flex-col items-center gap-4">
         <Link
-          href="/checkin"
+          href="/checkin?mode=new"
           className="rounded-full bg-[#9B87F5] px-8 py-3.5 text-sm font-medium text-white hover:bg-[#8b77e5]"
           onClick={() => logEvent("new_star_click")}
         >

@@ -154,7 +154,7 @@ export default function MyStarPage() {
               내 소원그림 다시 보기
             </button>
             <button
-              onClick={() => router.push("/checkin")}
+              onClick={() => router.push("/checkin?mode=new")}
               className="w-full rounded-full border border-white/15 py-3 text-sm text-white/50 hover:text-white/70 transition-colors"
             >
               + 새 별 만들기

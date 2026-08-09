@@ -62,6 +62,12 @@ export default function CheckinPageContent() {
       return;
     }
 
+    // mode=new: 기존 별 resume을 건너뛰고 Step 1부터 새 체크인 시작
+    if (searchParams.get("mode") === "new") {
+      setIsInitializing(false);
+      return;
+    }
+
     // ?starId= 없음 — dt_guest_token 쿠키 기반으로 기존 별 조회 (서버에서 쿠키 읽음)
     // 기존 /api/dt/me/star 재사용. 신규 사용자(401)는 Step 1으로 자연스럽게 진입.
     fetch("/api/dt/me/star")
