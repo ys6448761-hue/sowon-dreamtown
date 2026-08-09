@@ -30,46 +30,106 @@ Do NOT apply V-shaped jaw, enlarged eyes, or generic attractive face.
 The viewer must immediately say "that's me" — not "that looks like someone like me."`;
 
 const HOPE_RESTORATION_RULE = `HOPE RESTORATION RULE:
-Show the happiness that already exists in the people — slightly more open and at ease.
-Quiet genuine happiness: mouth corners naturally raised, eyes softly crinkled,
-cheeks gently lifted, relaxed facial muscles, warm natural gaze.
-Do NOT force a larger smile than the person naturally has.
-Do NOT show exaggerated toothy grin, forced smile, or commercial advertising smile.
-The WishArt is a moment of hope — not sorrow, and not a performance.
-Goal: "This is me — on the day I was most genuinely happy."`;
+The goal is NOT a big smile. It is the person's most comfortable and genuinely happy state.
+
+Preserve the person's real expression structure first. Then apply the minimum change needed:
+
+If already smiling in the photo:
+  → Keep the actual smile pattern. Do not enlarge or intensify it.
+  → Change intensity: 0–10% from original.
+
+If showing a weak or subtle smile:
+  → Gently reinforce: slightly lifted cheeks, softened eyes, natural mouth corners.
+  → Change intensity: 10–20% from original.
+
+If neutral expression:
+  → Lift mouth corners very slightly. Soften the eyes. Relax facial tension.
+  → Closed-mouth gentle expression only. Do not invent or add teeth.
+  → Change intensity: 20–30% from original.
+
+If tense, tired, or guarded:
+  → Restore relaxation first. Reduce jaw tension, soften eyes, release facial muscles.
+  → Smile is secondary to relaxation.
+  → Change intensity: 0–20% from original.
+
+Do NOT create a smile that was not present in the original.
+Do NOT force a smile larger than what the person naturally shows.
+The person should look like themselves — on one of their best and most comfortable days.`;
+
+const TEETH_RULE = `TEETH RULE:
+If the reference photo shows teeth naturally: preserve the original teeth pattern as-is.
+If the reference photo shows a closed-mouth expression: use closed-mouth gentle smile only.
+Do NOT invent a new open-mouth smile where none existed.
+Do NOT show oversized toothy grin, artificially perfect teeth, or advertisement smile.
+Do NOT create forced open-mouth smile or invented teeth pattern.`;
+
+const COUPLE_EXPRESSION_RULE = `MULTI-PERSON EXPRESSION RULE:
+If multiple people appear, treat each person's expression independently.
+Do NOT apply the same smile, the same teeth exposure, or the same expression to all people.
+Each person's expression follows their own original pattern and the rules above.
+Relationship warmth is expressed through: proximity, posture, gaze direction, warm light, and atmosphere.
+Do NOT homogenize the expressions across people in the image.`;
 
 const WORLD_RESPONSE_RULE = `WORLD RESPONSE RULE:
-The environment around the subject must visually "respond" to the wish text.
-Wish-related imagery (symbols, light, colors, textures) should appear in the background or atmosphere.
-The world is celebrating or cradling the wish — not ignoring it.`;
+The world carries the primary emotional weight — approximately 70–80% of the emotional expression.
+The person's face carries approximately 20–30%.
 
-const GEMSTONE_STAR_RULE = `GEMSTONE STAR RULE:
-Each DreamTown visitor is associated with a gemstone star:
-Citrine (황수정), Sapphire (사파이어), Emerald (에메랄드), Ruby (루비), Diamond (다이아몬드).
-The gemstone's color and luminosity must appear in the image — in light, reflections, or ambient glow.
-Do NOT place a literal gemstone in the image unless it naturally fits. Use color and light instead.`;
+This is not a canvas area ratio. It is an emotional responsibility ratio.
+Do not force happiness onto the person's face.
+Let the world respond to their wish instead.
+
+Express emotion through:
+- warm light falling on the scene
+- emotional sky (golden hour, twilight, soft dawn)
+- Yeosu sea reflecting the mood
+- watercolor flowers and atmospheric color
+- the selected Yeosu Origin responding to the wish energy
+
+The person exists within the world's emotional response — the world celebrates their wish.`;
 
 const DREAMTOWN_VISUAL_RULE = `DREAMTOWN VISUAL SIGNATURE RULE:
 The image must carry DreamTown's emotional visual signature — not generic tourism photography.
-Required: at least 3 of the following atmospheric elements must be present:
-- watercolor flowers blooming in the background or foreground
-- emotional sky: golden hour, twilight, soft dawn, or star-lit evening
-- Yeosu sea light: reflected golden or blue watercolor shimmer on the water
-- warm atmospheric haze: soft mist or light diffusion over the harbor
-- painterly Yeosu landscape: hills, sea, islands rendered in soft layered watercolor washes
-These elements form a single emotional world together — not decorative props added on top.
-The result should feel like a DreamTown painting, not a travel brochure photo.`;
+Use 2–3 of the following atmospheric elements as needed, in harmony with the person:
+- watercolor flowers (soft, present but not dominant)
+- emotional sky: golden hour, twilight, soft dawn, or starlit evening
+- Yeosu sea light: reflected watercolor shimmer on the water
+- warm atmospheric haze or light diffusion over the harbor
+- painterly Yeosu landscape in soft layered watercolor washes
+
+RESTRAINT IS REQUIRED:
+Do not apply all elements at maximum saturation simultaneously.
+DreamTown's signature is emotional coherence — not visual abundance.
+If flowers, sky, and light all compete at full intensity, the person is lost.
+Each element serves the person's emotional moment. The world supports the person.
+The result should feel like one quiet, unified emotional world — genuine, not spectacular.`;
 
 const COLOR_RULE = `COLOR RULE:
 The image must have a coherent, emotionally resonant color palette.
-The gemstone color is the dominant accent.
-Warm gold or soft teal may be used as secondary tones.
-Avoid muddy or desaturated results — the image should feel luminous and alive.`;
+Warm gold or soft teal may be used as accent tones.
+Avoid muddy or desaturated results — the image should feel luminous and alive.
+Avoid excessive golden saturation that overwhelms the faces or flattens identity.`;
 
 const WISHART_WOW_RULE = `WISHART WOW RULE:
 This image will be shown to the visitor as their personal wish portrait.
 It must feel like a genuine keepsake — something they would want to save and share.
 Quality, composition, and emotional resonance are the top priorities.`;
+
+const PERSON_FIRST_RULE = `PERSON-FIRST COMPOSITION RULE:
+DreamTown WishArt is NOT "a Yeosu tourist illustration with a person added."
+It IS "the moment a person's wish is held by Yeosu."
+
+Visual priority order:
+1. The person — face, identity, expression
+2. The warmth and relationship between people (if multiple)
+3. DreamTown emotional atmosphere
+4. The selected Yeosu Origin as supporting context
+5. Decorative elements last
+
+The first thing the eye must reach is the person's face — not the landmark, not the background.
+The landmark must support the person, not compete with them.
+Background intensity must not overpower or visually crowd the faces.
+Reduce landmark visual dominance compared to a typical tourism illustration.
+The Yeosu location appears as emotional context — not as the hero of the image.`;
 
 const POSTER_COMPOSITION_RULE = `POSTER COMPOSITION RULE:
 Compose the image as a vertical portrait (portrait orientation, 1024×1536).
@@ -105,7 +165,7 @@ This is an energy shift in the illustration — not a facial reconstruction.`;
 
 const WISH_MOMENT_SCENE = `WISH MOMENT SCENE:
 The image captures the exact moment the wish is being released into the world.
-The atmosphere should feel charged with possibility — not mundane, not dramatic.
+The atmosphere should feel charged with quiet possibility — not mundane, not dramatic.
 Subtle light effects (golden hour glow, soft bokeh, watercolor light diffusion) are appropriate.`;
 
 const NEGATIVE_RULE = `NEGATIVE RULE (what to avoid):
@@ -118,10 +178,15 @@ const NEGATIVE_RULE = `NEGATIVE RULE (what to avoid):
 - Do NOT apply V-shaped jaw or artificially enlarged eyes.
 - Do NOT replace, redesign, or idealize the subject's facial identity.
 - Do NOT show exaggerated toothy grin, forced smile, or commercial advertising smile.
+- Do NOT show artificial perfect teeth or a forced open-mouth smile that did not exist in the original.
+- Do NOT apply identical smiles or identical expressions across multiple people.
 - Do NOT show impossible physics (floating people, etc.) unless the wish text explicitly calls for it.
 - Do NOT make the background a generic studio backdrop or plain gradient.
 - Do NOT compose as a tourism poster — no location name banners.
+- Do NOT let the landmark or background visually overpower the subjects' faces.
 - Do NOT add floating lanterns, glitter explosions, or fantasy magic particle effects.
+- Do NOT apply excessive flower density or excessive golden saturation that crowds the faces.
+- Do NOT add visual clutter (sparkling particles, glowing effects) directly around the faces.
 - Do NOT show multiple magical stars, star seeds (별씨앗), or star workshop (별공방) symbols.
 - Do NOT show a white lighthouse, European lighthouse, or hilltop lighthouse.
 - Do NOT show generic European scenery that is not Yeosu.`;
@@ -131,22 +196,23 @@ const NEGATIVE_RULE = `NEGATIVE RULE (what to avoid):
 type LocationType = "healing" | "new_beginning" | "courage" | "wisdom" | "gratitude";
 
 const LOCATION_KEYWORDS: Record<LocationType, string[]> = {
-  healing:       ["치유", "휴식", "평안", "마음", "위로", "쉬고", "쉬다", "평화", "안정", "힐링", "위안", "편안"],
-  new_beginning: ["시작", "변화", "도전", "새출발", "새로운", "출발", "도약", "기회", "모험", "첫"],
-  courage:       ["용기", "성취", "전진", "자신감", "이겨", "극복", "강해", "할 수 있", "성공", "도전", "이기"],
-  gratitude:     ["가족", "사랑", "감사", "관계", "함께", "부모", "자녀", "아이", "소중", "고마", "행복"],
-  wisdom:        ["방향", "고민", "지혜", "선택", "마음정리", "결정", "길", "답", "깨달음", "생각"],
+  gratitude:     ["가족", "사랑", "감사", "부모", "엄마", "아빠", "아내", "남편", "아이", "함께", "행복"],
+  healing:       ["건강", "회복", "치유", "휴식", "평안", "위로", "아프", "마음편안"],
+  new_beginning: ["새출발", "시작", "취업", "입학", "이직", "변화", "새로운", "출발"],
+  courage:       ["용기", "도전", "합격", "시험", "성공", "성취", "해내", "자신감"],
+  wisdom:        ["방향", "선택", "고민", "지혜", "결정", "마음정리", "길을 찾"],
 };
 
 const LOCATION_RULES: Record<LocationType, string> = {
   healing: `LOCATION — ODONGDO ISLAND (오동도), Yeosu, Korea:
 A small island connected to the mainland by a 768-meter wooden walkway over the sea.
-Famous for its dense camellia forest and a white lighthouse at the island's tip.
+Famous for its dense camellia forest and a lighthouse at the island's tip.
 Key visual elements: wooden sea-walkway, camellia blossoms (red and pink), calm sheltered cove,
 soft morning or sunset light filtering through camellia trees.
 The atmosphere is quiet, healing, and intimately natural.
 Paint in DreamTown watercolor style: drifting camellia petals, reflected light on the walkway water,
-warm gentle sunlight diffused through the trees. Gemstone color in the petal light.`,
+warm gentle sunlight diffused through the trees.
+Scale: the island path and trees are background context — the person is the center.`,
 
   new_beginning: `LOCATION — YEOSU EXPO STATION (여수엑스포역), Yeosu, Korea:
 A modern station with a sweeping curved roof, opening directly toward Yeosu harbor.
@@ -155,7 +221,8 @@ Key visual elements: curved modern roof forms, open sky, harbor visible beyond t
 light streaming through glass and steel, sense of a journey about to begin.
 The atmosphere is hopeful, forward-looking, full of new possibility.
 Paint in DreamTown watercolor style: fresh morning light, open sky washes of color,
-architectural lines softened into watercolor edges. Gemstone color in the sky light.`,
+architectural lines softened into watercolor edges.
+Scale: the station forms are background context — the person is the center.`,
 
   courage: `LOCATION — YEOSU MARITIME CABLE CAR (여수해상케이블카), Yeosu, Korea:
 Cable car gondolas suspended over the open sea between Dolsan Island and the Yeosu mainland.
@@ -164,17 +231,20 @@ Key visual elements: cable car gondola, aerial perspective over Yeosu harbor,
 deep blue sea below, distant islands, cable lines receding into the horizon.
 The atmosphere is exhilarating, expansive, courageous.
 Paint in DreamTown watercolor style: deep blue sea with watercolor shimmer,
-soft aerial haze, wind-swept watercolor sky. Gemstone color in the sea reflections.`,
+soft aerial haze, wind-swept watercolor sky.
+Scale: the gondola and sea are background context — the person is the center.`,
 
   wisdom: `LOCATION — HAMEL LIGHTHOUSE (하멜등대), DreamTown, Yeosu, Korea:
 A RED cylindrical lighthouse standing on a harbor breakwater visibly connected to the land.
 Appearance: red cylindrical body, white lantern room at the top.
 Key visual elements: red lighthouse, harbor breakwater, deep blue Yeosu sea,
 distant cable car lights where composition permits.
-If text appears naturally: vertical "하멜등대" Korean signage on the lighthouse body.
 The atmosphere is reflective, directional — a moment of clarity at the edge of the sea.
 Paint in DreamTown watercolor style: deep harbor blues, red lighthouse as warm anchor,
-watercolor light on the breakwater stones. Gemstone color in the harbor light.
+watercolor light on the breakwater stones.
+If text renders naturally: vertical "하멜등대" Korean signage on the lighthouse body.
+SCALE RULE: The lighthouse is context — not the hero of the image.
+It must NOT dominate the composition or compete with the subject's face.
 Do NOT show: white lighthouse, European lighthouse, hilltop lighthouse, floating lighthouse.`,
 
   gratitude: `LOCATION — YI SUN-SIN PLAZA (이순신광장), Yeosu, Korea:
@@ -184,7 +254,8 @@ Key visual elements: harbor promenade, Yeosu bay, warm evening or golden hour li
 sense of togetherness, gentle sea breeze, the Admiral Yi Sun-sin statue as a distant silhouette.
 The atmosphere is warm, grateful, and celebratory of bonds between people.
 Paint in DreamTown watercolor style: golden sunset over the harbor, soft sea reflections,
-warm gathering light. Gemstone color in the sunset glow on the water.`,
+warm gathering light.
+Scale: the plaza and harbor are background context — the people are the center.`,
 };
 
 const LOCATION_NAMES: Record<LocationType, string> = {
@@ -197,16 +268,17 @@ const LOCATION_NAMES: Record<LocationType, string> = {
 
 function detectLocation(wishText: string): LocationType {
   const lower = wishText.toLowerCase();
-  // gratitude checked first — family/love keywords are strong signals
+  // Check in order: gratitude → healing → new_beginning → courage → wisdom
   for (const type of ["gratitude", "healing", "new_beginning", "courage", "wisdom"] as LocationType[]) {
     if (LOCATION_KEYWORDS[type].some((kw) => lower.includes(kw))) {
       return type;
     }
   }
-  return "wisdom"; // default: Hamel Lighthouse
+  // TODO: replace with LLM-based classifier before hotel full launch
+  return "wisdom"; // temporary fallback — Hamel Lighthouse
 }
 
-// ─── Gemstone detection ───────────────────────────────────────────────────────
+// ─── Gemstone helpers (reserved for 3P — not used in current MVP prompt) ──────
 
 const GEMSTONE_KEYWORDS: Record<string, string[]> = {
   citrine:  ["황수정", "시트린", "노랑", "노란", "gold", "golden", "황금"],
@@ -224,36 +296,38 @@ const GEMSTONE_COLORS: Record<string, string> = {
   diamond:  "brilliant white and prismatic light (diamond)",
 };
 
-function detectGemstone(wishText: string): string {
+// Reserved for 3P — not called in buildWishartPrompt()
+export function detectGemstone(wishText: string): string {
   const lower = wishText.toLowerCase();
   for (const [gem, keywords] of Object.entries(GEMSTONE_KEYWORDS)) {
     if (keywords.some((kw) => lower.includes(kw))) {
       return gem;
     }
   }
-  return "citrine"; // default
+  return "citrine";
 }
+
+// Reserved for 3P
+export { GEMSTONE_COLORS };
 
 // ─── Expression adjustment ────────────────────────────────────────────────────
 
 function expressionAdjustment(expression: ExpressionType): string {
   switch (expression) {
     case "sad":
-      return "The subject's expression in the output must be softened to quiet warmth — a moment of peace replacing sadness.";
+      return "The subject shows tension or sadness. Restore relaxation first: soften jaw, release facial tension, warm the eyes. Apply only a very subtle mouth-corner lift if it fits naturally. Do NOT invent a smile. Change intensity: 0–20% from original.";
     case "neutral":
-      return "The subject's expression in the output should suggest gentle anticipation or calm readiness.";
+      return "The subject has a neutral expression. Apply minimal change: slightly lift mouth corners, soften the eyes, relax facial muscles. Closed-mouth expression only — do NOT invent teeth. Change intensity: 20–30% from original.";
     case "gentle_smile":
-      return "The subject's gentle smile should be preserved and slightly illuminated by the wish energy.";
+      return "The subject already has a gentle smile. Preserve the exact smile pattern as-is. Illuminate it gently with the wish energy — do NOT enlarge or intensify the smile. Change intensity: 0–10% from original.";
     case "bright_smile":
-      return "The subject's bright smile should radiate outward into the environment — the world smiling back.";
+      return "The subject has a bright smile. Preserve the exact original smile pattern completely. Do NOT change the smile itself. Let the world around them respond with wish energy. Change intensity: 0% from original.";
   }
 }
 
 // ─── Main export ─────────────────────────────────────────────────────────────
 
 export function buildWishartPrompt(profile: PhotoProfile, wishText: string): string {
-  const gemstone = detectGemstone(wishText);
-  const gemColor = GEMSTONE_COLORS[gemstone];
   const expAdj = expressionAdjustment(profile.expression);
   const locationType = detectLocation(wishText);
   const locationRule = LOCATION_RULES[locationType];
@@ -270,11 +344,15 @@ ${IDENTITY_LOCK_RULE}
 
 ${HOPE_RESTORATION_RULE}
 
+${TEETH_RULE}
+
+${COUPLE_EXPRESSION_RULE}
+
 ${WORLD_RESPONSE_RULE}
 
-${GEMSTONE_STAR_RULE}
-
 ${locationRule}
+
+${PERSON_FIRST_RULE}
 
 ${DREAMTOWN_VISUAL_RULE}
 
@@ -302,8 +380,6 @@ ${personDesc}
 EXPRESSION DIRECTIVE:
 ${expAdj}
 
-GEMSTONE: ${gemstone} — use ${gemColor} as the dominant accent color in light, reflections, and atmosphere.
-
 WISH TEXT (what this person is wishing for):
 "${wishText}"
 
@@ -312,5 +388,5 @@ LOCATION SELECTED: ${locationName}
 
 ---
 
-Create a WishArt portrait: a 2D hand-painted watercolor illustration of the subject from the uploaded photo, at ${locationName}, at the moment their wish is released into the world. The environment and atmosphere respond to the wish. The gemstone color permeates the light. The image carries DreamTown's emotional visual signature — flowers, sea light, emotional sky, painterly Yeosu landscape. Portrait orientation (1024×1536). This is a meaningful personal keepsake the subject would want to save and keep forever.`;
+Create a WishArt portrait: a 2D hand-painted watercolor illustration of the subject from the uploaded photo, at ${locationName}, at the moment their wish is released into the world. The person is the center — the Yeosu location holds them. The world responds to the wish through light, atmosphere, and the emotional landscape. Portrait orientation (1024×1536). This is a meaningful personal keepsake the subject would want to save and keep forever.`;
 }
