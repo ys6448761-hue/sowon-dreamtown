@@ -148,7 +148,7 @@ export default function MyStarPage() {
           )}
           <div className="mt-6 space-y-3">
             <button
-              onClick={() => router.push(`/home?starId=${starId}`)}
+              onClick={() => router.push(`/checkin?starId=${starId}`)}
               className="w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white"
             >
               내 소원그림 다시 보기
