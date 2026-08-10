@@ -740,11 +740,7 @@ export default function CheckinPageContent() {
 
                 <div className="mt-8 space-y-3">
                   <button
-                    onClick={() => {
-                      if (resumeStarId) {
-                        router.push(`/home?starId=${resumeStarId}`);
-                      }
-                    }}
+                    onClick={() => router.push("/my-star")}
                     className="w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white"
                   >
                     내 소원별 만나기
