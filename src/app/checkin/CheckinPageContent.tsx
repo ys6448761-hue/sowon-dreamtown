@@ -740,7 +740,7 @@ export default function CheckinPageContent() {
 
                 <div className="mt-8 space-y-3">
                   <a
-                    href="https://app.dailymiracles.kr/wish/input"
+                    href="https://app.dailymiracles.kr/star-entry"
                     className="block w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white text-center"
                   >
                     내 소원별 만나기
