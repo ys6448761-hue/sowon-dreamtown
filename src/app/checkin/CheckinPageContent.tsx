@@ -739,12 +739,12 @@ export default function CheckinPageContent() {
                 )}
 
                 <div className="mt-8 space-y-3">
-                  <button
-                    onClick={() => router.push("/my-star")}
-                    className="w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white"
+                  <a
+                    href="https://app.dailymiracles.kr/wish/input"
+                    className="block w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white text-center"
                   >
                     내 소원별 만나기
-                  </button>
+                  </a>
                   <p className="pt-3 text-xs text-center text-gray-300">
                     오늘, 미소를 품은 소원이가 되었습니다.
                   </p>
