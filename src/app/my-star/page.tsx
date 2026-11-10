@@ -126,7 +126,7 @@ export default function MyStarPage() {
     <main className="flex min-h-screen flex-col items-center justify-center bg-[#0D1B2A] px-6">
 
       {isRevealed ? (
-        /* ── revealed: 소원그림 표시 ── */
+        /* ── revealed: 소원별 홈 ── */
         <div className="w-full max-w-sm">
           <div className="mb-6 text-center">
             <p
@@ -136,20 +136,28 @@ export default function MyStarPage() {
             >
               ✨
             </p>
-            <p className="mt-3 text-sm font-medium text-white/70">소원그림이 공개되었습니다</p>
+            <p className="mt-3 text-base font-semibold text-white">
+              {starStatus?.visitorName ? `${starStatus.visitorName}님의 소원별` : "나의 소원별"}
+            </p>
           </div>
           {starStatus?.wishImageUrl && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={starStatus.wishImageUrl}
               alt="소원그림"
-              className="w-full rounded-2xl shadow-lg"
+              className="mx-auto w-40 rounded-2xl shadow-lg"
             />
           )}
           <div className="mt-6 space-y-3">
+            <a
+              href="https://app.dailymiracles.kr/star-entry"
+              className="block w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white text-center"
+            >
+              내 소원별 만나기
+            </a>
             <button
               onClick={() => router.push(`/checkin?starId=${starId}`)}
-              className="w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white"
+              className="w-full rounded-full border border-white/15 py-3 text-sm text-white/50 hover:text-white/70 transition-colors"
             >
               내 소원그림 다시 보기
             </button>
