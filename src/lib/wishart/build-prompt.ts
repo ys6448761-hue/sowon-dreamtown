@@ -182,22 +182,36 @@ Cel-shading is subtle and restrained — not heavy anime outlines.
 The face must not look like a 3D render, CGI portrait, beauty filter, or photorealistic AI photo.`;
 
 const VITALITY_RULE = `VITALITY RULE (ADAPTIVE — judge each person independently):
-The goal is NOT uniform rejuvenation applied to everyone.
-The goal is to restore the vitality that is already the person's own best self —
-adaptive to what the reference photo actually shows.
+The goal is to show every adult as their most vital, alive self —
+5 to 10 years younger-looking than their actual appearance in the photo.
+This applies to ALL adults regardless of expression or energy level in the reference.
+
+AGE SOFTENING (always applied to adults):
+Render every adult appearing 5–10 years younger than the reference photo shows.
+  - Skin: slightly more elastic, luminous, and clear — ease visible fatigue lines without erasing texture
+  - Eye corners (눈가): soften tension lines and crow's feet gently
+  - Nasolabial folds (팔자): soften slightly — do NOT erase completely, just reduce depth
+  - Jawline: slightly lifted and softer edge
+  - Cheeks: subtle lift in skin vitality
+  - Eyes: brighter, more alive
+Maximum reduction: do NOT apply more than 10 years of age reduction.
+The result must still read as the same recognizable adult — NOT a teenage face, NOT a 20-year-old face.
+Avoid excessive beautification or AI-generic "young face" effect.
+
+EXPRESSION VITALITY (judge each adult independently, in addition to age softening above):
 
 CASE A — Reference already shows genuine happiness, bright smile, or healthy energy:
-  → Vitality restoration: minimal to none. The reference IS the target.
-  → The person already looks alive and well. Preserve that energy as-is.
+  → Expression change: minimal to none. The reference IS the expression target.
+  → Age softening still applies: render 5–10 years younger as described above.
 
 CASE B — Reference shows a calm, neutral, or mildly tired adult:
-  → Gently restore: brighten eyes, lift skin vitality, release surface fatigue.
-  → Energy range: up to approximately 5 years fresher. Subtle, not dramatic.
+  → Gently restore expression: brighten eyes, lift skin vitality, release surface fatigue.
+  → Age softening applies: render 5–10 years younger as described above.
 
 CASE C — Reference shows significant fatigue, tension, or low vitality in an adult:
-  → Restore vitality more actively: ease tired-looking skin, release facial tension,
+  → Restore expression more actively: ease tired-looking skin, release facial tension,
      restore cheek vitality, brighten the eyes.
-  → Energy range: approximately 5–10 years fresher (maximum allowed range).
+  → Age softening applies: render 5–10 years younger as described above.
 
 ALWAYS MAINTAIN regardless of case:
   - face shape, eye shape, nose shape, jaw identity
@@ -206,13 +220,13 @@ ALWAYS MAINTAIN regardless of case:
   - recognizable age category (no teenage transformation)
   - all distinctive personal features
 
-NEVER apply to children — no vitality modification or age shift for minors whatsoever.
+NEVER apply to children — no age softening or vitality modification for minors whatsoever.
 For multi-person photos: judge each person independently.
-  → Do NOT apply the same vitality level to everyone in the photo.
-  → A child who is already joyful: zero change.
-  → An adult who appears tired: restore per Case B or C above.
+  → Do NOT apply the same vitality level or age softening to everyone uniformly.
+  → A child who is already joyful: zero change, zero age shift.
+  → An adult: always apply 5–10 year age softening regardless of their expression.
 
-This is energy and vitality — NOT a facial reconstruction or identity replacement.`;
+This is a natural vitality restoration — NOT a facial reconstruction or identity replacement.`;
 
 const WISH_MOMENT_SCENE = `WISH MOMENT SCENE:
 The image captures the exact moment the wish is being released into the world.
@@ -222,7 +236,7 @@ Subtle light effects (golden hour glow, soft bokeh, watercolor light diffusion) 
 const NEGATIVE_RULE = `NEGATIVE RULE (what to avoid):
 - Do NOT add text, logos, watermarks, QR codes, or explanatory text of any kind.
 - Do NOT show violence, fear, or distress.
-- Do NOT alter the subject's race, gender, or age significantly.
+- Do NOT alter the subject's race or gender. Do NOT alter age by more than 10 years (intentional 5–10 year softening is allowed and desired for adults).
 - Do NOT render photorealistic portrait, cinematic photo, 3D render, or CGI face.
 - Do NOT create plastic skin, hyperreal skin, or beauty-filter face.
 - Do NOT use Pixar-like face, game character face, or sharp anime proportions.
