@@ -58,13 +58,20 @@ export async function POST(req: NextRequest) {
 
     const star = await prisma.dtStar.findUnique({
       where: { id: starId },
-      select: { id: true, photoUrl: true, wishImageStatus: true, guestIdentityId: true },
+      select: { id: true, photoUrl: true, wishImageStatus: true, wishImageAttempts: true, guestIdentityId: true },
     });
     if (!star) {
       return NextResponse.json({ error: "star not found", request_id: requestId }, { status: 404 });
     }
     if (star.guestIdentityId !== identity.id) {
       return NextResponse.json({ error: "forbidden", request_id: requestId }, { status: 403 });
+    }
+    // PHX-WISHART-011: 총 3회 소진 여부 사전 확인 (early exit)
+    if (star.wishImageAttempts >= 3) {
+      return NextResponse.json(
+        { error: "소원그림을 완성하는 과정에서 확인이 필요해요. DreamTown 운영팀이 도와드릴게요.", request_id: requestId },
+        { status: 429 },
+      );
     }
     if (star.wishImageStatus !== "failed") {
       return NextResponse.json(
@@ -85,16 +92,48 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "wish not found", request_id: requestId }, { status: 422 });
     }
 
+    // R2 다운로드 성공 여부를 확인 후 횟수 차감 (실제 AI 호출 전 오류는 미계상)
     const { body: photoBuffer, contentType } = await downloadFromR2(star.photoUrl);
 
     // extension hint for MIME override (R2 ContentType may be generic)
     const ext = star.photoUrl.split(".").pop()?.toLowerCase() ?? "";
     const mimeType = EXT_TO_MIME[ext] ?? contentType;
 
-    await prisma.dtStar.update({
-      where: { id: starId },
-      data: { wishImageStatus: "pending" },
+    // PHX-WISHART-011: 원자적 횟수 증가 + 상태 전환
+    // WHERE attempts < 3 AND status = "failed" 조건이 한 트랜잭션에서 검증됨 (동시 요청 경쟁 방지)
+    const updateResult = await prisma.dtStar.updateMany({
+      where: {
+        id: starId,
+        wishImageAttempts: { lt: 3 },
+        wishImageStatus: "failed",
+        guestIdentityId: identity.id,
+      },
+      data: {
+        wishImageAttempts: { increment: 1 },
+        wishImageStatus: "pending",
+      },
     });
+
+    if (updateResult.count === 0) {
+      // 동시 요청에서 경쟁 패배 — 최신 상태를 조회하여 적절한 에러 반환
+      const freshStar = await prisma.dtStar.findUnique({
+        where: { id: starId },
+        select: { wishImageAttempts: true, wishImageStatus: true },
+      });
+      if (!freshStar) {
+        return NextResponse.json({ error: "star not found", request_id: requestId }, { status: 404 });
+      }
+      if (freshStar.wishImageAttempts >= 3) {
+        return NextResponse.json(
+          { error: "소원그림을 완성하는 과정에서 확인이 필요해요. DreamTown 운영팀이 도와드릴게요.", request_id: requestId },
+          { status: 429 },
+        );
+      }
+      return NextResponse.json(
+        { error: "retry only allowed when status is failed", wishImageStatus: freshStar.wishImageStatus, request_id: requestId },
+        { status: 409 },
+      );
+    }
 
     void runWishartGeneration(starId, photoBuffer, wish.content, mimeType);
 

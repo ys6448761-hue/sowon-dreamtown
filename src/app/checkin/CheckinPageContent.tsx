@@ -19,6 +19,7 @@ type CheckinStatus = {
   wishImageUrl: string | null;
   wishImageStatus: string;
   wishImageRevealedAt: string | null;
+  wishImageAttemptsExhausted?: boolean; // PHX-WISHART-011: 총 3회 소진 시 true
 };
 
 const NAME_MAX = 50;
@@ -836,45 +837,61 @@ export default function CheckinPageContent() {
                 <h1 className="mt-5 text-lg font-semibold text-gray-800">
                   그림을 완성하지 못했어요
                 </h1>
-                <p className="mt-4 text-sm leading-relaxed text-gray-400">
-                  잠시 별빛이 닿지 않았나 봐요.<br />
-                  다시 시도하거나 스태프에게 말씀해 주세요.
-                </p>
+                {checkinStatus.wishImageAttemptsExhausted ? (
+                  // PHX-WISHART-011: 총 3회 소진 — 운영팀 안내
+                  <p className="mt-4 text-sm leading-relaxed text-gray-400">
+                    소원그림을 완성하는 과정에서 확인이 필요해요.<br />
+                    DreamTown 운영팀이 도와드릴게요.
+                  </p>
+                ) : (
+                  <p className="mt-4 text-sm leading-relaxed text-gray-400">
+                    잠시 별빛이 닿지 않았나 봐요.<br />
+                    다시 시도하거나 스태프에게 말씀해 주세요.
+                  </p>
+                )}
                 {status === "error" && errorMsg && (
                   <p className="mt-3 text-xs text-amber-600">{errorMsg}</p>
                 )}
                 <div className="mt-8 space-y-3">
-                  <button
-                    onClick={async () => {
-                      if (!resumeStarId || status === "loading") return;
-                      setStatus("loading");
-                      setErrorMsg("");
-                      try {
-                        const res = await fetch("/api/dt/wishart/retry", {
-                          method: "POST",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ starId: resumeStarId }),
-                        });
-                        if (!res.ok) {
-                          const d = await res.json().catch(() => ({}));
-                          setErrorMsg((d as { error?: string }).error === "generation unavailable"
-                            ? "현재 그림 생성이 준비 중이에요. 스태프에게 문의해 주세요."
-                            : "다시 시도 중 오류가 발생했습니다.");
+                  {!checkinStatus.wishImageAttemptsExhausted && (
+                    <button
+                      onClick={async () => {
+                        if (!resumeStarId || status === "loading") return;
+                        setStatus("loading");
+                        setErrorMsg("");
+                        try {
+                          const res = await fetch("/api/dt/wishart/retry", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ starId: resumeStarId }),
+                          });
+                          if (!res.ok) {
+                            const d = await res.json().catch(() => ({}));
+                            if (res.status === 429) {
+                              // 횟수 소진 — 운영팀 안내 모드로 전환
+                              setCheckinStatus((prev) => prev ? { ...prev, wishImageAttemptsExhausted: true } : prev);
+                              setStatus("idle");
+                              return;
+                            }
+                            setErrorMsg((d as { error?: string }).error === "generation unavailable"
+                              ? "현재 그림 생성이 준비 중이에요. 스태프에게 문의해 주세요."
+                              : "다시 시도 중 오류가 발생했습니다.");
+                            setStatus("error");
+                            return;
+                          }
+                          setStatus("idle");
+                          setCheckinStatus((prev) => prev ? { ...prev, wishImageStatus: "pending" } : prev);
+                        } catch {
+                          setErrorMsg("네트워크 연결을 확인해 주세요.");
                           setStatus("error");
-                          return;
                         }
-                        setStatus("idle");
-                        setCheckinStatus((prev) => prev ? { ...prev, wishImageStatus: "pending" } : prev);
-                      } catch {
-                        setErrorMsg("네트워크 연결을 확인해 주세요.");
-                        setStatus("error");
-                      }
-                    }}
-                    disabled={status === "loading"}
-                    className="w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white disabled:opacity-40"
-                  >
-                    {status === "loading" ? "시도 중…" : "다시 시도하기"}
-                  </button>
+                      }}
+                      disabled={status === "loading"}
+                      className="w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white disabled:opacity-40"
+                    >
+                      {status === "loading" ? "시도 중…" : "다시 시도하기"}
+                    </button>
+                  )}
                   <button
                     onClick={() => router.push("/my-star")}
                     className="w-full rounded-full border border-[#9B87F5]/30 py-3 text-sm text-[#9B87F5]/70 hover:bg-[#9B87F5]/5 transition-colors"

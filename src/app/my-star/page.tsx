@@ -25,6 +25,7 @@ type StarStatus = {
   wishImageUrl: string | null;
   wishImageStatus: string;
   wishImageRevealedAt: string | null;
+  wishImageAttemptsExhausted?: boolean; // PHX-WISHART-011: 총 3회 소진 시 true
 };
 
 export default function MyStarPage() {
@@ -186,40 +187,55 @@ export default function MyStarPage() {
         <div className="w-full max-w-xs text-center">
           <p className="text-3xl mb-5" aria-hidden="true">🌙</p>
           <p className="text-sm font-medium text-white/70">그림을 완성하지 못했어요</p>
-          <p className="mt-2 text-xs text-white/40">다시 시도하거나 스태프에게 말씀해 주세요.</p>
+          {starStatus?.wishImageAttemptsExhausted ? (
+            // PHX-WISHART-011: 총 3회 소진 — 운영팀 안내
+            <p className="mt-2 text-xs text-white/50 leading-relaxed">
+              소원그림을 완성하는 과정에서 확인이 필요해요.<br />
+              DreamTown 운영팀이 도와드릴게요.
+            </p>
+          ) : (
+            <p className="mt-2 text-xs text-white/40">다시 시도하거나 스태프에게 말씀해 주세요.</p>
+          )}
           {revealError && <p className="mt-3 text-xs text-amber-400">{revealError}</p>}
-          <div className="mt-6 space-y-3">
-            <button
-              onClick={async () => {
-                if (!starId || isRevealing) return;
-                setIsRevealing(true);
-                setRevealError("");
-                try {
-                  const res = await fetch("/api/dt/wishart/retry", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ starId }),
-                  });
-                  if (!res.ok) {
-                    const d = await res.json().catch(() => ({}));
-                    setRevealError((d as { error?: string }).error === "generation unavailable"
-                      ? "현재 그림 생성이 준비 중이에요. 스태프에게 문의해 주세요."
-                      : "다시 시도 중 오류가 발생했습니다.");
-                    return;
+          {!starStatus?.wishImageAttemptsExhausted && (
+            <div className="mt-6 space-y-3">
+              <button
+                onClick={async () => {
+                  if (!starId || isRevealing) return;
+                  setIsRevealing(true);
+                  setRevealError("");
+                  try {
+                    const res = await fetch("/api/dt/wishart/retry", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ starId }),
+                    });
+                    if (!res.ok) {
+                      const d = await res.json().catch(() => ({}));
+                      if (res.status === 429) {
+                        // 횟수 소진 — 운영팀 안내 모드로 전환
+                        setStarStatus((prev) => prev ? { ...prev, wishImageAttemptsExhausted: true } : prev);
+                        return;
+                      }
+                      setRevealError((d as { error?: string }).error === "generation unavailable"
+                        ? "현재 그림 생성이 준비 중이에요. 스태프에게 문의해 주세요."
+                        : "다시 시도 중 오류가 발생했습니다.");
+                      return;
+                    }
+                    setStarStatus((prev) => prev ? { ...prev, wishImageStatus: "pending" } : prev);
+                  } catch {
+                    setRevealError("네트워크 연결을 확인해 주세요.");
+                  } finally {
+                    setIsRevealing(false);
                   }
-                  setStarStatus((prev) => prev ? { ...prev, wishImageStatus: "pending" } : prev);
-                } catch {
-                  setRevealError("네트워크 연결을 확인해 주세요.");
-                } finally {
-                  setIsRevealing(false);
-                }
-              }}
-              disabled={isRevealing}
-              className="w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white disabled:opacity-40"
-            >
-              {isRevealing ? "시도 중…" : "다시 시도하기"}
-            </button>
-          </div>
+                }}
+                disabled={isRevealing}
+                className="w-full rounded-full bg-[#9B87F5] py-3.5 text-sm font-medium text-white disabled:opacity-40"
+              >
+                {isRevealing ? "시도 중…" : "다시 시도하기"}
+              </button>
+            </div>
+          )}
         </div>
       ) : isReady ? (
         /* ── ready: 하멜등대 대기 안내 ── */

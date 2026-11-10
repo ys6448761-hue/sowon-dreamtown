@@ -43,6 +43,7 @@ export async function GET(req: NextRequest) {
         wishImageUrl: true,
         wishImageStatus: true,
         wishImageRevealedAt: true,
+        wishImageAttempts: true, // PHX-WISHART-011: 횟수 소진 여부 계산용
       },
     });
 
@@ -89,6 +90,7 @@ export async function GET(req: NextRequest) {
       wishImageUrl: resolvedWishImageUrl,
       wishImageStatus: star.wishImageStatus,
       wishImageRevealedAt: star.wishImageRevealedAt?.toISOString() ?? null,
+      wishImageAttemptsExhausted: star.wishImageAttempts >= 3, // PHX-WISHART-011
     });
   } catch (err) {
     return serverError("dt/checkin-status GET", err, requestId);

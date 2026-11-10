@@ -197,6 +197,7 @@ model DtStar {
   wishImageUrl        String?
   wishImageStatus     String    @default("pending") // pending | generating | ready | failed | revealed
   wishImageRevealedAt DateTime? // null = 비공개
+  wishImageAttempts   Int       @default(0) // PHX-WISHART-011: AI 생성 시도 횟수 (최초=1, 재시도마다 +1, 최대 3)
 
   // OWN-001: Guest Identity 연결 (nullable — 기존 anonymous Star는 NULL)
   guestIdentityId String?
