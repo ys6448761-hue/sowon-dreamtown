@@ -26,6 +26,7 @@ import {
 } from "@/lib/utils/guest-identity";
 import { logCheckinEvent } from "@/lib/utils/checkin-events";
 import { runWishartGeneration } from "@/lib/wishart/run-generation";
+import { checkPin, getClientIp } from "@/lib/utils/pin-guard";
 
 const NAME_MAX = 50;
 const PHONE_MAX = 20;
@@ -165,8 +166,60 @@ export async function POST(req: NextRequest) {
             });
             return resumeResponse;
           }
-          // isComplete → fall through: 기존 identity 재사용, 신규 별 생성
+
+          // PHX-WISHART-011: 1작품 정책 — 동일 identity에 완성 작품 존재 → 신규 생성 차단
+          // 기존 별로 돌아가게 함 (isResuming: true → fetchCheckinStatus → Step 7)
+          if (isAiComplete) {
+            await prisma.dtGuestIdentity.update({
+              where: { id: existingIdentity.id },
+              data: {
+                lastUsedAt: new Date(),
+                expiresAt: calculateGuestIdentityExpiry(new Date()),
+              },
+            });
+            logCheckinEvent({ event: "checkin_resumed", starId: existingStar.id, requestId });
+            const redirectResponse = NextResponse.json({
+              success: true,
+              starId: existingStar.id,
+              isResuming: true,
+            });
+            redirectResponse.cookies.set(GUEST_TOKEN_COOKIE_NAME, existingToken, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "lax",
+              path: "/",
+              maxAge: GUEST_TOKEN_MAX_AGE_SECONDS,
+            });
+            return redirectResponse;
+          }
         }
+      }
+    }
+
+    // ── PIN gate — 별빛항로 구매자 전용 (PHX-WISHART-009) ──────────────────
+    // shouldResume 경로(기존 고객)는 이미 반환됨 → 여기는 신규 생성 전용.
+    // R2 업로드·AI 생성 등 비용 발생 전에 검증.
+    {
+      const rawPin = form.get("pin");
+      const pin = typeof rawPin === "string" ? rawPin.trim() : null;
+      const pinResult = checkPin(pin, getClientIp(req));
+      if (pinResult === "not_configured") {
+        return NextResponse.json(
+          { error: "service unavailable", request_id: requestId },
+          { status: 503 },
+        );
+      }
+      if (pinResult === "rate_limited") {
+        return NextResponse.json(
+          { error: "너무 많이 시도했습니다. 잠시 후 다시 시도해 주세요.", request_id: requestId },
+          { status: 429 },
+        );
+      }
+      if (pinResult === "wrong") {
+        return NextResponse.json(
+          { error: "확인번호가 올바르지 않습니다.", request_id: requestId },
+          { status: 403 },
+        );
       }
     }
 
@@ -237,6 +290,7 @@ export async function POST(req: NextRequest) {
           photoUrl: photoKey, // R2 object key 저장 (공개 URL 아님)
           phone,
           // wishImageUrl: null (기본값), wishImageStatus: "pending" (기본값)
+          wishImageAttempts: 1, // PHX-WISHART-011: 최초 생성 = 시도 1회 차감
           dayCount: 1,
           starStage: 1,
           guestIdentityId: identityId,
