@@ -8,7 +8,8 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+// 1.5 = 별빛항로 확인번호 입력 (PHX-WISHART-009)
+type Step = 1 | 1.5 | 2 | 3 | 4 | 5 | 6 | 7;
 
 type CheckinStatus = {
   status: "no_data" | "photo_missing" | "wish_missing" | "ready" | "revealed";
@@ -85,6 +86,7 @@ export default function CheckinPageContent() {
   const [step, setStep] = useState<Step>(1);
 
   // 입력값
+  const [pin, setPin] = useState(""); // PHX-WISHART-009: 별빛항로 확인번호
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -179,15 +181,12 @@ export default function CheckinPageContent() {
         break;
       case "photo_missing":
       case "wish_missing":
-        if (status.visitorName) {
-          setName(status.visitorName);
-          setStep(3);
-        } else {
-          setStep(2);
-        }
+        // 별 생성 미완료 → 서버가 shouldResume하지 않음 → 신규 생성 필요 → PIN 필요
+        setStep(1);
         break;
       case "ready":
       case "revealed":
+        // 기존 고객: PIN 없이 소원그림 화면 직행
         setStep(7);
         if (status.visitorName) setName(status.visitorName);
         break;
@@ -247,11 +246,23 @@ export default function CheckinPageContent() {
       if (trimPhone) body.append("phone", trimPhone);
       body.append("photo", photoFile);
       body.append("wish", trimWish);
+      body.append("pin", pin); // PHX-WISHART-009
 
       const res = await fetch("/api/checkin", { method: "POST", body });
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
+        if (res.status === 403 || res.status === 429) {
+          setErrorMsg((data as { error?: string }).error ?? "확인번호를 다시 확인해 주세요.");
+          setStatus("error");
+          setStep(1.5);
+          return;
+        }
+        if (res.status === 503) {
+          setErrorMsg("서비스를 일시적으로 이용할 수 없습니다. 스태프에게 문의해 주세요.");
+          setStatus("error");
+          return;
+        }
         setErrorMsg((data as { error?: string }).error ?? "잠시 문제가 생겼습니다.");
         setStatus("error");
         return;
@@ -347,10 +358,54 @@ export default function CheckinPageContent() {
               지금부터 당신의 별빛항로를 준비합니다.
             </p>
             <button
-              onClick={() => setStep(2)}
+              onClick={() => setStep(1.5)}
               className="mt-10 w-full rounded-full bg-[#9B87F5] py-3 text-sm font-medium text-white"
             >
               우주민 등록 시작하기
+            </button>
+          </section>
+        )}
+
+        {/* Step 1.5: 별빛항로 확인번호 (PHX-WISHART-009) */}
+        {step === 1.5 && (
+          <section>
+            {status === "error" && errorMsg && (
+              <div className="mb-6 rounded-xl border border-amber-100 bg-amber-50 px-4 py-4">
+                <p className="text-sm leading-relaxed text-amber-700 whitespace-pre-line">{errorMsg}</p>
+              </div>
+            )}
+            <h2 className="text-center text-lg font-semibold text-gray-800">
+              별빛항로 확인번호
+            </h2>
+            <p className="mt-2 text-center text-sm leading-relaxed text-gray-400">
+              별빛항로 패키지 구매 시 받으신
+              <br />
+              확인번호를 입력해 주세요.
+            </p>
+
+            <input
+              value={pin}
+              onChange={(e) => {
+                setPin(e.target.value);
+                if (status === "error") { setStatus("idle"); setErrorMsg(""); }
+              }}
+              type="password"
+              inputMode="numeric"
+              placeholder="확인번호 입력"
+              className="mt-6 w-full rounded-xl border border-[#9B87F5]/30 bg-white px-4 py-3 text-sm text-gray-800 placeholder-gray-300 outline-none focus:border-[#9B87F5] focus:ring-1 focus:ring-[#9B87F5]/40 tracking-widest text-center"
+            />
+
+            <button
+              onClick={() => {
+                if (!pin.trim()) return;
+                setStatus("idle");
+                setErrorMsg("");
+                setStep(2);
+              }}
+              disabled={!pin.trim()}
+              className="mt-6 w-full rounded-full bg-[#9B87F5] py-3 text-sm font-medium text-white disabled:opacity-40"
+            >
+              다음
             </button>
           </section>
         )}

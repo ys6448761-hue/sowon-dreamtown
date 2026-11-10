@@ -26,6 +26,7 @@ import {
 } from "@/lib/utils/guest-identity";
 import { logCheckinEvent } from "@/lib/utils/checkin-events";
 import { runWishartGeneration } from "@/lib/wishart/run-generation";
+import { checkPin, getClientIp } from "@/lib/utils/pin-guard";
 
 const NAME_MAX = 50;
 const PHONE_MAX = 20;
@@ -167,6 +168,33 @@ export async function POST(req: NextRequest) {
           }
           // isComplete → fall through: 기존 identity 재사용, 신규 별 생성
         }
+      }
+    }
+
+    // ── PIN gate — 별빛항로 구매자 전용 (PHX-WISHART-009) ──────────────────
+    // shouldResume 경로(기존 고객)는 이미 반환됨 → 여기는 신규 생성 전용.
+    // R2 업로드·AI 생성 등 비용 발생 전에 검증.
+    {
+      const rawPin = form.get("pin");
+      const pin = typeof rawPin === "string" ? rawPin.trim() : null;
+      const pinResult = checkPin(pin, getClientIp(req));
+      if (pinResult === "not_configured") {
+        return NextResponse.json(
+          { error: "service unavailable", request_id: requestId },
+          { status: 503 },
+        );
+      }
+      if (pinResult === "rate_limited") {
+        return NextResponse.json(
+          { error: "너무 많이 시도했습니다. 잠시 후 다시 시도해 주세요.", request_id: requestId },
+          { status: 429 },
+        );
+      }
+      if (pinResult === "wrong") {
+        return NextResponse.json(
+          { error: "확인번호가 올바르지 않습니다.", request_id: requestId },
+          { status: 403 },
+        );
       }
     }
 
